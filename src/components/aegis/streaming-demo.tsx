@@ -1,9 +1,9 @@
 'use client';
 
 import * as React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { toast } from 'sonner';
-import { Play, Square, Radio, Loader2, CheckCircle2, Gauge } from 'lucide-react';
+import { Play, Square, Radio, Loader2, CheckCircle2, Gauge, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -38,6 +38,7 @@ type StreamEvent = StreamChunkEvent | StreamDoneEvent;
  *   - the final token map size when the stream completes
  */
 export function AegisStreamingDemo() {
+  const prefersReduced = useReducedMotion();
   const [streaming, setStreaming] = React.useState(false);
   const [output, setOutput] = React.useState('');
   const [buffered, setBuffered] = React.useState(0);
@@ -48,14 +49,18 @@ export function AegisStreamingDemo() {
   const [tokenCount, setTokenCount] = React.useState(0);
 
   const sourceRef = React.useRef<EventSource | null>(null);
-  const outputEndRef = React.useRef<HTMLDivElement | null>(null);
+  const scrollContainerRef = React.useRef<HTMLDivElement | null>(null);
 
-  // Auto-scroll the output panel to bottom on new chunks.
+  // B2 fix: auto-scroll the container directly during streaming.
+  // Using scrollIntoView({behavior:'smooth'}) on every chunk (~35ms) caused
+  // janky, laggy scrolling because smooth-scroll animations queue up.
+  // Instead we set scrollTop directly — instant, no animation queue.
   React.useEffect(() => {
-    if (outputEndRef.current) {
-      outputEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    const el = scrollContainerRef.current;
+    if (el) {
+      el.scrollTop = el.scrollHeight;
     }
-  }, [output]);
+  }, [output, streaming]);
 
   const cleanup = React.useCallback(() => {
     if (sourceRef.current) {
@@ -166,12 +171,12 @@ export function AegisStreamingDemo() {
 
                 <div className="flex items-center gap-2">
                   {!streaming ? (
-                    <Button size="sm" onClick={start} disabled={streaming} className="h-9">
+                    <Button size="sm" onClick={start} disabled={streaming} className="h-9 active:scale-[0.98]">
                       <Play className="size-3.5" />
-                      Start stream
+                      {done ? 'Replay stream' : 'Start stream'}
                     </Button>
                   ) : (
-                    <Button size="sm" variant="destructive" onClick={stop} className="h-9">
+                    <Button size="sm" variant="destructive" onClick={stop} className="h-9 active:scale-[0.98]">
                       <Square className="size-3.5" />
                       Stop
                     </Button>
@@ -209,7 +214,7 @@ export function AegisStreamingDemo() {
               </div>
 
               {/* Output */}
-              <div className="relative rounded-md border border-border/60 bg-background/60 p-3 min-h-64 max-h-96 overflow-y-auto">
+              <div ref={scrollContainerRef} className="relative rounded-md border border-border/60 bg-background/60 p-3 min-h-64 max-h-96 overflow-y-auto">
                 <pre className="whitespace-pre-wrap break-words text-[13px] leading-relaxed aegis-mono text-foreground/90">
                   {output || (
                     <span className="text-muted-foreground">
@@ -218,10 +223,12 @@ export function AegisStreamingDemo() {
                     </span>
                   )}
                   {streaming && (
-                    <span className="inline-block w-2 h-4 ml-0.5 align-middle bg-primary/70 animate-pulse" />
+                    <span
+                      className="inline-block w-[0.5em] h-[1.1em] ml-0.5 align-text-bottom bg-primary/70 animate-pulse"
+                      style={{ transform: 'translateY(2px)' }}
+                    />
                   )}
                 </pre>
-                <div ref={outputEndRef} />
               </div>
             </CardContent>
           </Card>
@@ -263,7 +270,7 @@ export function AegisStreamingDemo() {
                     {completed.map((d, i) => (
                       <motion.div
                         key={`${d.entityType}-${i}-${d.value}`}
-                        initial={{ opacity: 0, scale: 0.7, y: -4 }}
+                        initial={prefersReduced ? false : { opacity: 0, scale: 0.7, y: -4 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         transition={{ type: 'spring', stiffness: 380, damping: 22 }}
                       >

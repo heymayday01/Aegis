@@ -205,3 +205,38 @@
 .chain-link {
   background: linear-gradient(180deg, color-mix(in oklch, var(--primary) 50%, transparent), transparent);
 }
+
+/* ---- Accessibility: reduced motion ---- */
+/* Respect users who prefer reduced motion. Disables all CSS animations + transitions. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .aegis-live-dot::after {
+    animation: none;
+    opacity: 0.3;
+  }
+}
+
+/* Skip link — visible only when focused by keyboard users. */
+.aegis-skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -3rem;
+  z-index: 100;
+  border-radius: var(--radius-md);
+  background: var(--primary);
+  color: var(--primary-foreground);
+  padding: 0.5rem 1rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  transition: top 150ms ease-out;
+}
+.aegis-skip-link:focus {
+  top: 0.75rem;
+}

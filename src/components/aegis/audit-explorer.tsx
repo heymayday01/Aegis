@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import {
@@ -65,6 +65,7 @@ function providerBadge(provider: string): string {
  * (and watch the chain break downstream), repair the chain, or clear it.
  */
 export function AegisAuditExplorer() {
+  const prefersReduced = useReducedMotion();
   const [chain, setChain] = React.useState<AuditLogEntry[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [busy, setBusy] = React.useState<string | null>(null);
@@ -108,8 +109,14 @@ export function AegisAuditExplorer() {
   const onSeed = () => post({ action: 'seed' }, 'Seeded demo entries');
   const onRepair = () => post({ action: 'repair' }, 'Chain repaired');
   const onClear = () => post({ action: 'clear' }, 'Chain cleared');
-  const onTamper = (seq: number) =>
+  const onTamper = (seq: number) => {
+    // B4 fix: tampering is a destructive/demo action, not a success.
+    // Use a warning toast so the semantics are honest.
     post({ action: 'tamper', seq }, `Tampered entry #${seq}`);
+    toast.warning(`Entry #${seq} corrupted`, {
+      description: 'The hash chain is now broken downstream. Click Repair to fix.',
+    });
+  };
 
   const firstTampered = chain.find((e) => e.tampered);
   const integrityOk = !firstTampered;
@@ -251,6 +258,7 @@ export function AegisAuditExplorer() {
                   isLast={i === chain.length - 1}
                   onTamper={() => onTamper(entry.seq)}
                   busy={busy !== null}
+                  prefersReduced={prefersReduced}
                 />
               ))}
             </div>
@@ -300,18 +308,20 @@ function ChainBlock({
   isLast,
   onTamper,
   busy,
+  prefersReduced,
 }: {
   entry: AuditLogEntry;
   isLast: boolean;
   onTamper: () => void;
   busy: boolean;
+  prefersReduced: boolean;
 }) {
   const tampered = entry.tampered;
   return (
     <motion.div
-      initial={{ opacity: 0, y: 8 }}
+      initial={prefersReduced ? false : { opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.25, ease: 'easeOut' }}
       className="relative pl-8"
     >
       {/* Chain link connector */}
@@ -382,7 +392,7 @@ function ChainBlock({
                   size="sm"
                   onClick={onTamper}
                   disabled={busy}
-                  className="h-7 text-[11px] text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                  className="h-8 px-2 text-[11px] text-muted-foreground hover:text-destructive hover:bg-destructive/10 active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   <Hammer className="size-3" />
                   Tamper this
@@ -441,9 +451,13 @@ function HashRow({
       </span>
       <Tooltip>
         <TooltipTrigger asChild>
+          {/* B3 fix: make the hash keyboard-focusable so screen reader + keyboard
+              users can access the full hash via the tooltip. */}
           <span
+            tabIndex={0}
+            role="button"
             className={cn(
-              'flex-1 min-w-0 truncate text-[11px] aegis-mono cursor-help',
+              'flex-1 min-w-0 truncate text-[11px] aegis-mono cursor-help rounded-sm px-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
               highlight ? 'text-emerald-300' : 'text-muted-foreground',
             )}
           >

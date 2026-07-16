@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { ShieldCheck, ArrowRight, Cpu, Link2, Radio, Plug } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -14,6 +14,7 @@ const STATS = [
 ];
 
 export function AegisHero() {
+  const prefersReduced = useReducedMotion();
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -31,9 +32,9 @@ export function AegisHero() {
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 py-20 sm:py-28 lg:py-32">
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
+          initial={prefersReduced ? false : { opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: 'easeOut' }}
+          transition={{ duration: 0.4, ease: 'easeOut' }}
           className="flex flex-col items-start gap-6 max-w-3xl"
         >
           <div className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/60 px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-primary">
@@ -94,9 +95,9 @@ export function AegisHero() {
 
         {/* Floating verification panel — a tasteful decorative proof. */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={prefersReduced ? false : { opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
+          transition={{ duration: 0.5, delay: 0.15, ease: 'easeOut' }}
           className="pointer-events-none absolute right-8 top-24 hidden w-80 rounded-xl border border-border/60 bg-card/70 p-4 shadow-2xl backdrop-blur-sm lg:block"
           aria-hidden
         >

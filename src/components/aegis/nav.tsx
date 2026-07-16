@@ -1,9 +1,17 @@
 'use client';
 
 import * as React from 'react';
-import { Shield, Github } from 'lucide-react';
+import { Shield, Github, Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetTitle,
+  SheetClose,
+} from '@/components/ui/sheet';
 
 const NAV_ITEMS = [
   { id: 'playground', label: 'Playground' },
@@ -16,6 +24,7 @@ const NAV_ITEMS = [
 export function AegisNav() {
   const [scrolled, setScrolled] = React.useState(false);
   const [active, setActive] = React.useState<string>('playground');
+  const [mobileOpen, setMobileOpen] = React.useState(false);
 
   React.useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -49,10 +58,18 @@ export function AegisNav() {
     const el = document.getElementById(id);
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      // Update hash without jumping.
       history.replaceState(null, '', `#${id}`);
     }
+    setMobileOpen(false);
   };
+
+  const navLinkClass = (id: string) =>
+    cn(
+      'rounded-md px-3 py-2 text-sm transition-colors active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+      active === id
+        ? 'text-foreground bg-accent/60'
+        : 'text-muted-foreground hover:text-foreground hover:bg-accent/40',
+    );
 
   return (
     <header
@@ -65,7 +82,7 @@ export function AegisNav() {
         <a
           href="#top"
           onClick={(e) => handleClick(e, 'top')}
-          className="flex items-center gap-2.5 group"
+          className="flex items-center gap-2.5 group rounded-md active:scale-[0.97] transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           aria-label="Aegis home"
         >
           <span className="grid size-7 place-items-center rounded-md bg-primary/15 text-primary ring-1 ring-primary/30 group-hover:bg-primary/25 transition-colors">
@@ -77,18 +94,15 @@ export function AegisNav() {
           </span>
         </a>
 
-        <nav className="hidden md:flex items-center gap-1">
+        {/* Desktop nav */}
+        <nav className="hidden md:flex items-center gap-1" aria-label="Sections">
           {NAV_ITEMS.map((item) => (
             <a
               key={item.id}
               href={`#${item.id}`}
               onClick={(e) => handleClick(e, item.id)}
-              className={cn(
-                'rounded-md px-3 py-1.5 text-sm transition-colors',
-                active === item.id
-                  ? 'text-foreground bg-accent/60'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-accent/40',
-              )}
+              className={navLinkClass(item.id)}
+              aria-current={active === item.id ? 'true' : undefined}
             >
               {item.label}
             </a>
@@ -107,11 +121,59 @@ export function AegisNav() {
             href="https://github.com"
             target="_blank"
             rel="noreferrer noopener"
-            aria-label="Source"
-            className="grid size-9 place-items-center rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors"
+            aria-label="Source on GitHub"
+            className="grid size-9 place-items-center rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors active:scale-[0.95] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
             <Github className="size-4" />
           </a>
+
+          {/* Mobile nav menu */}
+          <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+            <SheetTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="md:hidden size-9 active:scale-[0.95]"
+                aria-label="Open navigation menu"
+                aria-expanded={mobileOpen}
+              >
+                {mobileOpen ? <X className="size-4" /> : <Menu className="size-4" />}
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-72 p-0">
+              <SheetTitle className="px-6 pt-6 pb-2 text-base font-semibold">
+                Sections
+              </SheetTitle>
+              <nav className="flex flex-col gap-1 px-3 py-2" aria-label="Mobile sections">
+                {NAV_ITEMS.map((item) => (
+                  <SheetClose asChild key={item.id}>
+                    <a
+                      href={`#${item.id}`}
+                      onClick={(e) => handleClick(e, item.id)}
+                      className={cn(
+                        'rounded-md px-3 py-2.5 text-sm transition-colors active:scale-[0.98] min-h-11 flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                        active === item.id
+                          ? 'text-foreground bg-accent/60 font-medium'
+                          : 'text-muted-foreground hover:text-foreground hover:bg-accent/40',
+                      )}
+                      aria-current={active === item.id ? 'true' : undefined}
+                    >
+                      {item.label}
+                    </a>
+                  </SheetClose>
+                ))}
+              </nav>
+              <div className="px-6 pt-4 border-t border-border/60 mt-2">
+                <Badge
+                  variant="outline"
+                  className="border-primary/30 bg-primary/10 text-primary"
+                >
+                  <span className="size-1.5 rounded-full bg-primary aegis-live-dot" />
+                  local-first
+                </Badge>
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
     </header>

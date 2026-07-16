@@ -89,3 +89,52 @@ Stage Summary:
 - Streaming-aware redaction is the signature technical demo — live token-by-token with buffering.
 - $0 budget intact; dark emerald security theme; responsive; sticky footer.
 - Screenshots saved: preview-hero.png, preview-playground.png, preview-streaming.png, preview-mobile.png, preview-final.png
+
+---
+Task ID: 8
+Agent: main (orchestrator)
+Task: Apply 12-principles-of-animation + ui-ux-pro-max skills — fix all bugs and improve UI/UX
+
+Skills applied:
+- skills/12-principles-of-animation/SKILL.md — Disney's 12 principles adapted for web (timing, easing, physics, staging)
+- skills/ui-ux-pro-max/SKILL.md — UI/UX design intelligence (forms, accessibility, responsive, feedback, motion sensitivity)
+
+Audit findings (full read of all 9 Aegis components):
+
+Bugs fixed:
+- B1 (playground.tsx): Stale highlighted preview after text edit — old detection indices no longer matched new text. Fixed: onTextChange clears result/rehydrated/roundTripOk when text changes.
+- B2 (streaming-demo.tsx): Janky auto-scroll during fast streaming — scrollIntoView({behavior:'smooth'}) queued up on every ~35ms chunk. Fixed: set scrollContainerRef.scrollTop directly (instant, no animation queue).
+- B3 (audit-explorer.tsx): Hash tooltip trigger was a plain <span> with no tabIndex — keyboard users couldn't access the full hash. Fixed: added tabIndex=0, role="button", focus-visible ring.
+- B4 (audit-explorer.tsx): Tamper action used toast.success — semantically wrong for a destructive demo action. Fixed: uses toast.warning with a description telling the user to click Repair.
+- B5 (streaming-demo.tsx): Blinking cursor block was h-4 (16px) on 13px text — floated visually. Fixed: uses em-based sizing (w-[0.5em] h-[1.1em]) matching line height.
+- B6 (nav.tsx): Mobile had no navigation — links hidden below md: with no fallback. Fixed: added a Sheet-based mobile menu (hamburger button) with all 5 sections, min-h-11 touch targets, SheetClose on click.
+
+Animation principle fixes (12-principles skill):
+- A1 easing-entrance-ease-out (audit-explorer.tsx): ChainBlock entrance had transition={{duration:0.3}} with no easing (defaulted to ease-in-out). Fixed: {duration:0.25, ease:'easeOut'}.
+- A2 easing-entrance-ease-out (hero.tsx): Floating audit panel had transition={{duration:0.6, delay:0.2}} with no easing. Fixed: {duration:0.5, delay:0.15, ease:'easeOut'}.
+- A3 physics-active-state (playground.tsx): Strictness buttons had transition-all but no :active scale. Fixed: added active:scale-[0.97] + aria-pressed.
+- A4 physics-active-state (nav.tsx): Nav links + logo had no active state. Fixed: active:scale-[0.97] on all interactive elements.
+
+UI/UX improvements (ui-ux-pro-max skill):
+- U1 (playground.tsx): Added Cmd/Ctrl+Enter keyboard shortcut to trigger redact from the textarea, with a visible <kbd> hint below the input.
+- U5 (audit-explorer.tsx, policy-editor.tsx): Increased touch targets — Tamper button h-7→h-8, glossary remove button size-4→size-5. Mobile nav links min-h-11.
+- U9 (globals.css + all motion components): Added prefers-reduced-motion media query (disables all CSS animations/transitions). All framer-motion components now use useReducedMotion() to skip entrance animations when reduced motion is preferred.
+- U10 (page.tsx): Added a visually-hidden skip-to-playground link, visible only when keyboard-focused. Uses .aegis-skip-link utility.
+- Focus-visible rings added to all custom buttons (strictness, nav links, hash spans, glossary remove, tamper).
+
+Verification (Agent Browser):
+- Lint: zero errors
+- No console/runtime errors after reload
+- Mobile nav menu: opens, lists all 5 sections, closes on click ✓
+- Skip link: present in DOM ✓
+- B1 fix: redact → highlights appear; edit text → highlights cleared + buttons disabled ✓
+- U1 fix: Cmd+Enter via keydown event triggers redact ✓
+- B3 fix: hash spans have tabIndex, keyboard-focusable ✓
+- Streaming: output flows, "Replay stream" label appears after completion ✓
+- Screenshots: preview-fixed.png (desktop), preview-fixed-mobile.png (mobile)
+
+Stage Summary:
+- All 6 bugs fixed and browser-verified
+- All 4 animation principle violations fixed (ease-out entrances, active pressed states)
+- 4 UI/UX improvements applied (keyboard shortcut, touch targets, reduced-motion, skip link)
+- Lint clean, zero runtime errors, all interactions verified end-to-end

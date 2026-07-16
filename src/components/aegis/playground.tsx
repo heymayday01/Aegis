@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { toast } from 'sonner';
 import {
   Sparkles,
@@ -62,6 +62,7 @@ interface PolicyResponse {
  * Live-highlights detections in the source text and renders a rehydration proof.
  */
 export function AegisPlayground() {
+  const prefersReduced = useReducedMotion();
   const [text, setText] = React.useState(SAMPLE_TEXT);
   const [strictness, setStrictness] = React.useState<Strictness>('balanced');
   const [loading, setLoading] = React.useState(false);
@@ -125,6 +126,26 @@ export function AegisPlayground() {
     };
     return { ...base, strictness };
   }, [policy, strictness]);
+
+  // B1 fix: clear stale result when the user edits the input text.
+  // Old detections have indices that no longer match the new text, so
+  // highlights would be misaligned. Force a re-redact.
+  const onTextChange = (v: string) => {
+    setText(v);
+    if (result) {
+      setResult(null);
+      setRehydrated(null);
+      setRoundTripOk(null);
+    }
+  };
+
+  // U1: Cmd/Ctrl+Enter triggers redact from the textarea.
+  const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+      e.preventDefault();
+      onRedact();
+    }
+  };
 
   const onRedact = async () => {
     if (!text.trim()) {
@@ -228,12 +249,13 @@ export function AegisPlayground() {
                 key={opt.value}
                 onClick={() => setStrictness(opt.value)}
                 className={cn(
-                  'inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition-all',
+                  'inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition-colors active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
                   strictness === opt.value
                     ? 'bg-primary text-primary-foreground shadow-sm'
                     : 'text-muted-foreground hover:text-foreground hover:bg-accent/50',
                 )}
                 title={opt.desc}
+                aria-pressed={strictness === opt.value}
               >
                 {opt.label}
               </button>
@@ -270,12 +292,21 @@ export function AegisPlayground() {
               </div>
               <Textarea
                 value={text}
-                onChange={(e) => setText(e.target.value)}
+                onChange={(e) => onTextChange(e.target.value)}
+                onKeyDown={onKeyDown}
                 rows={10}
                 spellCheck={false}
                 className="min-h-44 resize-y aegis-mono text-[13px] leading-relaxed"
                 placeholder="Paste anything containing PII — emails, keys, cards, Aadhaar, PAN, IPs, your codenames…"
               />
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] text-muted-foreground">
+                  Tip: press <kbd className="rounded border border-border/70 bg-muted px-1 py-0.5 text-[9px] aegis-mono">⌘/Ctrl</kbd> + <kbd className="rounded border border-border/70 bg-muted px-1 py-0.5 text-[9px] aegis-mono">↵</kbd> to redact
+                </span>
+                <span className="text-[10px] text-muted-foreground aegis-mono">
+                  strictness: {strictness}
+                </span>
+              </div>
 
               <div>
                 <div className="flex items-center justify-between mb-1.5">
@@ -304,7 +335,7 @@ export function AegisPlayground() {
               <Button
                 onClick={onRedact}
                 disabled={loading || !text.trim()}
-                className="mt-1 h-11 self-start"
+                className="mt-1 h-11 self-start active:scale-[0.98]"
               >
                 {loading ? (
                   <>

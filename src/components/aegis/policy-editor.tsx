@@ -202,8 +202,9 @@ export function AegisPolicyEditor() {
                         key={s}
                         onClick={() => updateStrictness(s)}
                         disabled={busy}
+                        aria-pressed={selected}
                         className={cn(
-                          'flex items-start gap-3 rounded-lg border p-3 text-left transition-all',
+                          'flex items-start gap-3 rounded-lg border p-3 text-left transition-colors active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
                           selected
                             ? 'border-primary/60 bg-primary/10 ring-1 ring-primary/30'
                             : 'border-border/60 bg-background/40 hover:border-border hover:bg-accent/30',
@@ -333,7 +334,7 @@ export function AegisPolicyEditor() {
                             onClick={() => removeTerm(term)}
                             disabled={busy}
                             aria-label={`Remove ${term}`}
-                            className="grid size-4 place-items-center rounded-sm hover:bg-destructive/20 hover:text-destructive transition-colors"
+                            className="grid size-5 place-items-center rounded-sm hover:bg-destructive/20 hover:text-destructive transition-colors active:scale-[0.9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                           >
                             <X className="size-3" />
                           </button>
