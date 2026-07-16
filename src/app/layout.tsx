@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,24 +14,32 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Z.ai Code Scaffold - AI-Powered Development",
-  description: "Modern Next.js scaffold optimized for AI-powered development with Z.ai. Built with TypeScript, Tailwind CSS, and shadcn/ui.",
-  keywords: ["Z.ai", "Next.js", "TypeScript", "Tailwind CSS", "shadcn/ui", "AI development", "React"],
-  authors: [{ name: "Z.ai Team" }],
-  icons: {
-    icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",
-  },
+  title: "Aegis — Local-First Trust & Redaction Layer for AI",
+  description:
+    "Aegis sits between you and any AI provider, strips sensitive data before it ever leaves your device, and gives a cryptographically provable audit trail of exactly what was sent where. Turn 'trust us' into 'verify it yourself.'",
+  keywords: [
+    "Aegis",
+    "AI redaction",
+    "PII detection",
+    "data loss prevention",
+    "MCP",
+    "tamper-evident audit log",
+    "local-first",
+    "developer security",
+    "LLM privacy",
+  ],
+  authors: [{ name: "Aegis" }],
   openGraph: {
-    title: "Z.ai Code Scaffold",
-    description: "AI-powered development with modern React stack",
-    url: "https://chat.z.ai",
-    siteName: "Z.ai",
+    title: "Aegis — Verify, don't trust.",
+    description:
+      "Local-first, provider-agnostic redaction layer with a tamper-evident hash-chained audit log. Zero infrastructure cost. Open-source.",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Z.ai Code Scaffold",
-    description: "AI-powered development with modern React stack",
+    title: "Aegis — Local-First Trust & Redaction Layer for AI",
+    description:
+      "Strip sensitive data before it leaves your device. Cryptographically provable audit trail. $0 infra.",
   },
 };
 
@@ -41,12 +49,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className="dark" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
       >
         {children}
-        <Toaster />
+        <Toaster position="bottom-right" richColors closeButton />
       </body>
     </html>
   );

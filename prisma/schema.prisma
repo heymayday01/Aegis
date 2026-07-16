@@ -1,8 +1,7 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// Aegis — Prisma schema
+// Local-first trust & redaction layer for AI.
+// NOTE: No plaintext vault (token↔value) is ever stored here. Only audit metadata
+// (entity TYPES and counts, never values) + policy config + glossary terms.
 
 generator client {
   provider = "prisma-client-js"
@@ -13,20 +12,41 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+// A redaction policy. One active policy at a time in this demo (the "default" org policy).
+// In production this would be org-scoped and multi-seat.
+model Policy {
+  id                String   @id @default(cuid())
+  name              String   @default("default")
+  strictness        String   @default("balanced") // paranoid | balanced | permissive
+  enabledEntityTypes String  @default("EMAIL,API_KEY,PHONE,CREDIT_CARD,AADHAAR,PAN,IP_ADDRESS,CUSTOM_GLOSSARY")
+  customGlossary    String   @default("") // newline-separated terms
+  active            Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 }
 
-model Post {
+// A glossary term (org-defined sensitive term: client names, codenames, etc.)
+// Stored as separate rows for easy add/remove from the dashboard.
+model GlossaryTerm {
   id        String   @id @default(cuid())
-  title     String
-  content   String?
-  published Boolean  @default(false)
-  authorId  String
+  term      String
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+
+  @@unique([term])
+}
+
+// A tamper-evident audit log entry. The hash chain is: currentHash = SHA-256(previousHash + payload).
+// We store previousHash + currentHash so integrity can be re-verified on read.
+// CRITICAL: only entity TYPES and COUNTS are stored — never the redacted values themselves.
+model AuditLogEntry {
+  id                   String   @id @default(cuid())
+  seq                  Int      @unique // monotonic sequence for chain ordering
+  timestamp            DateTime @default(now())
+  entityTypesRedacted  String   @default("") // comma-separated EntityType values
+  entityCounts         String   @default("") // JSON: {"EMAIL":2,"API_KEY":1}
+  destinationProvider  String   @default("openai") // which AI provider the redacted text was sent to
+  inputCharCount       Int      @default(0) // length of original input (no content)
+  previousHash         String   @default("")
+  currentHash          String   @default("")
+  // `tampered` is NOT stored — it is computed on read by re-verifying the chain.
 }

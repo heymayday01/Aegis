@@ -1,31 +1,25 @@
-'use client'
+import { AegisNav } from '@/components/aegis/nav';
+import { AegisHero } from '@/components/aegis/hero';
+import { AegisPlayground } from '@/components/aegis/playground';
+import { AegisStreamingDemo } from '@/components/aegis/streaming-demo';
+import { AegisAuditExplorer } from '@/components/aegis/audit-explorer';
+import { AegisPolicyEditor } from '@/components/aegis/policy-editor';
+import { AegisArchitecture } from '@/components/aegis/architecture';
+import { AegisSiteFooter } from '@/components/aegis/site-footer';
 
 export default function Home() {
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      minHeight: '100vh',
-      gap: '2rem',
-      padding: '1rem'
-    }}>
-      <div style={{
-        position: 'relative',
-        width: '6rem',
-        height: '6rem'
-      }}>
-        <img
-          src="/logo.svg"
-          alt="Z.ai Logo"
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'contain'
-          }}
-        />
-      </div>
+    <div className="flex min-h-screen flex-col overflow-x-hidden bg-background text-foreground">
+      <AegisNav />
+      <main className="flex-1">
+        <AegisHero />
+        <AegisPlayground />
+        <AegisStreamingDemo />
+        <AegisAuditExplorer />
+        <AegisPolicyEditor />
+        <AegisArchitecture />
+      </main>
+      <AegisSiteFooter />
     </div>
-  )
+  );
 }
