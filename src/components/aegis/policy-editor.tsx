@@ -4,10 +4,8 @@ import * as React from 'react';
 import { toast } from 'sonner';
 import { Plus, X, Loader2, Sliders, BookMarked } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
-import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import type { EntityType, Policy, Strictness } from '@/lib/aegis/types';
 import { ALL_ENTITY_TYPES, ENTITY_META } from '@/lib/aegis/types';
@@ -154,45 +152,44 @@ export function AegisPolicyEditor() {
   };
 
   return (
-    <section id="policy" className="scroll-mt-20 border-t border-border/60 bg-card/20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-16 sm:py-20">
+    <section id="policy" className="scroll-mt-20 border-t border-border bg-card/20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-16 sm:py-24">
         <SectionHeading
+          num="04"
           eyebrow="Policy Editor"
-          title="Policy configuration"
+          title={
+            <>
+              Policy <br className="hidden sm:block" />
+              <span className="italic text-muted-foreground">configuration.</span>
+            </>
+          }
           description="Changes here apply live to the playground and streaming demo. The active policy is persisted server-side and re-read on every detection call."
         />
 
         {loading || !policy ? (
-          <div className="mt-8 grid gap-4 lg:grid-cols-2">
-            <Card className="border-border/70">
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="h-5 w-1/3 bg-muted animate-pulse rounded" />
-                  <div className="h-10 w-full bg-muted animate-pulse rounded" />
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="border-border/70">
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="h-5 w-1/3 bg-muted animate-pulse rounded" />
-                  <div className="grid grid-cols-2 gap-2">
-                    {Array.from({ length: 8 }).map((_, i) => (
-                      <div key={i} className="h-12 bg-muted animate-pulse rounded" />
-                    ))}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+          <div className="mt-8 grid gap-px bg-border border border-border lg:grid-cols-2">
+            <div className="bg-card p-6 space-y-3">
+              <div className="h-5 w-1/3 bg-muted animate-pulse" />
+              <div className="h-10 w-full bg-muted animate-pulse" />
+            </div>
+            <div className="bg-card p-6 space-y-3">
+              <div className="h-5 w-1/3 bg-muted animate-pulse" />
+              <div className="grid grid-cols-2 gap-2">
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <div key={i} className="h-12 bg-muted animate-pulse" />
+                ))}
+              </div>
+            </div>
           </div>
         ) : (
-          <div className="mt-8 grid gap-4 lg:grid-cols-2">
-            {/* Strictness */}
-            <Card className="border-border/70">
-              <CardContent className="flex flex-col gap-4">
-                <div className="flex items-center gap-2">
+          <div className="mt-8 grid gap-px bg-border border border-border lg:grid-cols-2">
+            {/* Strictness + entity toggles — left panel */}
+            <div className="bg-card flex flex-col">
+              {/* Strictness radio cards */}
+              <div className="border-b border-border p-5 sm:p-6">
+                <div className="flex items-center gap-2 mb-4">
                   <Sliders className="size-4 text-primary" />
-                  <h3 className="text-sm font-semibold">Strictness</h3>
+                  <h3 className="aegis-eyebrow text-muted-foreground">Strictness</h3>
                 </div>
                 <div className="flex flex-col gap-2">
                   {(Object.keys(STRICTNESS_META) as Strictness[]).map((s) => {
@@ -204,10 +201,10 @@ export function AegisPolicyEditor() {
                         disabled={busy}
                         aria-pressed={selected}
                         className={cn(
-                          'flex items-start gap-3 rounded-lg border p-3 text-left transition-colors active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+                          'flex items-start gap-3 border p-3 text-left transition-colors active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
                           selected
-                            ? 'border-primary/60 bg-primary/10 ring-1 ring-primary/30'
-                            : 'border-border/60 bg-background/40 hover:border-border hover:bg-accent/30',
+                            ? 'border-primary ring-1 ring-primary/30 bg-primary/5'
+                            : 'border-border bg-background/40 hover:border-foreground/20 hover:bg-accent/30',
                         )}
                       >
                         <span
@@ -228,65 +225,63 @@ export function AegisPolicyEditor() {
                     );
                   })}
                 </div>
+              </div>
 
-                <div className="border-t border-border/60 pt-3">
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-sm font-semibold">Entity type toggles</h3>
-                    <span className="text-[11px] text-muted-foreground aegis-mono">
-                      {policy.enabledEntityTypes.length}/{ALL_ENTITY_TYPES.length} on
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {ALL_ENTITY_TYPES.map((type) => {
-                      const meta = ENTITY_META[type];
-                      const enabled = policy.enabledEntityTypes.includes(type);
-                      return (
-                        <div
-                          key={type}
-                          className={cn(
-                            'flex items-center justify-between gap-3 rounded-md border px-3 py-2 transition-colors',
-                            enabled
-                              ? `entity-${type} border-border/70 bg-background/40`
-                              : 'border-border/40 bg-background/20 opacity-60',
-                          )}
-                        >
-                          <div className="flex items-center gap-2 min-w-0">
-                            <span
-                              className={`entity-${type} inline-block size-2.5 rounded-full shrink-0`}
-                              style={{ background: 'var(--ec)' }}
-                            />
-                            <div className="min-w-0">
-                              <div className="text-sm font-medium truncate">{meta.label}</div>
-                              <div className="text-[11px] text-muted-foreground truncate">
-                                {meta.description}
-                              </div>
+              {/* Entity type toggles — gap-px grid */}
+              <div className="p-5 sm:p-6">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="aegis-eyebrow text-muted-foreground">Entity types</h3>
+                  <span className="text-[11px] text-muted-foreground aegis-mono">
+                    {policy.enabledEntityTypes.length}/{ALL_ENTITY_TYPES.length} on
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-border border border-border">
+                  {ALL_ENTITY_TYPES.map((type) => {
+                    const meta = ENTITY_META[type];
+                    const enabled = policy.enabledEntityTypes.includes(type);
+                    return (
+                      <div
+                        key={type}
+                        className={cn(
+                          'bg-card flex items-center justify-between gap-3 px-3 py-2.5 transition-colors',
+                          !enabled && 'opacity-60',
+                        )}
+                      >
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span
+                            className={`entity-${type} entity-dot inline-block size-2.5 rounded-full shrink-0`}
+                          />
+                          <div className="min-w-0">
+                            <div className="text-sm font-medium truncate">{meta.label}</div>
+                            <div className="text-[11px] text-muted-foreground truncate">
+                              {meta.description}
                             </div>
                           </div>
-                          <Switch
-                            checked={enabled}
-                            onCheckedChange={(v) => toggleEntityType(type, v)}
-                            disabled={busy}
-                            aria-label={`Toggle ${meta.label}`}
-                          />
                         </div>
-                      );
-                    })}
-                  </div>
+                        <Switch
+                          checked={enabled}
+                          onCheckedChange={(v) => toggleEntityType(type, v)}
+                          disabled={busy}
+                          aria-label={`Toggle ${meta.label}`}
+                        />
+                      </div>
+                    );
+                  })}
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
-            {/* Custom glossary */}
-            <Card className="border-border/70">
-              <CardContent className="flex flex-col gap-4">
-                <div className="flex items-center gap-2">
+            {/* Custom glossary — right panel */}
+            <div className="bg-card flex flex-col">
+              <div className="border-b border-border p-5 sm:p-6">
+                <div className="flex items-center gap-2 mb-3">
                   <BookMarked className="size-4 text-primary" />
-                  <h3 className="text-sm font-semibold">Custom glossary</h3>
+                  <h3 className="aegis-eyebrow text-muted-foreground">Custom glossary</h3>
                 </div>
                 <p className="text-xs text-muted-foreground leading-relaxed">
                   Codenames, customer names, internal project labels. Matched
-                  case-insensitively as whole words. Use the{' '}
-                  <span className={`entity-CUSTOM_GLOSSARY entity-chip rounded px-1.5 py-0.5 text-[10px]`}>
+                  case-insensitively as whole words. Uses the{' '}
+                  <span className="entity-CUSTOM_GLOSSARY entity-chip px-1.5 py-0.5 text-[10px] aegis-mono">
                     Glossary
                   </span>{' '}
                   colour everywhere.
@@ -297,7 +292,7 @@ export function AegisPolicyEditor() {
                     e.preventDefault();
                     addTerm();
                   }}
-                  className="flex gap-2"
+                  className="mt-4 flex gap-2"
                 >
                   <Input
                     value={newTerm}
@@ -311,49 +306,49 @@ export function AegisPolicyEditor() {
                     Add
                   </Button>
                 </form>
+              </div>
 
-                <div className="border-t border-border/60 pt-3">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs uppercase tracking-wide text-muted-foreground">
-                      Current terms ({glossaryTerms.length})
-                    </span>
-                  </div>
-                  {glossaryTerms.length === 0 ? (
-                    <div className="rounded-md border border-dashed border-border/50 p-4 text-center text-xs text-muted-foreground">
-                      No glossary terms yet. Add one above.
-                    </div>
-                  ) : (
-                    <div className="flex flex-wrap gap-1.5">
-                      {glossaryTerms.map((term) => (
-                        <span
-                          key={term}
-                          className={`entity-CUSTOM_GLOSSARY entity-chip inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs aegis-mono`}
-                        >
-                          {term}
-                          <button
-                            onClick={() => removeTerm(term)}
-                            disabled={busy}
-                            aria-label={`Remove ${term}`}
-                            className="grid size-5 place-items-center rounded-sm hover:bg-destructive/20 hover:text-destructive transition-colors active:scale-[0.9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                          >
-                            <X className="size-3" />
-                          </button>
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                <div className="mt-auto rounded-md border border-primary/30 bg-primary/5 p-3 text-xs">
-                  <span className="font-medium text-primary">Live:</span>{' '}
-                  <span className="text-muted-foreground">
-                    Changes apply immediately to the playground above and to streaming
-                    detection. The server stores one active policy; future org-scoping is
-                    documented in the architecture section.
+              <div className="p-5 sm:p-6 flex-1 flex flex-col">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="aegis-eyebrow text-muted-foreground">
+                    Current terms ({glossaryTerms.length})
                   </span>
                 </div>
-              </CardContent>
-            </Card>
+                {glossaryTerms.length === 0 ? (
+                  <div className="border border-dashed border-border p-4 text-center text-xs text-muted-foreground">
+                    No glossary terms yet. Add one above.
+                  </div>
+                ) : (
+                  <div className="flex flex-wrap gap-1.5">
+                    {glossaryTerms.map((term) => (
+                      <span
+                        key={term}
+                        className="entity-CUSTOM_GLOSSARY entity-chip inline-flex items-center gap-1.5 px-2 py-1 text-xs aegis-mono"
+                      >
+                        {term}
+                        <button
+                          onClick={() => removeTerm(term)}
+                          disabled={busy}
+                          aria-label={`Remove ${term}`}
+                          className="grid size-5 place-items-center hover:bg-destructive/20 hover:text-destructive transition-colors active:scale-[0.9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        >
+                          <X className="size-3" />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                {/* // live — comment-style note, mono */}
+                <div className="mt-auto pt-4 border-t border-border text-[11px] text-muted-foreground leading-relaxed">
+                  <span className="text-foreground/80 aegis-mono">{'// live'}</span>
+                  <br />
+                  Changes apply immediately to the playground above and to streaming
+                  detection. The server stores one active policy; future org-scoping is
+                  documented in the architecture section.
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </div>

@@ -4,16 +4,18 @@ import * as React from 'react';
 import { cn } from '@/lib/utils';
 
 /**
- * A section heading with a small uppercase emerald eyebrow above a title.
- * Used across all Aegis sections for a consistent rhythm.
+ * SectionHeading — editorial magazine style.
+ * A numbered eyebrow ("01 / Playground") + serif title + muted description.
  */
 export function SectionHeading({
+  num,
   eyebrow,
   title,
   description,
   className,
   align = 'left',
 }: {
+  num?: string;
   eyebrow: string;
   title: React.ReactNode;
   description?: React.ReactNode;
@@ -28,10 +30,15 @@ export function SectionHeading({
         className,
       )}
     >
-      <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-primary">
-        {eyebrow}
-      </span>
-      <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">
+      <div className={cn('flex items-center gap-3', align === 'center' && 'justify-center')}>
+        {num && (
+          <span className="aegis-section-num text-primary">{num}</span>
+        )}
+        <span className="aegis-eyebrow text-muted-foreground">
+          {eyebrow}
+        </span>
+      </div>
+      <h2 className="aegis-serif text-3xl sm:text-4xl lg:text-5xl leading-[1.05] tracking-tight">
         {title}
       </h2>
       {description && (

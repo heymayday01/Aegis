@@ -138,3 +138,86 @@ Stage Summary:
 - All 4 animation principle violations fixed (ease-out entrances, active pressed states)
 - 4 UI/UX improvements applied (keyboard shortcut, touch targets, reduced-motion, skip link)
 - Lint clean, zero runtime errors, all interactions verified end-to-end
+
+---
+Task ID: 9
+Agent: full-stack-developer (redesign pass 2)
+Task: Redesign audit-explorer, policy-editor, architecture, site-footer to match the new Editorial Security Terminal design system
+
+Work Log:
+- Read worklog.md (Tasks 1, 6, 7, 8), AEGIS-UPGRADED-PLAN.md, globals.css (NEW design system), section-heading.tsx (new num prop), and all 4 already-redesigned reference components (hero, nav, playground, streaming-demo) to internalise the Editorial Security Terminal aesthetic
+- Redesigned audit-explorer.tsx (section 03, "Tamper-evident / audit chain."): removed Card/CardContent/Badge imports + PROVIDER_COLORS helper; integrity summary now hard-edged bg-card with border-l-2 (primary when ok, destructive when broken); 10×10 icon tile in matching tone; entry + entity counts in .aegis-mono text-2xl; ChainBlock is now a hard-edged bg-card panel with three border-b-divided sections (header / entity chips / hashes); TAMPERED badge is hard-edged border-destructive; hashes still use .aegis-mono with tabIndex=0 + role=button + focus-visible ring (B3 preserved); AlertDialog confirm + toast.warning for tamper (B4 preserved); useReducedMotion preserved; fixed pre-existing TS error (prefersReduced: boolean → boolean | null in ChainBlock props)
+- Redesigned policy-editor.tsx (section 04, "Policy / configuration."): removed Card/CardContent/Badge imports; strictness radio cards hard-edged with border + selected state border-primary ring-1 ring-primary/30 bg-primary/5 (aria-pressed + active:scale preserved); entity type toggles use the gap-px bg-border border border-border grid trick — each cell bg-card shows entity-dot + label + description + Switch; glossary chips use .entity-CUSTOM_GLOSSARY .entity-chip; remove buttons keep size-5 + active:scale-[0.9] + focus-visible ring (U5 preserved); "Live:" note now "// live" comment span in .aegis-mono (matching streaming-demo's // how it works pattern) with explanation following in normal muted-foreground text; all optimistic update + rollback logic preserved; loading skeleton uses the same gap-px grid trick
+- Redesigned architecture.tsx (section 05, "How it / works."): removed Card/CardContent/Badge imports; system diagram wrapped in a hard-edged outer border border-border bg-card frame with inner lg:grid-cols-[1fr_auto_1.4fr_auto_1fr] gap-4; DiagramColumn cells are border border-border bg-card with their own inner gap-px grid for items; DiagramCore gets the spec-mandated border-primary/40 bg-primary/5; arrows are ArrowRight in text-muted-foreground (hidden on mobile); upgrade callouts are hard-edged bg-card cards with a small border-based colored tag at top — tag uses .entity-XXX (sets --ec) + .entity-chip (provides bg/border/color from var(--ec)), tones: entity-IP_ADDRESS for MCP, entity-AADHAAR for Presidio, entity-CREDIT_CARD for Streaming; honest limits card uses .aegis-eyebrow column headers (text-primary ✓ / text-destructive ✗) + .aegis-mono list items; "honest v1 claim" callout is hard-edged with border-l-2 border-l-primary; portfolio narrative card is border-primary/30 bg-primary/5 with bullet · markers in primary + hard-edged border-primary/30 text-primary .aegis-mono bottom pills (NOT shadcn Badge)
+- Redesigned site-footer.tsx: removed unused React + Shield imports; new "Colophon" header strip with .aegis-eyebrow + aegis-mono "engine online" + .aegis-live-dot, separated by border-b border-border; main row uses the same inline SVG shield as nav.tsx in an 8×8 bg-primary/12 ring-1 ring-primary/30 tile + "Aegis" in .aegis-serif text-xl + tagline; right side has 4 hard-edged border border-border text-muted-foreground .aegis-mono pills; bottom bar is border-t border-border with .aegis-mono version line + © year + "Not affiliated with any AI vendor." preserved; mt-auto preserved (sticky footer)
+- Fixed a pre-existing lint error in streaming-demo.tsx line 311: `// how it works` → `{'// how it works'}` — same .jsx-no-comment-textnodes error pattern I was using in policy-editor's `// live` note. Functionally identical output, just disambiguates the literal string from a JS comment for the JSX parser. (This was introduced by Task 9 pass 1; fixed opportunistically since I was told to match this exact pattern.)
+- Ran bun run lint → zero errors. Ran bunx tsc --noEmit → zero errors in any of the 5 files I modified. Checked dev.log → all routes still returning 200, no runtime errors after the redesign.
+
+Stage Summary:
+- Files modified:
+  - src/components/aegis/audit-explorer.tsx (full redesign to Editorial Security Terminal)
+  - src/components/aegis/policy-editor.tsx (full redesign)
+  - src/components/aegis/architecture.tsx (full redesign)
+  - src/components/aegis/site-footer.tsx (full redesign, colophon-style)
+  - src/components/aegis/streaming-demo.tsx (1-line pre-existing lint fix only — `// how it works` literal disambiguation; no presentation change)
+- Lint status: pass (zero errors)
+- TypeScript: zero errors in any modified file (pre-existing errors in src/app/api/audit/route.ts:44 and src/lib/aegis/patterns/index.ts remain — out of scope)
+- All original logic preserved per task requirement: every API call (GET/POST /api/audit, GET/POST /api/policy), all state (chain, policy, glossaryTerms, busy, loading), all handlers (onSeed/onRepair/onClear/onTamper, updateStrictness/toggleEntityType, addTerm/removeTerm), all accessibility (focus-visible rings, aria-pressed on strictness radios, aria-labels on Switch + glossary remove, tabIndex=0 + role=button on hash spans), AlertDialog confirm for Clear, useReducedMotion throughout, toast.warning semantics for tamper, mt-auto sticky footer
+- Any issues: none introduced. The streaming-demo one-line fix was a pre-existing error from pass 1 that I fixed opportunistically since I was using the same `// comment` pattern in policy-editor.
+
+---
+Task ID: 10
+Agent: main (orchestrator)
+Task: Redesign the entire Aegis website to shed the "AI-made" look — modern, trending, responsive
+
+Design direction: "Editorial Security Terminal"
+- Typography: Instrument Serif (display headlines, italic emphasis) + Geist (body) + JetBrains Mono (code/hashes/labels). Serif headlines are the #1 anti-AI tell.
+- Color: warm-tinted near-black (oklch 0.14 0.006 130 — olive-warm undertone, NOT zinc) with signature lime-chartreuse primary (oklch 0.84 0.2 124 — NOT generic emerald)
+- Layout: asymmetric editorial — oversized serif headlines, off-center hero with floating proof card, numbered sections (01-05) like a magazine
+- Texture: subtle SVG film grain overlay (opacity 0.035, mix-blend overlay), hard-edged cards with hairline dividers (gap-px bg-border grid trick), terminal scanlines on streaming panel
+- Motion: kinetic marquee (entity types scrolling), scroll-progress bar in nav, parallax floating panel, magnetic button hovers, spring-animated entity chips
+
+VLM audit of old design confirmed the AI tells:
+1. Uniform sans-serif, no type hierarchy
+2. Rigid symmetric grid
+3. Generic "tech green"
+4. Formulaic cards/badges
+5. Weak visual hierarchy
+6. No distinctive elements
+7. Overuse of gradients/badges
+8. Generic jargon-heavy copy
+
+Files redesigned:
+- globals.css: new warm-tinted dark palette, 3-font system, film grain overlay, @layer utilities wrapper (critical — Tailwind v4 was tree-shaking plain custom classes), .aegis-serif/.aegis-mono/.aegis-eyebrow/.aegis-token/.aegis-scanlines/.aegis-marquee utilities
+- layout.tsx: Instrument Serif + JetBrains Mono + Geist font imports via next/font
+- nav.tsx: scroll-progress bar, numbered section links (01-05), SVG shield wordmark, Sheet mobile menu
+- hero.tsx: asymmetric 8/4 grid, oversized serif headline with italic muted emphasis + lime highlight, floating audit-chain proof card with scroll parallax, kinetic marquee of entity types
+- section-heading.tsx: editorial numbered style (num prop + serif title + italic muted second line)
+- playground.tsx: hard-edged split panels with hairline dividers, borderless textarea, .aegis-eyebrow labels, .aegis-token pills, wand-icon hover rotate
+- streaming-demo.tsx: terminal aesthetic with traffic-light dots, aegis://stream URL, scanline overlay, $ prompt, // how-it-works comments
+- audit-explorer.tsx: hard-edged chain blocks with border-b dividers, left-accent integrity card, mono stat numbers (subagent)
+- policy-editor.tsx: hairline-grid entity toggles, hard-edged strictness radios (subagent)
+- architecture.tsx: hard-edged diagram frame, entity-colored upgrade tags, border-l-2 honest-claim callout (subagent)
+- site-footer.tsx: colophon style with SVG shield + serif wordmark + mono version bar (subagent)
+
+Critical bug fixed during redesign:
+- Custom CSS classes (.aegis-serif etc.) were being tree-shaken by Tailwind v4 because they weren't in @layer utilities. Wrapped all custom utilities in @layer utilities — they now survive the build.
+- Font variables from next/font weren't cascading to the utility classes. Referenced font-family names directly ("Instrument Serif", "JetBrains Mono") instead of via var(--font-...) — fonts now load and render correctly.
+- SQLite DB became read-only mid-session (stale file handle from an old next-server process that wasn't killed). Killed the orphan process (PID 1050 from 17:20), cleared WAL files, restarted — DB writes work again.
+
+Verification (Agent Browser):
+- Lint: zero errors
+- Fonts: h1 renders in "Instrument Serif", mono in "JetBrains Mono" (verified via computed style)
+- Redact: 11 tokens + highlights, buttons enable, round-trip works
+- Streaming: live token-by-token output with scanlines, "Replay" label after completion
+- Tamper: "BROKEN at entry #1" → Repair → "VERIFIED"
+- Mobile: responsive, nav menu works
+- No console/runtime errors
+- VLM critique: 8/10 on the full page (distinctiveness 8, layout originality 9, security-appropriateness 9). "Less generic, avoids the AI landing page trap."
+
+Stage Summary:
+- Full redesign complete and browser-verified
+- Every interaction still works end-to-end
+- Design system is consistent across all 8 sections
+- $0 budget intact, dark emerald→lime-chartreuse palette, Instrument Serif headlines
+- Screenshots: preview-redesign-hero.png, preview-redesign-final.png, preview-redesign-mobile.png, preview-tamper.png

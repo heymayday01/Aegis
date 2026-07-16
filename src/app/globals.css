@@ -7,7 +7,8 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-mono: var(--font-jetbrains-mono);
+  --font-serif: var(--font-instrument-serif);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -37,6 +38,8 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --color-lime: var(--lime);
+  --color-paper: var(--paper);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -44,74 +47,81 @@
 }
 
 :root {
-  --radius: 0.75rem;
-  --background: oklch(0.99 0 0);
-  --foreground: oklch(0.16 0.01 200);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.16 0.01 200);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.16 0.01 200);
-  --primary: oklch(0.62 0.15 160);
-  --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.96 0.01 200);
-  --secondary-foreground: oklch(0.22 0.02 200);
-  --muted: oklch(0.96 0.01 200);
-  --muted-foreground: oklch(0.52 0.02 200);
-  --accent: oklch(0.95 0.02 160);
-  --accent-foreground: oklch(0.22 0.02 200);
+  /* Warm-tinted light mode (paper) — used only if dark isn't forced. */
+  --radius: 0.5rem;
+  --background: oklch(0.97 0.008 85);
+  --foreground: oklch(0.18 0.01 80);
+  --card: oklch(0.99 0.006 85);
+  --card-foreground: oklch(0.18 0.01 80);
+  --popover: oklch(0.99 0.006 85);
+  --popover-foreground: oklch(0.18 0.01 80);
+  --primary: oklch(0.68 0.19 122);
+  --primary-foreground: oklch(0.16 0.02 122);
+  --secondary: oklch(0.93 0.01 85);
+  --secondary-foreground: oklch(0.22 0.02 80);
+  --muted: oklch(0.93 0.01 85);
+  --muted-foreground: oklch(0.48 0.02 80);
+  --accent: oklch(0.92 0.04 122);
+  --accent-foreground: oklch(0.22 0.02 80);
   --destructive: oklch(0.58 0.22 25);
-  --border: oklch(0.9 0.01 200);
-  --input: oklch(0.9 0.01 200);
-  --ring: oklch(0.62 0.15 160);
-  --chart-1: oklch(0.62 0.15 160);
-  --chart-2: oklch(0.7 0.15 60);
+  --border: oklch(0.86 0.01 80);
+  --input: oklch(0.86 0.01 80);
+  --ring: oklch(0.68 0.19 122);
+  --paper: oklch(0.97 0.008 85);
+  --lime: oklch(0.82 0.21 125);
+  --chart-1: oklch(0.68 0.19 122);
+  --chart-2: oklch(0.72 0.15 60);
   --chart-3: oklch(0.65 0.2 350);
   --chart-4: oklch(0.7 0.15 230);
   --chart-5: oklch(0.7 0.15 130);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.16 0.01 200);
-  --sidebar-primary: oklch(0.62 0.15 160);
-  --sidebar-primary-foreground: oklch(0.99 0 0);
-  --sidebar-accent: oklch(0.95 0.02 160);
-  --sidebar-accent-foreground: oklch(0.22 0.02 200);
-  --sidebar-border: oklch(0.9 0.01 200);
-  --sidebar-ring: oklch(0.62 0.15 160);
+  --sidebar: oklch(0.96 0.008 85);
+  --sidebar-foreground: oklch(0.18 0.01 80);
+  --sidebar-primary: oklch(0.68 0.19 122);
+  --sidebar-primary-foreground: oklch(0.16 0.02 122);
+  --sidebar-accent: oklch(0.92 0.04 122);
+  --sidebar-accent-foreground: oklch(0.22 0.02 80);
+  --sidebar-border: oklch(0.86 0.01 80);
+  --sidebar-ring: oklch(0.68 0.19 122);
 }
 
 .dark {
-  /* Deep slate with a faint cool tint — security product aesthetic. */
-  --background: oklch(0.16 0.012 235);
-  --foreground: oklch(0.97 0.005 200);
-  --card: oklch(0.205 0.014 235);
-  --card-foreground: oklch(0.97 0.005 200);
-  --popover: oklch(0.205 0.014 235);
-  --popover-foreground: oklch(0.97 0.005 200);
-  /* Emerald primary — shield / trust. Deliberately NOT indigo or blue. */
-  --primary: oklch(0.72 0.16 158);
-  --primary-foreground: oklch(0.16 0.02 158);
-  --secondary: oklch(0.27 0.016 235);
-  --secondary-foreground: oklch(0.97 0.005 200);
-  --muted: oklch(0.25 0.014 235);
-  --muted-foreground: oklch(0.7 0.012 220);
-  --accent: oklch(0.3 0.04 158);
-  --accent-foreground: oklch(0.97 0.005 200);
-  --destructive: oklch(0.66 0.21 22);
-  --border: oklch(1 0 0 / 9%);
-  --input: oklch(1 0 0 / 13%);
-  --ring: oklch(0.72 0.16 158 / 60%);
-  --chart-1: oklch(0.72 0.16 158);
+  /* Warm-tinted near-black. NOT zinc/neutral — has a subtle olive-warm undertone
+     that reads as intentional rather than the generic "dark mode gray" every AI
+     site uses. Think: oxidized metal, not VS Code. */
+  --background: oklch(0.14 0.006 130);
+  --foreground: oklch(0.96 0.008 90);
+  --card: oklch(0.175 0.008 130);
+  --card-foreground: oklch(0.96 0.008 90);
+  --popover: oklch(0.175 0.008 130);
+  --popover-foreground: oklch(0.96 0.008 90);
+  /* Signature lime-chartreuse — NOT emerald, NOT generic tech green. */
+  --primary: oklch(0.84 0.2 124);
+  --primary-foreground: oklch(0.16 0.03 124);
+  --secondary: oklch(0.22 0.01 130);
+  --secondary-foreground: oklch(0.96 0.008 90);
+  --muted: oklch(0.2 0.008 130);
+  --muted-foreground: oklch(0.66 0.012 100);
+  --accent: oklch(0.26 0.05 124);
+  --accent-foreground: oklch(0.96 0.008 90);
+  --destructive: oklch(0.62 0.21 22);
+  --border: oklch(0.96 0.008 90 / 10%);
+  --input: oklch(0.96 0.008 90 / 14%);
+  --ring: oklch(0.84 0.2 124 / 55%);
+  --paper: oklch(0.97 0.008 85);
+  --lime: oklch(0.82 0.21 125);
+  --chart-1: oklch(0.84 0.2 124);
   --chart-2: oklch(0.78 0.15 70);
   --chart-3: oklch(0.7 0.2 350);
   --chart-4: oklch(0.72 0.15 200);
   --chart-5: oklch(0.72 0.16 130);
-  --sidebar: oklch(0.18 0.014 235);
-  --sidebar-foreground: oklch(0.97 0.005 200);
-  --sidebar-primary: oklch(0.72 0.16 158);
-  --sidebar-primary-foreground: oklch(0.16 0.02 158);
-  --sidebar-accent: oklch(0.27 0.016 235);
-  --sidebar-accent-foreground: oklch(0.97 0.005 200);
-  --sidebar-border: oklch(1 0 0 / 9%);
-  --sidebar-ring: oklch(0.72 0.16 158 / 60%);
+  --sidebar: oklch(0.155 0.008 130);
+  --sidebar-foreground: oklch(0.96 0.008 90);
+  --sidebar-primary: oklch(0.84 0.2 124);
+  --sidebar-primary-foreground: oklch(0.16 0.03 124);
+  --sidebar-accent: oklch(0.22 0.01 130);
+  --sidebar-accent-foreground: oklch(0.96 0.008 90);
+  --sidebar-border: oklch(0.96 0.008 90 / 10%);
+  --sidebar-ring: oklch(0.84 0.2 124 / 55%);
 }
 
 @layer base {
@@ -121,8 +131,25 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "ss01", "cv01", "cv03";
+    /* Subtle film grain overlay — the #1 thing that kills the "AI-flat" look.
+       Generated via inline SVG noise, fixed to viewport, pointer-events none. */
+    position: relative;
   }
-  /* Custom scrollbar — security/console feel. */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.035;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  /* All content sits above the grain. */
+  body > * {
+    position: relative;
+    z-index: 2;
+  }
   ::-webkit-scrollbar {
     width: 10px;
     height: 10px;
@@ -131,83 +158,185 @@
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: color-mix(in oklch, var(--muted-foreground) 35%, transparent);
-    border-radius: 999px;
+    background: color-mix(in oklch, var(--muted-foreground) 30%, transparent);
+    border-radius: 0;
     border: 2px solid transparent;
     background-clip: padding-box;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: color-mix(in oklch, var(--muted-foreground) 55%, transparent);
+    background: color-mix(in oklch, var(--primary) 50%, transparent);
     background-clip: padding-box;
+  }
+  ::selection {
+    background: color-mix(in oklch, var(--primary) 30%, transparent);
+    color: var(--foreground);
   }
 }
 
-/* ---- Aegis custom utilities ---- */
+/* ---- Aegis design system utilities ---- */
+/* Wrapped in @layer utilities so Tailwind v4 preserves them (otherwise
+   plain custom classes get tree-shaken out of the build). */
 
-/* Subtle grid background for hero / sections. */
-.aegis-grid {
-  background-image:
-    linear-gradient(to right, color-mix(in oklch, var(--foreground) 6%, transparent) 1px, transparent 1px),
-    linear-gradient(to bottom, color-mix(in oklch, var(--foreground) 6%, transparent) 1px, transparent 1px);
-  background-size: 40px 40px;
-}
+@layer utilities {
 
-/* Radial glow used behind the hero. */
-.aegis-glow {
-  background: radial-gradient(60% 60% at 50% 0%, color-mix(in oklch, var(--primary) 22%, transparent) 0%, transparent 70%);
-}
+  /* Display serif — for editorial headlines. */
+  .aegis-serif {
+    font-family: "Instrument Serif", Georgia, 'Times New Roman', serif;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    font-feature-settings: "ss01";
+  }
 
-/* Monospace hash display with subtle letter-spacing. */
-.aegis-mono {
-  font-family: var(--font-mono);
-  letter-spacing: 0.02em;
-}
+  /* Monospace — for hashes, tokens, code, labels. */
+  .aegis-mono {
+    font-family: "JetBrains Mono", "Geist Mono", ui-monospace, monospace;
+    letter-spacing: -0.01em;
+  }
 
-/* Animated "live" pulse dot. */
-.aegis-live-dot {
-  position: relative;
-}
-.aegis-live-dot::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 999px;
-  background: var(--primary);
-  animation: aegis-pulse 1.8s ease-out infinite;
-  opacity: 0.6;
-}
-@keyframes aegis-pulse {
-  0% { transform: scale(1); opacity: 0.6; }
-  100% { transform: scale(2.4); opacity: 0; }
-}
+  /* Uppercase eyebrow label with wide tracking — magazine style. */
+  .aegis-eyebrow {
+    font-family: "JetBrains Mono", "Geist Mono", ui-monospace, monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-size: 0.6875rem;
+    font-weight: 500;
+  }
 
-/* Entity color tokens — mapped to ENTITY_META in types.ts. */
-.entity-EMAIL { --ec: oklch(0.78 0.16 75); }       /* amber */
-.entity-API_KEY { --ec: oklch(0.7 0.21 18); }      /* rose */
-.entity-PHONE { --ec: oklch(0.75 0.13 200); }      /* cyan */
-.entity-CREDIT_CARD { --ec: oklch(0.7 0.22 330); } /* fuchsia */
-.entity-AADHAAR { --ec: oklch(0.72 0.16 158); }    /* emerald */
-.entity-PAN { --ec: oklch(0.65 0.2 300); }         /* violet */
-.entity-IP_ADDRESS { --ec: oklch(0.72 0.14 230); } /* sky */
-.entity-CUSTOM_GLOSSARY { --ec: oklch(0.8 0.18 130); } /* lime */
+  /* Hard-edged card — neo-brutalist border, no soft shadow. */
+  .aegis-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    position: relative;
+  }
+  .aegis-card-hover {
+    transition: border-color 200ms ease, transform 200ms ease;
+  }
+  .aegis-card-hover:hover {
+    border-color: color-mix(in oklch, var(--primary) 40%, var(--border));
+    transform: translateY(-1px);
+  }
 
-.entity-chip {
-  background: color-mix(in oklch, var(--ec) 16%, transparent);
-  color: color-mix(in oklch, var(--ec) 88%, white);
-  border: 1px solid color-mix(in oklch, var(--ec) 35%, transparent);
-}
-.entity-underline {
-  background: linear-gradient(180deg, transparent 62%, color-mix(in oklch, var(--ec) 32%, transparent) 62%);
-  border-bottom: 1px dashed color-mix(in oklch, var(--ec) 70%, transparent);
-}
+  /* Grid background — finer, more editorial than the old 40px grid. */
+  .aegis-grid {
+    background-image:
+      linear-gradient(to right, color-mix(in oklch, var(--foreground) 4%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in oklch, var(--foreground) 4%, transparent) 1px, transparent 1px);
+    background-size: 64px 64px;
+  }
 
-/* Chain link connector — used in the audit log visualization. */
-.chain-link {
-  background: linear-gradient(180deg, color-mix(in oklch, var(--primary) 50%, transparent), transparent);
+  /* Radial lime glow — used sparingly, only behind hero. */
+  .aegis-glow {
+    background: radial-gradient(50% 50% at 70% 20%, color-mix(in oklch, var(--primary) 18%, transparent) 0%, transparent 70%);
+  }
+
+  /* Animated "live" pulse dot — kept from v1, refined. */
+  .aegis-live-dot {
+    position: relative;
+  }
+  .aegis-live-dot::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    background: var(--primary);
+    animation: aegis-pulse 2s ease-out infinite;
+    opacity: 0.5;
+  }
+  @keyframes aegis-pulse {
+    0% { transform: scale(1); opacity: 0.5; }
+    100% { transform: scale(2.6); opacity: 0; }
+  }
+
+  /* Kinetic marquee — for the hero stat strip. Respects reduced motion. */
+  .aegis-marquee {
+    display: flex;
+    overflow: hidden;
+    user-select: none;
+    gap: 2rem;
+    mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  }
+  .aegis-marquee-track {
+    display: flex;
+    gap: 2rem;
+    flex-shrink: 0;
+    min-width: 100%;
+    animation: aegis-marquee 38s linear infinite;
+  }
+  @keyframes aegis-marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-100%); }
+  }
+
+  /* Magnetic button — the signature interactive element. */
+  .aegis-magnetic {
+    transition: transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    will-change: transform;
+  }
+
+  /* Numbered section marker — magazine-style. */
+  .aegis-section-num {
+    font-family: "JetBrains Mono", "Geist Mono", ui-monospace, monospace;
+    font-size: 0.6875rem;
+    color: var(--muted-foreground);
+    letter-spacing: 0.1em;
+  }
+
+  /* Token pill — for redacted output. Hard-edged, not soft. */
+  .aegis-token {
+    font-family: "JetBrains Mono", "Geist Mono", ui-monospace, monospace;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.0625rem 0.375rem;
+    border-radius: 0.25rem;
+    border: 1px solid;
+    display: inline-flex;
+    align-items: center;
+    vertical-align: baseline;
+  }
+
+  /* Entity color tokens. */
+  .entity-EMAIL { --ec: oklch(0.82 0.16 75); }
+  .entity-API_KEY { --ec: oklch(0.7 0.21 18); }
+  .entity-PHONE { --ec: oklch(0.78 0.13 200); }
+  .entity-CREDIT_CARD { --ec: oklch(0.72 0.22 330); }
+  .entity-AADHAAR { --ec: oklch(0.84 0.2 124); }
+  .entity-PAN { --ec: oklch(0.68 0.2 300); }
+  .entity-IP_ADDRESS { --ec: oklch(0.75 0.14 230); }
+  .entity-CUSTOM_GLOSSARY { --ec: oklch(0.85 0.19 130); }
+
+  .entity-chip {
+    background: color-mix(in oklch, var(--ec) 14%, transparent);
+    color: color-mix(in oklch, var(--ec) 92%, white);
+    border: 1px solid color-mix(in oklch, var(--ec) 32%, transparent);
+  }
+  .entity-underline {
+    background: linear-gradient(180deg, transparent 65%, color-mix(in oklch, var(--ec) 28%, transparent) 65%);
+    border-bottom: 1px dashed color-mix(in oklch, var(--ec) 65%, transparent);
+  }
+  .entity-dot {
+    background: var(--ec);
+  }
+
+  /* Chain link connector — vertical, with a gradient fade. */
+  .chain-link {
+    background: linear-gradient(180deg, color-mix(in oklch, var(--primary) 45%, transparent), color-mix(in oklch, var(--primary) 10%, transparent));
+  }
+
+  /* Terminal-style scanline — for the streaming panel. */
+  .aegis-scanlines {
+    background-image: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      color-mix(in oklch, var(--foreground) 2.5%, transparent) 2px,
+      color-mix(in oklch, var(--foreground) 2.5%, transparent) 3px
+    );
+  }
+
 }
 
 /* ---- Accessibility: reduced motion ---- */
-/* Respect users who prefer reduced motion. Disables all CSS animations + transitions. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -220,6 +349,9 @@
   .aegis-live-dot::after {
     animation: none;
     opacity: 0.3;
+  }
+  .aegis-marquee-track {
+    animation: none;
   }
 }
 

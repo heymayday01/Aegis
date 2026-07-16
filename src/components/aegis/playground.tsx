@@ -15,9 +15,7 @@ import {
   Wand2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import type {
@@ -234,24 +232,30 @@ export function AegisPlayground() {
 
   return (
     <section id="playground" className="scroll-mt-20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-16 sm:py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-16 sm:py-24">
         <SectionHeading
+          num="01"
           eyebrow="Live Playground"
-          title="Paste your prompt. Watch the PII vanish."
-          description="Every detection is highlighted in place, swapped for a reversible token, and logged in the audit chain. Try editing the text or changing strictness — the live policy is yours."
+          title={
+            <>
+              Paste your prompt. <br className="hidden sm:block" />
+              <span className="italic text-muted-foreground">Watch the PII vanish.</span>
+            </>
+          }
+          description="Every detection is highlighted in place, swapped for a reversible token, and logged in the audit chain. Edit the text or change strictness — the live policy is yours."
         />
 
         {/* Strictness segmented control + actions */}
         <div className="mt-8 flex flex-wrap items-center gap-3 justify-between">
-          <div className="inline-flex items-center rounded-lg border border-border/70 bg-card p-1 shadow-sm">
+          <div className="inline-flex items-center rounded-md border border-border bg-card p-1">
             {STRICTNESS_OPTIONS.map((opt) => (
               <button
                 key={opt.value}
                 onClick={() => setStrictness(opt.value)}
                 className={cn(
-                  'inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition-colors active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+                  'inline-flex items-center gap-2 rounded px-3 py-1.5 text-sm font-medium transition-colors active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
                   strictness === opt.value
-                    ? 'bg-primary text-primary-foreground shadow-sm'
+                    ? 'bg-primary text-primary-foreground'
                     : 'text-muted-foreground hover:text-foreground hover:bg-accent/50',
                 )}
                 title={opt.desc}
@@ -265,11 +269,11 @@ export function AegisPlayground() {
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="sm" onClick={refreshPolicy} title="Reload policy from server">
               <RefreshCw className="size-3.5" />
-              Sync policy
+              Sync
             </Button>
             <Button variant="outline" size="sm" onClick={() => setText(SAMPLE_TEXT)}>
               <Sparkles className="size-3.5" />
-              Load sample
+              Sample
             </Button>
             <Button variant="outline" size="sm" onClick={() => { setText(''); setResult(null); setRehydrated(null); }}>
               <Eraser className="size-3.5" />
@@ -278,185 +282,186 @@ export function AegisPlayground() {
           </div>
         </div>
 
-        <div className="mt-4 grid gap-4 lg:grid-cols-2">
-          {/* LEFT: input + highlight preview */}
-          <Card className="border-border/70">
-            <CardContent className="flex flex-col gap-3">
-              <div className="flex items-center justify-between">
-                <span className="text-xs uppercase tracking-wide text-muted-foreground">
-                  Input
-                </span>
-                <span className="text-[11px] text-muted-foreground aegis-mono">
-                  {text.length} chars
-                </span>
-              </div>
-              <Textarea
-                value={text}
-                onChange={(e) => onTextChange(e.target.value)}
-                onKeyDown={onKeyDown}
-                rows={10}
-                spellCheck={false}
-                className="min-h-44 resize-y aegis-mono text-[13px] leading-relaxed"
-                placeholder="Paste anything containing PII — emails, keys, cards, Aadhaar, PAN, IPs, your codenames…"
-              />
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] text-muted-foreground">
-                  Tip: press <kbd className="rounded border border-border/70 bg-muted px-1 py-0.5 text-[9px] aegis-mono">⌘/Ctrl</kbd> + <kbd className="rounded border border-border/70 bg-muted px-1 py-0.5 text-[9px] aegis-mono">↵</kbd> to redact
-                </span>
-                <span className="text-[10px] text-muted-foreground aegis-mono">
-                  strictness: {strictness}
-                </span>
-              </div>
+        <div className="mt-6 grid gap-px bg-border border border-border lg:grid-cols-2">
+          {/* LEFT: input + highlight preview — hard-edged editorial panel */}
+          <div className="bg-card flex flex-col gap-4 p-5 sm:p-6">
+            <div className="flex items-center justify-between border-b border-border pb-3">
+              <span className="aegis-eyebrow text-muted-foreground">
+                Input
+              </span>
+              <span className="text-[11px] text-muted-foreground aegis-mono">
+                {text.length} chars
+              </span>
+            </div>
+            <Textarea
+              value={text}
+              onChange={(e) => onTextChange(e.target.value)}
+              onKeyDown={onKeyDown}
+              rows={8}
+              spellCheck={false}
+              className="min-h-40 resize-y aegis-mono text-[13px] leading-relaxed border-0 bg-transparent focus-visible:ring-0 p-0"
+              placeholder="Paste anything containing PII — emails, keys, cards, Aadhaar, PAN, IPs, your codenames…"
+            />
+            <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+              <span>
+                <kbd className="rounded border border-border bg-muted px-1 py-0.5 text-[9px] aegis-mono">⌘/Ctrl</kbd>{' '}
+                +{' '}
+                <kbd className="rounded border border-border bg-muted px-1 py-0.5 text-[9px] aegis-mono">↵</kbd>{' '}
+                to redact
+              </span>
+              <span className="aegis-mono">
+                {strictness}
+              </span>
+            </div>
 
-              <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-xs uppercase tracking-wide text-muted-foreground">
-                    Highlighted preview
+            <div>
+              <div className="flex items-center justify-between mb-2 border-t border-border pt-3">
+                <span className="aegis-eyebrow text-muted-foreground">
+                  Highlighted preview
+                </span>
+                {result && result.detections.length > 0 && (
+                  <span className="text-[11px] text-primary aegis-mono">
+                    {result.detections.length} found
                   </span>
-                  {result && result.detections.length > 0 && (
-                    <span className="text-[11px] text-primary">
-                      {result.detections.length} detection{result.detections.length === 1 ? '' : 's'}
-                    </span>
-                  )}
-                </div>
-                <div className="rounded-md border border-border/60 bg-background/60 p-3 text-[13px] leading-relaxed aegis-mono whitespace-pre-wrap break-words min-h-24 max-h-72 overflow-y-auto">
-                  {result && result.detections.length > 0 ? (
-                    <HighlightedText text={text} detections={result.detections} />
-                  ) : (
-                    <span className="text-muted-foreground">
-                      {loading
-                        ? 'Detecting…'
-                        : 'Run “Redact” to highlight entities in this text.'}
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              <Button
-                onClick={onRedact}
-                disabled={loading || !text.trim()}
-                className="mt-1 h-11 self-start active:scale-[0.98]"
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="size-4 animate-spin" />
-                    Redacting…
-                  </>
-                ) : (
-                  <>
-                    <Wand2 className="size-4" />
-                    Redact
-                  </>
                 )}
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* RIGHT: redacted output */}
-          <Card className="border-border/70">
-            <CardContent className="flex flex-col gap-3">
-              <div className="flex items-center justify-between">
-                <span className="text-xs uppercase tracking-wide text-muted-foreground">
-                  Redacted output
-                </span>
-                <div className="flex items-center gap-1.5">
-                  {result && Object.keys(result.tokenMap).length > 0 && (
-                    <Badge variant="outline" className="aegis-mono text-[10px]">
-                      {Object.keys(result.tokenMap).length} tokens
-                    </Badge>
-                  )}
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="size-8"
-                    onClick={onCopy}
-                    disabled={!result}
-                    title="Copy redacted text"
-                  >
-                    {copied ? <Check className="size-3.5 text-primary" /> : <Copy className="size-3.5" />}
-                  </Button>
-                </div>
               </div>
-
-              <div className="rounded-md border border-border/60 bg-background/60 p-3 text-[13px] leading-relaxed aegis-mono whitespace-pre-wrap break-words min-h-44 max-h-72 overflow-y-auto">
-                {loading ? (
-                  <div className="space-y-2">
-                    <Skeleton className="h-3 w-3/4" />
-                    <Skeleton className="h-3 w-full" />
-                    <Skeleton className="h-3 w-5/6" />
-                    <Skeleton className="h-3 w-2/3" />
-                  </div>
-                ) : result ? (
-                  <RenderedRedacted text={result.redactedText} />
+              <div className="rounded border border-border bg-background/60 p-3 text-[13px] leading-relaxed aegis-mono whitespace-pre-wrap break-words min-h-24 max-h-72 overflow-y-auto">
+                {result && result.detections.length > 0 ? (
+                  <HighlightedText text={text} detections={result.detections} />
                 ) : (
                   <span className="text-muted-foreground">
-                    Redacted output appears here. Tokens like{' '}
-                    <span className="text-primary">[AEGIS:EMAIL:A1B2]</span> stand in for
-                    real values — they restore 1:1 on rehydration.
+                    {loading
+                      ? 'Detecting…'
+                      : 'Run “Redact” to highlight entities in this text.'}
                   </span>
                 )}
               </div>
+            </div>
 
-              {/* Detection chips */}
-              {result && result.detections.length > 0 && (
-                <div>
-                  <span className="text-xs uppercase tracking-wide text-muted-foreground">
-                    Detected entities
-                  </span>
-                  <div className="mt-2 flex flex-wrap gap-1.5">
-                    {result.detections.map((d, i) => (
-                      <EntityChip
-                        key={`${d.entityType}-${i}`}
-                        type={d.entityType}
-                        value={d.value}
-                        confidence={d.confidence}
-                      />
-                    ))}
-                  </div>
-                </div>
+            <Button
+              onClick={onRedact}
+              disabled={loading || !text.trim()}
+              className="mt-1 h-11 self-start active:scale-[0.98] group"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="size-4 animate-spin" />
+                  Redacting…
+                </>
+              ) : (
+                <>
+                  <Wand2 className="size-4 transition-transform group-hover:rotate-12" />
+                  Redact
+                </>
               )}
+            </Button>
+          </div>
 
-              {/* Rehydrate */}
-              <div className="mt-1 flex flex-wrap items-center gap-2">
+          {/* RIGHT: redacted output */}
+          <div className="bg-card flex flex-col gap-4 p-5 sm:p-6">
+            <div className="flex items-center justify-between border-b border-border pb-3">
+              <span className="aegis-eyebrow text-muted-foreground">
+                Redacted output
+              </span>
+              <div className="flex items-center gap-1.5">
+                {result && Object.keys(result.tokenMap).length > 0 && (
+                  <span className="aegis-mono text-[10px] text-muted-foreground border border-border px-1.5 py-0.5 rounded">
+                    {Object.keys(result.tokenMap).length} tokens
+                  </span>
+                )}
                 <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={onRehydrate}
-                  disabled={!result || rehydrating}
+                  variant="ghost"
+                  size="icon"
+                  className="size-8"
+                  onClick={onCopy}
+                  disabled={!result}
+                  title="Copy redacted text"
+                  aria-label="Copy redacted text"
                 >
-                  {rehydrating ? (
-                    <Loader2 className="size-3.5 animate-spin" />
-                  ) : (
-                    <RefreshCw className="size-3.5" />
-                  )}
-                  Rehydrate
+                  {copied ? <Check className="size-3.5 text-primary" /> : <Copy className="size-3.5" />}
                 </Button>
-                {roundTripOk === true && (
-                  <Badge className="bg-primary/15 text-primary border border-primary/30">
-                    <ShieldCheck className="size-3" />
-                    Round-trip ✓ verified
-                  </Badge>
-                )}
-                {roundTripOk === false && (
-                  <Badge className="bg-destructive/15 text-destructive border border-destructive/40">
-                    <AlertTriangle className="size-3" />
-                    Round-trip ✗ mismatch
-                  </Badge>
-                )}
               </div>
+            </div>
 
-              {rehydrated !== null && (
-                <div>
-                  <span className="text-xs uppercase tracking-wide text-muted-foreground">
-                    Rehydrated original
-                  </span>
-                  <div className="mt-1.5 rounded-md border border-border/60 bg-background/60 p-3 text-[13px] leading-relaxed aegis-mono whitespace-pre-wrap break-words max-h-40 overflow-y-auto">
-                    {rehydrated}
-                  </div>
+            <div className="rounded border border-border bg-background/60 p-3 text-[13px] leading-relaxed aegis-mono whitespace-pre-wrap break-words min-h-44 max-h-72 overflow-y-auto">
+              {loading ? (
+                <div className="space-y-2">
+                  <Skeleton className="h-3 w-3/4" />
+                  <Skeleton className="h-3 w-full" />
+                  <Skeleton className="h-3 w-5/6" />
+                  <Skeleton className="h-3 w-2/3" />
                 </div>
+              ) : result ? (
+                <RenderedRedacted text={result.redactedText} />
+              ) : (
+                <span className="text-muted-foreground">
+                  Redacted output appears here. Tokens like{' '}
+                  <span className="aegis-token entity-chip entity-EMAIL">[AEGIS:EMAIL:A1B2]</span>{' '}
+                  stand in for real values — they restore 1:1 on rehydration.
+                </span>
               )}
-            </CardContent>
-          </Card>
+            </div>
+
+            {/* Detection chips */}
+            {result && result.detections.length > 0 && (
+              <div>
+                <span className="aegis-eyebrow text-muted-foreground">
+                  Detected entities
+                </span>
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {result.detections.map((d, i) => (
+                    <EntityChip
+                      key={`${d.entityType}-${i}`}
+                      type={d.entityType}
+                      value={d.value}
+                      confidence={d.confidence}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Rehydrate */}
+            <div className="mt-1 flex flex-wrap items-center gap-2 border-t border-border pt-4">
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={onRehydrate}
+                disabled={!result || rehydrating}
+                className="active:scale-[0.98]"
+              >
+                {rehydrating ? (
+                  <Loader2 className="size-3.5 animate-spin" />
+                ) : (
+                  <RefreshCw className="size-3.5" />
+                )}
+                Rehydrate
+              </Button>
+              {roundTripOk === true && (
+                <span className="inline-flex items-center gap-1.5 rounded border border-primary/30 bg-primary/10 px-2 py-1 text-[11px] text-primary">
+                  <ShieldCheck className="size-3" />
+                  Round-trip ✓ verified
+                </span>
+              )}
+              {roundTripOk === false && (
+                <span className="inline-flex items-center gap-1.5 rounded border border-destructive/40 bg-destructive/10 px-2 py-1 text-[11px] text-destructive">
+                  <AlertTriangle className="size-3" />
+                  Round-trip ✗ mismatch
+                </span>
+              )}
+            </div>
+
+            {rehydrated !== null && (
+              <div>
+                <span className="aegis-eyebrow text-muted-foreground">
+                  Rehydrated original
+                </span>
+                <div className="mt-2 rounded border border-border bg-background/60 p-3 text-[13px] leading-relaxed aegis-mono whitespace-pre-wrap break-words max-h-40 overflow-y-auto">
+                  {rehydrated}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </section>
@@ -505,7 +510,6 @@ function HighlightedText({
  * matching entity color chip.
  */
 function RenderedRedacted({ text }: { text: string }) {
-  // Match [AEGIS:TYPE:HEX]
   const parts = text.split(/(\[AEGIS:[A-Z_]+:[0-9A-F]+\])/g);
   return (
     <>
@@ -516,7 +520,7 @@ function RenderedRedacted({ text }: { text: string }) {
           return (
             <span
               key={i}
-              className={`entity-chip entity-${type} inline-flex items-center rounded px-1.5 py-0.5 text-[11px] font-semibold align-baseline`}
+              className={`aegis-token entity-chip entity-${type}`}
               title={`Redacted ${ENTITY_META[type]?.label ?? type}`}
             >
               {part}

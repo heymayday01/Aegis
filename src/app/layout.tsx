@@ -1,22 +1,32 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, JetBrains_Mono, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains-mono",
   subsets: ["latin"],
+  display: "swap",
+});
+
+const instrumentSerif = Instrument_Serif({
+  variable: "--font-instrument-serif",
+  subsets: ["latin"],
+  weight: "400",
+  style: ["normal", "italic"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Aegis — Local-First Trust & Redaction Layer for AI",
+  title: "Aegis — Verify, don't trust.",
   description:
-    "Aegis sits between you and any AI provider, strips sensitive data before it ever leaves your device, and gives a cryptographically provable audit trail of exactly what was sent where. Turn 'trust us' into 'verify it yourself.'",
+    "A local-first redaction layer for AI. Strip PII before it leaves your device. Tamper-evident audit chain. Streaming-aware. $0 infra.",
   keywords: [
     "Aegis",
     "AI redaction",
@@ -32,12 +42,12 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Aegis — Verify, don't trust.",
     description:
-      "Local-first, provider-agnostic redaction layer with a tamper-evident hash-chained audit log. Zero infrastructure cost. Open-source.",
+      "Local-first, provider-agnostic redaction layer with a tamper-evident hash-chained audit log. Zero infrastructure cost.",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Aegis — Local-First Trust & Redaction Layer for AI",
+    title: "Aegis — Verify, don't trust.",
     description:
       "Strip sensitive data before it leaves your device. Cryptographically provable audit trail. $0 infra.",
   },
@@ -51,10 +61,10 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
+        className={`${geistSans.variable} ${jetbrainsMono.variable} ${instrumentSerif.variable} antialiased bg-background text-foreground`}
       >
         {children}
-        <Toaster position="bottom-right" richColors closeButton />
+        <Toaster richColors position="bottom-right" />
       </body>
     </html>
   );
