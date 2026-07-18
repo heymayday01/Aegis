@@ -34,14 +34,16 @@ export function AegisNav() {
   // Smoothed hide-on-scroll: only hide after a directional delta of 12px,
   // and snap back instantly on direction change. Kills the jittery feel.
   useMotionValueEvent(scrollY, 'change', (latest) => {
-    const prev = lastY.current;
-    const delta = latest - prev;
-    lastY.current = latest;
+    // Safety: never hide at the top of the page.
     if (latest < 20) {
       setHidden(false);
       setScrolled(false);
+      lastY.current = latest;
       return;
     }
+    const prev = lastY.current;
+    const delta = latest - prev;
+    lastY.current = latest;
     setScrolled(true);
     // Only hide on a clear downward scroll (>12px delta, past 240px).
     if (delta > 12 && latest > 240 && !mobileOpen) setHidden(true);
@@ -89,16 +91,21 @@ export function AegisNav() {
   };
 
   // Spring the y position for a fluid, non-jittery hide/show.
-  const ySpring = useSpring(hidden ? -120 : 0, {
+  // Starts at 0 (visible) so the nav is always present on first paint.
+  const ySpring = useSpring(0, {
     stiffness: 320,
     damping: 34,
     mass: 0.8,
   });
+  // Drive the spring target from `hidden` — never let it conflict with `initial`.
+  React.useEffect(() => {
+    ySpring.set(hidden ? -120 : 0);
+  }, [hidden, ySpring]);
 
   return (
     <div className="fixed top-0 left-0 right-0 z-50 flex justify-center pointer-events-none">
       <motion.header
-        initial={prefersReduced ? false : { y: -80, opacity: 0 }}
+        initial={prefersReduced ? false : { opacity: 0 }}
         animate={{ opacity: 1 }}
         style={prefersReduced ? undefined : { y: ySpring }}
         transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
