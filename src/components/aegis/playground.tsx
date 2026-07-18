@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
 import { toast } from 'sonner';
 import {
   Sparkles,
@@ -28,6 +27,7 @@ import { ENTITY_META } from '@/lib/aegis/types';
 import { SectionHeading } from './section-heading';
 import { EntityChip } from './entity-chip';
 import { GlassPanel } from './glass-panel';
+import { ScrollReveal } from './scroll-card-3d';
 
 const SAMPLE_TEXT = `Hi team — onboarding the new customer from Acme Corp.
 
@@ -61,7 +61,6 @@ interface PolicyResponse {
  * Live-highlights detections in the source text and renders a rehydration proof.
  */
 export function AegisPlayground() {
-  const prefersReduced = useReducedMotion();
   const [text, setText] = React.useState(SAMPLE_TEXT);
   const [strictness, setStrictness] = React.useState<Strictness>('balanced');
   const [loading, setLoading] = React.useState(false);
@@ -232,7 +231,7 @@ export function AegisPlayground() {
   };
 
   return (
-    <section id="playground" className="scroll-mt-20 py-20 sm:py-28">
+    <section id="playground" className="scroll-mt-20 py-12 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <SectionHeading
           num="01"
@@ -249,12 +248,9 @@ export function AegisPlayground() {
         />
 
         {/* Strictness pill bar + actions */}
-        <motion.div
-          initial={prefersReduced ? false : { opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
-          className="mt-10 flex flex-wrap items-center gap-3 justify-between"
+        <ScrollReveal
+          delay={0.05}
+          className="mt-6 sm:mt-10 flex flex-wrap items-center gap-3 justify-between"
         >
           <div className="glass glass-glare inline-flex items-center rounded-full p-1 gap-0.5">
             {STRICTNESS_OPTIONS.map((opt) => (
@@ -309,17 +305,14 @@ export function AegisPlayground() {
               Clear
             </Button>
           </div>
-        </motion.div>
+        </ScrollReveal>
 
-        <motion.div
-          initial={prefersReduced ? false : { opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+        <ScrollReveal
+          delay={0.1}
           className="mt-6 grid gap-4 lg:grid-cols-2"
         >
           {/* LEFT: input + highlight preview */}
-          <GlassPanel liquid glare className="rounded-3xl p-6">
+          <GlassPanel liquid glare className="rounded-3xl p-4 sm:p-6">
             <div className="flex items-center justify-between pb-3 border-b border-foreground/10">
               <span className="aegis-eyebrow text-muted-foreground">Input</span>
               <span className="text-[11px] text-muted-foreground aegis-mono">
@@ -393,7 +386,7 @@ export function AegisPlayground() {
           </GlassPanel>
 
           {/* RIGHT: redacted output */}
-          <GlassPanel liquid glare className="rounded-3xl p-6">
+          <GlassPanel liquid glare className="rounded-3xl p-4 sm:p-6">
             <div className="flex items-center justify-between pb-3 border-b border-foreground/10">
               <span className="aegis-eyebrow text-muted-foreground">
                 Redacted output
@@ -504,7 +497,7 @@ export function AegisPlayground() {
               </div>
             )}
           </GlassPanel>
-        </motion.div>
+        </ScrollReveal>
       </div>
     </section>
   );

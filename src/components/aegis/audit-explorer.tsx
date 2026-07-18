@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import {
@@ -39,6 +38,7 @@ import { ENTITY_META } from '@/lib/aegis/types';
 import { SectionHeading } from './section-heading';
 import { truncateHash } from './masked-value';
 import { GlassPanel } from './glass-panel';
+import { ScrollCard3D, ScrollReveal } from './scroll-card-3d';
 
 interface AuditChainResponse {
   chain: AuditLogEntry[];
@@ -53,7 +53,6 @@ interface AuditChainResponse {
  * it.
  */
 export function AegisAuditExplorer() {
-  const prefersReduced = useReducedMotion();
   const [chain, setChain] = React.useState<AuditLogEntry[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [busy, setBusy] = React.useState<string | null>(null);
@@ -114,7 +113,7 @@ export function AegisAuditExplorer() {
   );
 
   return (
-    <section id="audit" className="scroll-mt-20 py-20 sm:py-28">
+    <section id="audit" className="scroll-mt-20 py-12 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <SectionHeading
           num="03"
@@ -131,19 +130,16 @@ export function AegisAuditExplorer() {
         />
 
         {/* Integrity summary + actions — floating glass panels */}
-        <motion.div
-          initial={prefersReduced ? false : { opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
-          className="mt-10 grid gap-4 sm:grid-cols-[1fr_auto]"
+        <ScrollReveal
+          delay={0.1}
+          className="mt-6 sm:mt-10 grid gap-4 sm:grid-cols-[1fr_auto]"
         >
           {/* Integrity summary glass panel with left accent */}
           <GlassPanel
             liquid
             glare
             className={cn(
-              'rounded-3xl p-6 flex flex-wrap items-center gap-5 border-l-2',
+              'rounded-3xl p-4 sm:p-6 flex flex-wrap items-center gap-5 border-l-2',
               integrityOk ? 'border-l-primary' : 'border-l-destructive',
             )}
           >
@@ -200,7 +196,7 @@ export function AegisAuditExplorer() {
           </GlassPanel>
 
           {/* Actions cell */}
-          <GlassPanel className="rounded-3xl p-6 flex flex-wrap items-center gap-2 justify-end">
+          <GlassPanel className="rounded-3xl p-4 sm:p-6 flex flex-wrap items-center gap-2 justify-end">
             {chain.length === 0 && !loading && (
               <Button
                 onClick={onSeed}
@@ -276,7 +272,7 @@ export function AegisAuditExplorer() {
               </>
             )}
           </GlassPanel>
-        </motion.div>
+        </ScrollReveal>
 
         {/* Chain visualization */}
         <div className="mt-8">
@@ -292,25 +288,8 @@ export function AegisAuditExplorer() {
           ) : chain.length === 0 ? (
             <EmptyState onSeed={onSeed} busy={busy} />
           ) : (
-            <motion.div
-              initial={prefersReduced ? false : { opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true, margin: '-80px' }}
-              transition={{ duration: 0.4 }}
-              className="relative"
-            >
-              <motion.ul
-                variants={{
-                  hidden: {},
-                  show: {
-                    transition: { staggerChildren: prefersReduced ? 0 : 0.04 },
-                  },
-                }}
-                initial="hidden"
-                whileInView="show"
-                viewport={{ once: true, margin: '-80px' }}
-                className="space-y-3"
-              >
+            <ScrollReveal>
+              <ul className="space-y-3">
                 {chain.map((entry, i) => (
                   <ChainBlock
                     key={entry.id}
@@ -318,11 +297,10 @@ export function AegisAuditExplorer() {
                     isLast={i === chain.length - 1}
                     onTamper={() => onTamper(entry.seq)}
                     busy={busy !== null}
-                    prefersReduced={prefersReduced}
                   />
                 ))}
-              </motion.ul>
-            </motion.div>
+              </ul>
+            </ScrollReveal>
           )}
         </div>
       </div>
@@ -338,7 +316,7 @@ function EmptyState({
   busy: string | null;
 }) {
   return (
-    <GlassPanel className="rounded-3xl p-10 flex flex-col items-center justify-center gap-3 text-center">
+    <GlassPanel className="rounded-3xl p-6 sm:p-10 flex flex-col items-center justify-center gap-3 text-center">
       <div className="grid size-12 place-items-center rounded-2xl bg-primary/10 text-primary ring-1 ring-primary/30">
         <Link2 className="size-6" />
       </div>
@@ -371,23 +349,15 @@ function ChainBlock({
   isLast,
   onTamper,
   busy,
-  prefersReduced,
 }: {
   entry: AuditLogEntry;
   isLast: boolean;
   onTamper: () => void;
   busy: boolean;
-  prefersReduced: boolean | null;
 }) {
   const tampered = entry.tampered;
   return (
-    <motion.li
-      variants={{
-        hidden: prefersReduced ? {} : { opacity: 0, y: 12 },
-        show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } },
-      }}
-      className="relative pl-10"
-    >
+    <li className="relative pl-10">
       {/* Chain link connector */}
       {!isLast && (
         <div
@@ -415,80 +385,83 @@ function ChainBlock({
         />
       </div>
 
-      {/* Glass block — tampered gets a red glow */}
-      <GlassPanel
-        className={cn(
-          'rounded-2xl p-5',
-          tampered && 'shadow-[0_0_30px_-5px] shadow-destructive/30 ring-1 ring-destructive/40',
-        )}
-      >
-        {/* Header row */}
-        <div className="flex flex-wrap items-start justify-between gap-3 pb-3 border-b border-foreground/10">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="aegis-mono text-[11px] glass rounded-full px-2 py-0.5">
-              #{String(entry.seq).padStart(3, '0')}
-            </span>
-            <span className="text-[11px] text-muted-foreground aegis-mono">
-              {format(new Date(entry.timestamp), 'd MMM yyyy, HH:mm:ss')}
-            </span>
-            <span className="aegis-mono text-[11px] glass rounded-full px-2 py-0.5 text-muted-foreground">
-              {entry.destinationProvider}
-            </span>
-            {tampered && (
-              <span className="inline-flex items-center gap-1 glass text-destructive rounded-full px-2 py-0.5 text-[10px] aegis-mono uppercase tracking-wider">
-                <AlertTriangle className="size-3" />
-                tampered
-              </span>
-            )}
-          </div>
-
-          <div className="flex items-center gap-1.5">
-            {!tampered && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onTamper}
-                disabled={busy}
-                className="h-8 px-3 rounded-full text-[11px] text-muted-foreground hover:text-destructive hover:bg-destructive/10 active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              >
-                <Hammer className="size-3" />
-                Tamper this
-              </Button>
-            )}
-          </div>
-        </div>
-
-        {/* Entity chips row */}
-        <div className="flex flex-wrap items-center gap-1.5 py-3 border-b border-foreground/10">
-          {entry.entityTypesRedacted.length === 0 ? (
-            <span className="text-xs text-muted-foreground italic">no entities</span>
-          ) : (
-            entry.entityTypesRedacted.map((type) => {
-              const meta = ENTITY_META[type];
-              const count = entry.entityCounts[type] ?? 0;
-              return (
-                <span
-                  key={type}
-                  className={`entity-${type} entity-chip inline-flex items-center gap-1 rounded-lg px-2 py-0.5 text-[11px]`}
-                >
-                  {meta.label}
-                  <span className="opacity-70">×{count}</span>
-                </span>
-              );
-            })
+      {/* 3D-scrolling glass block — tampered gets a red glow */}
+      <ScrollCard3D intensity={6}>
+        {/* Plain .glass (no liquid) per block — too many SVG filters would tank perf */}
+        <div
+          className={cn(
+            'glass rounded-2xl p-4 sm:p-5',
+            tampered && 'shadow-[0_0_30px_-5px] shadow-destructive/30 ring-1 ring-destructive/40',
           )}
-          <span className="ml-auto text-[11px] text-muted-foreground aegis-mono">
-            {entry.inputCharCount} chars in
-          </span>
-        </div>
+        >
+          {/* Header row */}
+          <div className="flex flex-wrap items-start justify-between gap-3 pb-3 border-b border-foreground/10">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="aegis-mono text-[10px] sm:text-[11px] glass rounded-full px-2 py-0.5">
+                #{String(entry.seq).padStart(3, '0')}
+              </span>
+              <span className="text-[10px] sm:text-[11px] text-muted-foreground aegis-mono">
+                {format(new Date(entry.timestamp), 'd MMM yyyy, HH:mm:ss')}
+              </span>
+              <span className="aegis-mono text-[10px] sm:text-[11px] glass rounded-full px-2 py-0.5 text-muted-foreground">
+                {entry.destinationProvider}
+              </span>
+              {tampered && (
+                <span className="inline-flex items-center gap-1 glass text-destructive rounded-full px-2 py-0.5 text-[10px] aegis-mono uppercase tracking-wider">
+                  <AlertTriangle className="size-3" />
+                  tampered
+                </span>
+              )}
+            </div>
 
-        {/* Hashes */}
-        <div className="grid gap-3 sm:grid-cols-2 mt-3">
-          <HashRow label="prev" hash={entry.previousHash} />
-          <HashRow label="curr" hash={entry.currentHash} highlight={!tampered} />
+            <div className="flex items-center gap-1.5">
+              {!tampered && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={onTamper}
+                  disabled={busy}
+                  className="h-8 px-3 rounded-full text-[10px] sm:text-[11px] text-muted-foreground hover:text-destructive hover:bg-destructive/10 active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  <Hammer className="size-3" />
+                  Tamper this
+                </Button>
+              )}
+            </div>
+          </div>
+
+          {/* Entity chips row */}
+          <div className="flex flex-wrap items-center gap-1.5 py-3 border-b border-foreground/10">
+            {entry.entityTypesRedacted.length === 0 ? (
+              <span className="text-xs text-muted-foreground italic">no entities</span>
+            ) : (
+              entry.entityTypesRedacted.map((type) => {
+                const meta = ENTITY_META[type];
+                const count = entry.entityCounts[type] ?? 0;
+                return (
+                  <span
+                    key={type}
+                    className={`entity-${type} entity-chip inline-flex items-center gap-1 rounded-lg px-2 py-0.5 text-[10px] sm:text-[11px]`}
+                  >
+                    {meta.label}
+                    <span className="opacity-70">×{count}</span>
+                  </span>
+                );
+              })
+            )}
+            <span className="ml-auto text-[10px] sm:text-[11px] text-muted-foreground aegis-mono">
+              {entry.inputCharCount} chars in
+            </span>
+          </div>
+
+          {/* Hashes */}
+          <div className="grid gap-2 sm:gap-3 sm:grid-cols-2 mt-3">
+            <HashRow label="prev" hash={entry.previousHash} />
+            <HashRow label="curr" hash={entry.currentHash} highlight={!tampered} />
+          </div>
         </div>
-      </GlassPanel>
-    </motion.li>
+      </ScrollCard3D>
+    </li>
   );
 }
 
@@ -502,7 +475,7 @@ function HashRow({
   highlight?: boolean;
 }) {
   return (
-    <div className="glass rounded-xl p-3 flex items-center gap-2 min-w-0">
+    <div className="glass rounded-xl p-2 sm:p-3 flex items-center gap-2 min-w-0">
       <span className="aegis-eyebrow text-muted-foreground w-8 shrink-0 text-[9px]">
         {label}
       </span>
@@ -514,7 +487,7 @@ function HashRow({
             tabIndex={0}
             role="button"
             className={cn(
-              'flex-1 min-w-0 truncate text-[11px] aegis-mono cursor-help focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded px-0.5',
+              'flex-1 min-w-0 truncate text-[10px] sm:text-[11px] aegis-mono cursor-help focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded px-0.5',
               highlight ? 'text-primary' : 'text-muted-foreground',
             )}
           >

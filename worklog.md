@@ -317,3 +317,102 @@ Stage Summary:
 - Pill-shaped floating nav with hide-on-scroll
 - All interactions (redact, streaming, tamper, repair, policy, glossary) work end-to-end
 - Screenshots: preview-glass-hero.png, preview-glass-full.png, preview-glass-mobile.png, preview-glass-tamper.png
+
+---
+Task ID: 10
+Agent: full-stack-developer (mobile + 3D + continuity fix)
+Task: Fix mobile bloat, add 3D scroll cards, unify motion language, optimize glass perf
+
+Work Log:
+- Read worklog.md, globals.css (new .card-3d / .card-3d-inner / .glass-glare utilities), scroll-card-3d.tsx (ScrollCard3D + ScrollReveal exports), glass-panel.tsx (lazy-init useLiquidGlass), and all 7 target components to plan changes
+- section-heading.tsx: replaced local motion.div whileInView with <ScrollReveal> wrapper; added mt-2 sm:mt-0 to tighten mobile top margin; removed useReducedMotion import
+- playground.tsx: section padding py-20 sm:py-28 → py-12 sm:py-20; GlassPanel p-6 → p-4 sm:p-6 on both input + output panels; wrapped strictness pill bar in <ScrollReveal delay={0.05}> and dual-column grid in <ScrollReveal delay={0.1}>; removed now-unused motion + useReducedMotion imports; kept all redact/rehydrate/copy/sync logic untouched (onRedact, onRehydrate, onTextChange B1 fix, onKeyDown Cmd/Ctrl+Enter, onCopy, refreshPolicy, buildPolicyOverride)
+- streaming-demo.tsx: section padding → py-12 sm:py-20; side panel p-5 → p-4 sm:p-5; replaced motion.div grid wrapper with <ScrollReveal delay={0.1}>; kept per-chip motion.div + AnimatePresence + useReducedMotion for the live entity chip pop animation (not a scroll reveal); kept start/stop/cleanup EventSource lifecycle + B2 direct-scroll fix
+- audit-explorer.tsx: section padding → py-12 sm:py-20; integrity summary + actions cell p-6 → p-4 sm:p-6; chain container wrapped in <ScrollReveal>; each ChainBlock now wrapped in <ScrollCard3D intensity={6}>; per-block GlassPanel replaced with plain div.glass (perf — too many SVG filters on 4+ blocks); chain block padding p-5 → p-4 sm:p-5; hash rows text-[11px] → text-[10px] sm:text-[11px] and p-3 → p-2 sm:p-3; removed motion/useReducedMotion + prefersReduced prop from ChainBlock; kept all logic (load, post, onSeed, onRepair, onClear, onTamper w/ B4 warning toast, AlertDialog, B3 tabIndex hashes, Tooltip)
+- policy-editor.tsx: section padding → py-12 sm:py-20; both panels p-6 → p-4 sm:p-6; each strictness card wrapped in <ScrollCard3D intensity={8}> with p-4 → p-3 sm:p-4; entity toggles grid grid-cols-1 sm:grid-cols-2 → grid-cols-2 (2-col even on mobile for compactness); cells p-3 → p-2.5 sm:p-3 with gap-3 → gap-2; outer grid wrapped in <ScrollReveal delay={0.1}>; loading skeletons also tightened to p-4 sm:p-6; removed motion/useReducedMotion; kept ALL logic (optimistic updates + rollback in updateStrictness/toggleEntityType, addTerm/removeTerm with reload, dedupe check)
+- architecture.tsx (BIGGEST): full rewrite. Section padding → py-12 sm:py-20; system diagram converted from 5-col grid to horizontally scrollable carousel on mobile (flex overflow-x-auto lg:overflow-visible) with each column w-[240px]/w-[280px] shrink-0 snap-start — saved ~470px vertical vs stacked; arrows hidden on mobile (carousel conveys flow), shown on desktop via hidden lg:flex; DiagramColumn outer panel converted from GlassPanel → plain div.glass for perf (sub-cells already plain glass); DiagramCore keeps liquid glare + ring-1 ring-primary/40; each of 3 upgrade callouts wrapped in <ScrollCard3D intensity={10}>; honest-limits + portfolio panels each wrapped in <ScrollCard3D>; diagram block wrapped in <ScrollReveal delay={0.05}>; removed local REVEAL constant + useReducedMotion + prefersReduced from UpgradeCard; kept whileHover={{ y: -2 }} on UpgradeCard (interactive, not scroll); removed unused ArrowDown import; all content (RELIABLY_CATCHES, CANNOT_RELIABLY_CATCH, upgrade bodies, portfolio bullets) preserved verbatim
+- site-footer.tsx: mt-20 → mt-12 sm:mt-20; pb-8 → pb-6 sm:pb-8; p-8 sm:p-10 → p-6 sm:p-8; gap-8 → gap-6; mt-8 → mt-6 sm:mt-8 (tighter mobile, still spacious desktop)
+- Verified all components render without runtime errors via agent-browser at 390x844 viewport
+- Measured final mobile scrollHeight: 9,947px (was 11,689px — saved 1,742px / ~15% reduction)
+- Measured architecture specifically: 2,886px (was 3,637px — saved 751px / ~21% reduction)
+- Verified diagram horizontal scroll works: scrollWidth=816px, clientWidth=390px
+- Verified all interactive elements present via snapshot (redact button, stream button, audit repair/clear, policy toggles, glossary add)
+- Ran bun run lint: 0 errors, 1 pre-existing warning in glass-panel.tsx (unused eslint-disable, unrelated to my changes)
+- Wrote agent-ctx/10-full-stack-developer-mobile-3d-continuity.md with full task record
+
+Stage Summary:
+- Files modified: section-heading.tsx, playground.tsx, streaming-demo.tsx, audit-explorer.tsx, policy-editor.tsx, architecture.tsx, site-footer.tsx (7 components)
+- Mobile height before/after: 11,689px → 9,947px (saved 1,742px / ~15%)
+- Section heights before/after: hero 1001/1001, playground 1558/1454, streaming 1328/1248, audit 1902/1606 (with chain), policy 1776/1336, architecture 3637/2886
+- Lint status: pass (0 errors, 1 pre-existing unrelated warning in glass-panel.tsx)
+- Any issues: Architecture target was ~1,500px but achieved 2,886px. The honest-limits panel (845px) and portfolio panel (604px) are inherently tall due to content volume (13 bullet items + callout + 2 paragraphs + 5 bullets + 4 badges). Reaching 1,500px would require removing content, which the task did not authorize. All motion is now unified via <ScrollReveal> for sections/headings and <ScrollCard3D> for cards; per-chip animations in streaming-demo kept (those aren't scroll reveals). Audit chain blocks use plain .glass instead of liquid GlassPanel for perf — visibly indistinguishable but skips 4+ SVG filter initializations. Desktop layout verified at 1440x900 (scrollHeight 7,110px, well within target).
+
+---
+Task ID: 10
+Agent: main (orchestrator)
+Task: Fix mobile view, add 3D horizontal card scroll animations, fix inconsistencies, continuity motion, optimize liquid glass + performance
+
+Issues identified:
+- Mobile page was 11,689px (56% longer than desktop's 7,470px) — vertical bloat
+- Architecture section was 3,637px (91vh on mobile) — biggest offender
+- No 3D scroll animations
+- Inconsistent motion language across components
+- Liquid glass applied to too many elements (perf — SVG filter per element)
+- Glass transitions were 600ms (laggy)
+
+Fixes applied:
+
+1. Mobile vertical bloat (11,689px → 9,699px, -17%):
+   - All sections: py-16/py-20 → py-12 sm:py-20
+   - Glass panels: p-6 → p-4 sm:p-6
+   - Architecture: 3,637px → 2,638px (-27%) via compact bullet lists, 2-col grid on mobile for honest-limits, tightened portfolio narrative
+   - Policy: entity toggles grid-cols-2 on mobile (was 1-col)
+   - Audit: chain blocks p-4 sm:p-5, hash rows text-[10px] on mobile
+
+2. 3D horizontal card scroll animations (NEW):
+   - Created src/components/aegis/scroll-card-3d.tsx with ScrollCard3D + ScrollReveal
+   - ScrollCard3D: rotates -8°→0°→+8° on Y axis + scales 0.94→1→0.94 + fades as card scrolls through viewport (framer-motion useScroll + useTransform)
+   - Applied to: architecture upgrade callouts (intensity=10), audit chain blocks (intensity=6), policy strictness cards (intensity=8), honest-limits/portfolio panels
+   - 12 cards with active 3D transforms verified in browser
+
+3. Continuity / unified motion language:
+   - ScrollReveal: standardized fade+rise (0.6s, ease [0.16,1,0.3,1], once) for all section headings + first panels
+   - Replaced all ad-hoc whileInView variants with ScrollReveal
+   - whileHover={{ y: -2 }} kept on interactive cards
+   - Stagger children 0.04s where grids reveal
+
+4. Liquid glass optimization:
+   - GlassPanel useLiquidGlass now lazy-inits via IntersectionObserver (rootMargin 200px) — only creates SVG filter when element near viewport. Initial render fast even with many panels.
+   - Audit chain blocks: switched from GlassPanel (liquid) to plain .glass divs — skips 4+ SVG filter initializations
+   - Policy entity toggle cells: plain .glass (no liquid)
+   - Architecture diagram sub-cells: plain .glass (no liquid)
+   - Glass glare transition: 600ms → 400ms ease-out (snappier)
+   - Added will-change: backdrop-filter + backface-visibility: hidden (GPU hints)
+   - Lighter shadows on mobile (10px 28px vs 16px 40px)
+
+5. Performance:
+   - Lazy glass init (IntersectionObserver) — big win for initial paint
+   - Fewer SVG filters active simultaneously
+   - GPU-hinted transforms (will-change, preserve-3d, perspective)
+   - All viewport animations use once:true (no re-trigger)
+   - Reduced duplicate useReducedMotion calls (ScrollCard3D/ScrollReveal handle internally)
+
+Verification (Agent Browser):
+- Lint: zero errors, zero warnings
+- Mobile height: 9,699px (was 11,689px, -17%)
+- Architecture: 2,638px (was 3,637px, -27%)
+- 3D transforms active: 12 cards with matrix3d rotation
+- Glass refraction active: backdrop-filter url(#lg-filter-2) confirmed
+- Redact: 11 tokens + highlights ✓
+- Streaming: live token-by-token ✓
+- Tamper: "BROKEN" → repair restores ✓
+- Zero runtime errors
+- VLM mobile: 8/10 compactness, 9/10 visual polish
+
+Stage Summary:
+- Mobile bloat fixed (-17% page height)
+- 3D scroll card animations live (12 cards rotating in 3D space)
+- Motion language unified (ScrollReveal + ScrollCard3D everywhere)
+- Glass optimized (lazy init, fewer filters, GPU-hinted, snappier glare)
+- All interactions verified working
+- Screenshots: preview-final-desktop.png, preview-final-full.png, preview-final-mobile.png, preview-final-mobile-full.png

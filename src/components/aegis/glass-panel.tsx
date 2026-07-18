@@ -4,24 +4,53 @@ import { useEffect, useRef, type ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
 /**
- * useLiquidGlass — React hook wrapper around the drop-in liquid-glass.js module.
- * Applies real Apple-style refraction (Chromium) or frosted-blur fallback (Safari/FF).
- * Call on a ref; the module handles SVG filter + displacement map + resize.
+ * useLiquidGlass — React hook wrapper around the liquid-glass module.
+ * Applies real Apple-style refraction (Chromium) or frosted-blur fallback.
+ *
+ * Performance: lazy-inits via IntersectionObserver — only creates the SVG
+ * filter + displacement map when the element scrolls into view. This keeps
+ * the initial render fast even with many glass panels on the page.
  */
 export function useLiquidGlass<T extends HTMLElement>(
-  opts?: Parameters<typeof import('@/lib/liquid-glass')['default']>[1],
+  opts?: { scale?: number; chroma?: number; border?: number; mapBlur?: number; blur?: number; saturate?: number; radius?: number; fallbackBlur?: number },
 ) {
   const ref = useRef<T>(null);
   useEffect(() => {
-    if (!ref.current) return;
+    const el = ref.current;
+    if (!el) return;
+
     let instance: { destroy: () => void } | undefined;
-    import('@/lib/liquid-glass').then((mod) => {
+    let observer: IntersectionObserver | undefined;
+    let cancelled = false;
+
+    // Lazy-init: only load + apply the glass when the element is near the viewport.
+    const init = async () => {
+      if (cancelled || !el) return;
+      const mod = await import('@/lib/liquid-glass');
       const lg = mod.default;
-      if (ref.current) {
-        instance = lg(ref.current, opts);
-      }
-    });
-    return () => instance?.destroy();
+      if (!lg || !el) return;
+      instance = lg(el, opts);
+    };
+
+    observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            init();
+            observer?.disconnect();
+            break;
+          }
+        }
+      },
+      { rootMargin: '200px' },
+    );
+    observer.observe(el);
+
+    return () => {
+      cancelled = true;
+      observer?.disconnect();
+      instance?.destroy();
+    };
   }, []);
   return ref;
 }
@@ -35,8 +64,8 @@ interface GlassPanelProps {
   strong?: boolean;
   /** Animated specular glare sweep on hover. */
   glare?: boolean;
-  /** liquid-glass.js options (scale, chroma, border, etc.) */
-  glassOptions?: Record<string, unknown>;
+  /** liquid-glass options (scale, chroma, border, etc.) */
+  glassOptions?: { scale?: number; chroma?: number; border?: number; mapBlur?: number; blur?: number; saturate?: number; radius?: number; fallbackBlur?: number };
   as?: 'div' | 'section' | 'article' | 'nav' | 'header' | 'footer';
 }
 
@@ -44,9 +73,9 @@ interface GlassPanelProps {
  * GlassPanel — the canonical glass surface. Combines:
  *   - .glass / .glass-strong material dressing (tint, shadow, inset highlights)
  *   - optional .glass-glare animated specular sweep
- *   - optional real refraction via useLiquidGlass()
+ *   - optional real refraction via useLiquidGlass() (lazy-init for perf)
  *
- * Use this everywhere instead of raw <Card> for the $100k glass aesthetic.
+ * Use this everywhere instead of raw <Card> for the liquid glass aesthetic.
  */
 export function GlassPanel({
   children,

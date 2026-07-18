@@ -10,6 +10,7 @@ import { ENTITY_META, type EntityType } from '@/lib/aegis/types';
 import { SectionHeading } from './section-heading';
 import { EntityChip } from './entity-chip';
 import { GlassPanel } from './glass-panel';
+import { ScrollReveal } from './scroll-card-3d';
 
 interface StreamChunkEvent {
   type: 'chunk';
@@ -136,7 +137,7 @@ export function AegisStreamingDemo() {
   const totalRedacted = completed.length;
 
   return (
-    <section id="streaming" className="scroll-mt-20 py-20 sm:py-28">
+    <section id="streaming" className="scroll-mt-20 py-12 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <SectionHeading
           num="02"
@@ -152,12 +153,9 @@ export function AegisStreamingDemo() {
           description="LLM responses arrive token-by-token. A PII entity like john@acme.com can split across chunk boundaries (john@ac | me.com). Aegis holds back a sliding window and redacts live as the stream flows — no broken tokens, no missed entities."
         />
 
-        <motion.div
-          initial={prefersReduced ? false : { opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
-          className="mt-10 grid gap-4 lg:grid-cols-[1fr_300px]"
+        <ScrollReveal
+          delay={0.1}
+          className="mt-6 sm:mt-10 grid gap-4 lg:grid-cols-[1fr_300px]"
         >
           {/* Stream output panel — terminal feel */}
           <GlassPanel liquid glare className="rounded-3xl overflow-hidden flex flex-col">
@@ -270,7 +268,7 @@ export function AegisStreamingDemo() {
           </GlassPanel>
 
           {/* Live side panel: counts + chips */}
-          <GlassPanel className="rounded-3xl p-5 flex flex-col gap-4">
+          <GlassPanel className="rounded-3xl p-4 sm:p-5 flex flex-col gap-4">
             <div className="flex items-center justify-between pb-3 border-b border-foreground/10">
               <span className="aegis-eyebrow text-muted-foreground">Live stats</span>
               {streaming ? (
@@ -353,7 +351,7 @@ export function AegisStreamingDemo() {
               ))}
             </div>
           </GlassPanel>
-        </motion.div>
+        </ScrollReveal>
       </div>
     </section>
   );

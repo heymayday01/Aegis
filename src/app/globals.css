@@ -182,8 +182,9 @@
   }
 
   /* ---- Liquid Glass system ----
-     The .glass class is the material; liquidGlass() from src/lib/liquid-glass.js
-     adds the real refraction (Chromium) / frosted fallback (Safari/FF). */
+     The .glass class is the material; liquidGlass() from src/lib/liquid-glass.ts
+     adds the real refraction (Chromium) / frosted fallback (Safari/FF).
+     Optimized: GPU-hinted (will-change), smoother transitions, lighter shadows. */
 
   .glass {
     position: relative;
@@ -194,10 +195,11 @@
       color-mix(in oklch, var(--foreground) 5%, transparent) 100%
     );
     box-shadow:
-      0 20px 50px -12px rgba(0, 0, 0, 0.5),
-      inset 0 1px 1px rgba(255, 255, 255, 0.15),
-      inset 0 -6px 16px rgba(255, 255, 255, 0.03),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+      0 16px 40px -12px rgba(0, 0, 0, 0.45),
+      inset 0 1px 1px rgba(255, 255, 255, 0.12),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.07);
+    will-change: backdrop-filter;
+    backface-visibility: hidden;
   }
   .glass-strong {
     background: linear-gradient(
@@ -207,12 +209,14 @@
       color-mix(in oklch, var(--foreground) 7%, transparent) 100%
     );
     box-shadow:
-      0 24px 60px -12px rgba(0, 0, 0, 0.6),
-      inset 0 1px 1px rgba(255, 255, 255, 0.2),
-      inset 0 -8px 20px rgba(255, 255, 255, 0.04),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+      0 20px 50px -12px rgba(0, 0, 0, 0.55),
+      inset 0 1px 1px rgba(255, 255, 255, 0.16),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.09);
+    will-change: backdrop-filter;
+    backface-visibility: hidden;
   }
-  /* Specular highlight sweep — animated glare that makes glass feel alive. */
+  /* Specular highlight sweep — animated glare that makes glass feel alive.
+     Smoothed: 400ms ease-out for a snappier, less laggy feel. */
   .glass-glare::before {
     content: "";
     position: absolute;
@@ -221,17 +225,44 @@
     background: linear-gradient(
       115deg,
       transparent 30%,
-      rgba(255, 255, 255, 0.08) 45%,
-      rgba(255, 255, 255, 0.14) 50%,
-      rgba(255, 255, 255, 0.08) 55%,
+      rgba(255, 255, 255, 0.06) 45%,
+      rgba(255, 255, 255, 0.12) 50%,
+      rgba(255, 255, 255, 0.06) 55%,
       transparent 70%
     );
     pointer-events: none;
     opacity: 0;
-    transition: opacity 600ms ease;
+    transition: opacity 400ms ease-out;
   }
-  .glass-glare:hover::before {
+  .glass-glare:hover::before,
+  .glass-glare:focus-within::before {
     opacity: 1;
+  }
+
+  /* ---- 3D scroll-card system ----
+     Horizontal cards that rotate in 3D as they enter/leave the viewport.
+     Used by architecture callouts, audit blocks, policy cards. The JS sets
+     --scroll-progress 0..1 via framer-motion useTransform on each card. */
+  .card-3d {
+    transform-style: preserve-3d;
+    perspective: 1000px;
+    will-change: transform;
+  }
+  .card-3d-inner {
+    transform-style: preserve-3d;
+    transition: transform 200ms ease-out;
+  }
+
+  /* ---- Mobile tightening ----
+     At <640px, glass panels use less padding, tighter radii, and smaller
+     shadows so the page doesn't feel like a parade of giant cards. */
+  @media (max-width: 640px) {
+    .glass {
+      box-shadow:
+        0 10px 28px -10px rgba(0, 0, 0, 0.4),
+        inset 0 1px 1px rgba(255, 255, 255, 0.1),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+    }
   }
 
   /* ---- Ambient background orbs ----

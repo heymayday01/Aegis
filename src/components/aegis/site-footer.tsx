@@ -18,11 +18,11 @@ const FOOTER_BADGES = ['Local-first', '$0 infra', 'Open-source', 'MCP-ready'];
  */
 export function AegisSiteFooter() {
   return (
-    <footer className="mt-20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 pb-8">
-        <GlassPanel className="rounded-t-3xl rounded-b-3xl p-8 sm:p-10">
+    <footer className="mt-12 sm:mt-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 pb-6 sm:pb-8">
+        <GlassPanel className="rounded-t-3xl rounded-b-3xl p-6 sm:p-8">
           {/* Main row */}
-          <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
+          <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
             {/* Left: shield-glyph wordmark + tagline */}
             <div className="flex items-start gap-3">
               <span className="grid size-10 place-items-center rounded-2xl bg-primary/12 text-primary ring-1 ring-primary/30 shrink-0">
@@ -69,7 +69,7 @@ export function AegisSiteFooter() {
           </div>
 
           {/* Bottom bar — mono version line + copyright */}
-          <div className="mt-8 pt-4 border-t border-foreground/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-[11px] text-muted-foreground">
+          <div className="mt-6 sm:mt-8 pt-4 border-t border-foreground/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-[11px] text-muted-foreground">
             <div className="aegis-mono flex items-center gap-2">
               <span className="size-1.5 rounded-full bg-primary aegis-live-dot" />
               v0.1.0 · SHA-256 hash-chained · zero server-side plaintext

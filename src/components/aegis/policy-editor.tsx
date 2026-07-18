@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
 import { toast } from 'sonner';
 import { Plus, X, Loader2, Sliders, BookMarked } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -12,6 +11,7 @@ import type { EntityType, Policy, Strictness } from '@/lib/aegis/types';
 import { ALL_ENTITY_TYPES, ENTITY_META } from '@/lib/aegis/types';
 import { SectionHeading } from './section-heading';
 import { GlassPanel } from './glass-panel';
+import { ScrollCard3D, ScrollReveal } from './scroll-card-3d';
 
 interface PolicyResponse {
   policy: Policy;
@@ -38,7 +38,6 @@ const STRICTNESS_META: Record<
 };
 
 export function AegisPolicyEditor() {
-  const prefersReduced = useReducedMotion();
   const [policy, setPolicy] = React.useState<Policy | null>(null);
   const [glossaryTerms, setGlossaryTerms] = React.useState<string[]>([]);
   const [loading, setLoading] = React.useState(true);
@@ -155,7 +154,7 @@ export function AegisPolicyEditor() {
   };
 
   return (
-    <section id="policy" className="scroll-mt-20 py-20 sm:py-28">
+    <section id="policy" className="scroll-mt-20 py-12 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <SectionHeading
           num="04"
@@ -172,12 +171,12 @@ export function AegisPolicyEditor() {
         />
 
         {loading || !policy ? (
-          <div className="mt-10 grid gap-4 lg:grid-cols-2">
-            <div className="glass rounded-3xl p-6 space-y-3">
+          <div className="mt-6 sm:mt-10 grid gap-4 lg:grid-cols-2">
+            <div className="glass rounded-3xl p-4 sm:p-6 space-y-3">
               <div className="h-5 w-1/3 bg-foreground/10 animate-pulse rounded-full" />
               <div className="h-10 w-full bg-foreground/5 animate-pulse rounded-2xl" />
             </div>
-            <div className="glass rounded-3xl p-6 space-y-3">
+            <div className="glass rounded-3xl p-4 sm:p-6 space-y-3">
               <div className="h-5 w-1/3 bg-foreground/10 animate-pulse rounded-full" />
               <div className="grid grid-cols-2 gap-2">
                 {Array.from({ length: 8 }).map((_, i) => (
@@ -190,15 +189,12 @@ export function AegisPolicyEditor() {
             </div>
           </div>
         ) : (
-          <motion.div
-            initial={prefersReduced ? false : { opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-80px' }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
-            className="mt-10 grid gap-4 lg:grid-cols-2"
+          <ScrollReveal
+            delay={0.1}
+            className="mt-6 sm:mt-10 grid gap-4 lg:grid-cols-2"
           >
             {/* Strictness + entity toggles — left panel */}
-            <GlassPanel className="rounded-3xl p-6 flex flex-col">
+            <GlassPanel className="rounded-3xl p-4 sm:p-6 flex flex-col">
               {/* Strictness radio cards */}
               <div className="pb-6 border-b border-foreground/10">
                 <div className="flex items-center gap-2 mb-4">
@@ -209,43 +205,44 @@ export function AegisPolicyEditor() {
                   {(Object.keys(STRICTNESS_META) as Strictness[]).map((s) => {
                     const selected = policy.strictness === s;
                     return (
-                      <button
-                        key={s}
-                        onClick={() => updateStrictness(s)}
-                        disabled={busy}
-                        aria-pressed={selected}
-                        className={cn(
-                          'glass glass-glare flex items-start gap-3 rounded-2xl p-4 text-left transition-all active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-                          selected
-                            ? 'ring-2 ring-primary bg-primary/5'
-                            : 'hover:ring-1 hover:ring-foreground/15',
-                        )}
-                      >
-                        <span
+                      <ScrollCard3D key={s} intensity={8}>
+                        <button
+                          onClick={() => updateStrictness(s)}
+                          disabled={busy}
+                          aria-pressed={selected}
                           className={cn(
-                            'mt-0.5 grid size-5 place-items-center rounded-full border-2 shrink-0',
-                            selected ? 'border-primary' : 'border-muted-foreground/40',
+                            'glass glass-glare flex items-start gap-3 rounded-2xl p-3 sm:p-4 text-left transition-all active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring w-full',
+                            selected
+                              ? 'ring-2 ring-primary bg-primary/5'
+                              : 'hover:ring-1 hover:ring-foreground/15',
                           )}
                         >
-                          {selected && (
-                            <span className="size-2.5 rounded-full bg-primary" />
-                          )}
-                        </span>
-                        <div className="min-w-0">
-                          <div className="text-sm font-medium">
-                            {STRICTNESS_META[s].label}
+                          <span
+                            className={cn(
+                              'mt-0.5 grid size-5 place-items-center rounded-full border-2 shrink-0',
+                              selected ? 'border-primary' : 'border-muted-foreground/40',
+                            )}
+                          >
+                            {selected && (
+                              <span className="size-2.5 rounded-full bg-primary" />
+                            )}
+                          </span>
+                          <div className="min-w-0">
+                            <div className="text-sm font-medium">
+                              {STRICTNESS_META[s].label}
+                            </div>
+                            <div className="text-xs text-muted-foreground leading-relaxed">
+                              {STRICTNESS_META[s].desc}
+                            </div>
                           </div>
-                          <div className="text-xs text-muted-foreground leading-relaxed">
-                            {STRICTNESS_META[s].desc}
-                          </div>
-                        </div>
-                      </button>
+                        </button>
+                      </ScrollCard3D>
                     );
                   })}
                 </div>
               </div>
 
-              {/* Entity type toggles — glass cell grid */}
+              {/* Entity type toggles — 2-col on mobile for compactness */}
               <div className="pt-6">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="aegis-eyebrow text-muted-foreground">Entity types</h3>
@@ -253,7 +250,7 @@ export function AegisPolicyEditor() {
                     {policy.enabledEntityTypes.length}/{ALL_ENTITY_TYPES.length} on
                   </span>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div className="grid grid-cols-2 gap-2">
                   {ALL_ENTITY_TYPES.map((type) => {
                     const meta = ENTITY_META[type];
                     const enabled = policy.enabledEntityTypes.includes(type);
@@ -261,7 +258,7 @@ export function AegisPolicyEditor() {
                       <div
                         key={type}
                         className={cn(
-                          'glass rounded-xl p-3 flex items-center justify-between gap-3 transition-opacity',
+                          'glass rounded-xl p-2.5 sm:p-3 flex items-center justify-between gap-2 transition-opacity',
                           !enabled && 'opacity-60',
                         )}
                       >
@@ -270,10 +267,10 @@ export function AegisPolicyEditor() {
                             className={`entity-${type} entity-dot inline-block size-2.5 rounded-full shrink-0`}
                           />
                           <div className="min-w-0">
-                            <div className="text-sm font-medium truncate">
+                            <div className="text-xs sm:text-sm font-medium truncate">
                               {meta.label}
                             </div>
-                            <div className="text-[11px] text-muted-foreground truncate">
+                            <div className="text-[10px] sm:text-[11px] text-muted-foreground truncate">
                               {meta.description}
                             </div>
                           </div>
@@ -292,7 +289,7 @@ export function AegisPolicyEditor() {
             </GlassPanel>
 
             {/* Custom glossary — right panel */}
-            <GlassPanel className="rounded-3xl p-6 flex flex-col">
+            <GlassPanel className="rounded-3xl p-4 sm:p-6 flex flex-col">
               <div className="pb-6 border-b border-foreground/10">
                 <div className="flex items-center gap-2 mb-3">
                   <BookMarked className="size-4 text-primary" />
@@ -380,7 +377,7 @@ export function AegisPolicyEditor() {
                 </div>
               </div>
             </GlassPanel>
-          </motion.div>
+          </ScrollReveal>
         )}
       </div>
     </section>

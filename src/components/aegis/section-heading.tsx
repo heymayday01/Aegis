@@ -1,15 +1,15 @@
 'use client';
 
 import * as React from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { ScrollReveal } from './scroll-card-3d';
 
 /**
- * SectionHeading — editorial magazine style, now with a liquid-glass reveal.
+ * SectionHeading — editorial magazine style.
  *
  * A numbered eyebrow ("01 / Playground") + serif title + muted description.
- * The whole block animates in once on scroll-into-view (opacity 0→1, y 20→0),
- * respecting prefers-reduced-motion.
+ * The reveal uses the shared <ScrollReveal> (0.6s ease-out, once per element)
+ * for motion-language consistency across the page.
  *
  * The title can contain `<span className="aegis-text-gradient">accent</span>`
  * for one gradient word per section.
@@ -29,15 +29,10 @@ export function SectionHeading({
   className?: string;
   align?: 'left' | 'center';
 }) {
-  const prefersReduced = useReducedMotion();
   return (
-    <motion.div
-      initial={prefersReduced ? false : { opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-80px' }}
-      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+    <ScrollReveal
       className={cn(
-        'flex flex-col gap-3',
+        'flex flex-col gap-3 mt-2 sm:mt-0',
         align === 'center' && 'items-center text-center',
         className,
       )}
@@ -58,6 +53,6 @@ export function SectionHeading({
           {description}
         </p>
       )}
-    </motion.div>
+    </ScrollReveal>
   );
 }
