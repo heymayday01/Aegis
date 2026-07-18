@@ -211,7 +211,7 @@ export function AegisPolicyEditor() {
                           disabled={busy}
                           aria-pressed={selected}
                           className={cn(
-                            'glass glass-glare flex items-start gap-3 rounded-2xl p-3 sm:p-4 text-left transition-all active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring w-full',
+                            'glass flex items-start gap-3 rounded-2xl p-3 sm:p-4 text-left transition-all active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring w-full',
                             selected
                               ? 'ring-2 ring-primary bg-primary/5'
                               : 'hover:ring-1 hover:ring-foreground/15',

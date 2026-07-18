@@ -62,7 +62,7 @@ interface GlassPanelProps {
   liquid?: boolean;
   /** Stronger tint + shadow for prominent panels. */
   strong?: boolean;
-  /** Animated specular glare sweep on hover. */
+  /** @deprecated glare hover-shine was removed; prop kept as no-op for API stability. */
   glare?: boolean;
   /** liquid-glass options (scale, chroma, border, etc.) */
   glassOptions?: { scale?: number; chroma?: number; border?: number; mapBlur?: number; blur?: number; saturate?: number; radius?: number; fallbackBlur?: number };
@@ -72,7 +72,6 @@ interface GlassPanelProps {
 /**
  * GlassPanel — the canonical glass surface. Combines:
  *   - .glass / .glass-strong material dressing (tint, shadow, inset highlights)
- *   - optional .glass-glare animated specular sweep
  *   - optional real refraction via useLiquidGlass() (lazy-init for perf)
  *
  * Use this everywhere instead of raw <Card> for the liquid glass aesthetic.
@@ -93,7 +92,6 @@ export function GlassPanel({
       className={cn(
         'rounded-2xl',
         strong ? 'glass glass-strong' : 'glass',
-        glare && 'glass-glare',
         className,
       )}
     >

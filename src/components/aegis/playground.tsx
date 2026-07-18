@@ -252,7 +252,7 @@ export function AegisPlayground() {
           delay={0.05}
           className="mt-6 sm:mt-10 flex flex-wrap items-center gap-3 justify-between"
         >
-          <div className="glass glass-glare inline-flex items-center rounded-full p-1 gap-0.5">
+          <div className="glass inline-flex items-center rounded-full p-1 gap-0.5">
             {STRICTNESS_OPTIONS.map((opt) => (
               <button
                 key={opt.value}

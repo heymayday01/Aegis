@@ -215,29 +215,10 @@
     will-change: backdrop-filter;
     backface-visibility: hidden;
   }
-  /* Specular highlight sweep — animated glare that makes glass feel alive.
-     Smoothed: 400ms ease-out for a snappier, less laggy feel. */
-  .glass-glare::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: linear-gradient(
-      115deg,
-      transparent 30%,
-      rgba(255, 255, 255, 0.06) 45%,
-      rgba(255, 255, 255, 0.12) 50%,
-      rgba(255, 255, 255, 0.06) 55%,
-      transparent 70%
-    );
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 400ms ease-out;
-  }
-  .glass-glare:hover::before,
-  .glass-glare:focus-within::before {
-    opacity: 1;
-  }
+  /* NOTE: the .glass-glare hover-shine was removed per design review —
+     the specular sweep read as a "cheap AI effect" on every hover and
+     fought the real refraction. Glass now stays clean and static on hover;
+     depth comes from the refraction + ambient orbs, not a fake glare sweep. */
 
   /* ---- 3D scroll-card system ----
      Horizontal cards that rotate in 3D as they enter/leave the viewport.

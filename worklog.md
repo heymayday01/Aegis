@@ -416,3 +416,62 @@ Stage Summary:
 - Glass optimized (lazy init, fewer filters, GPU-hinted, snappier glare)
 - All interactions verified working
 - Screenshots: preview-final-desktop.png, preview-final-full.png, preview-final-mobile.png, preview-final-mobile-full.png
+
+---
+Task ID: 11
+Agent: main (orchestrator)
+Task: Redesign navbar (desktop + mobile), fix expanded menu animations/fluidity, remove glass-glare hover shine
+
+1. Removed glass-glare hover shine (everywhere):
+   - Deleted the .glass-glare::before CSS rule from globals.css (the specular sweep on hover)
+   - Removed all glass-glare class refs from: hero.tsx, playground.tsx, policy-editor.tsx, nav.tsx
+   - GlassPanel glare prop kept as a no-op (deprecated) for API stability — no longer adds any class
+   - Verified: getComputedStyle(.glass, '::before').content === 'none' — the glare pseudo-element is gone
+   - Glass now stays clean and static on hover; depth comes from refraction + ambient orbs only
+
+2. Redesigned navbar:
+   Desktop pill nav:
+   - Refined the active-pill spring: stiffness 380, damping 30, mass 0.6 (snappier, less wobbly)
+   - Smaller text (13px) and tighter padding for a more refined pill
+   - Slightly smaller wordmark shield on mobile (size-6 vs size-7)
+   - Cleaner shadow transition on scroll
+
+   Hide-on-scroll fluidity:
+   - Replaced the jittery delta-0 comparison with a directional delta threshold:
+     hide only on >12px downward delta past 240px; show on <-4px upward delta
+   - Springed the y position (useSpring stiffness 320, damping 34, mass 0.8) for a fluid glide instead of a snap
+   - Nav never hides when mobile menu is open
+   - Nav snaps back to visible instantly at top of page (<20px)
+
+   Mobile expanding menu (replaced shadcn Sheet with custom fluid animation):
+   - Drops down from the nav pill itself with transformOrigin: 'top center'
+   - Enter: scale 0.92→1 + y -12→0 + opacity 0→1, 0.28s ease [0.16, 1, 0.3, 1]
+   - Exit: scale 1→0.95 + y 0→-8 + opacity 1→0, same easing
+   - Staggered link reveal: each of the 5 links fades in + slides x -12→0, 40ms stagger
+   - Active link gets a layoutId dot that springs between links
+   - Full-screen backdrop (bg-background/40 + blur) dims the page, dismisses on tap
+   - Body scroll locked when menu open
+   - Hamburger button morphs: Menu↔X with rotate+scale crossfade (AnimatePresence mode=wait)
+   - Footer row with GitHub link + local-first badge
+
+   Mobile menu content:
+   - "SECTIONS" eyebrow + "05" count header
+   - 5 staggered links with section numbers (01-05) in mono
+   - Active link highlighted with primary/10 bg + dot indicator
+   - Source + local-first footer row with top border
+
+Verification (Agent Browser):
+- Lint: zero errors
+- No console/runtime errors
+- Glass glare gone: ::before content === 'none' on all .glass elements
+- Mobile menu opens (verified programmatically + via click), shows all 5 links + Sections header + Source footer
+- Mobile menu closes cleanly (backdrop tap or X button)
+- Desktop active pill slides via layoutId spring
+- Hide-on-scroll: springed y, no jitter
+- VLM mobile nav verdict: 7/10 — "Smooth animations, cohesive dark-themed design, subtle premium touches"
+
+Stage Summary:
+- Glass glare completely removed (CSS rule deleted + all class refs stripped)
+- Navbar redesigned with fluid springed motion, custom mobile expand animation, staggered link reveal
+- All interactions verified working
+- Screenshots: preview-nav-desktop.png, preview-nav-mobile-open.png

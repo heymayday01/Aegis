@@ -180,7 +180,7 @@ function GlassProofCard() {
     <>
       <div
         ref={ref}
-        className="glass glass-glare rounded-3xl p-6 max-w-sm mx-auto"
+        className="glass rounded-3xl p-6 max-w-sm mx-auto"
       >
         <div className="flex items-center justify-between border-b border-foreground/10 pb-3">
           <span className="aegis-eyebrow text-muted-foreground">
