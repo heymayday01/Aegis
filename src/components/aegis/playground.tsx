@@ -27,6 +27,7 @@ import type {
 import { ENTITY_META } from '@/lib/aegis/types';
 import { SectionHeading } from './section-heading';
 import { EntityChip } from './entity-chip';
+import { GlassPanel } from './glass-panel';
 
 const SAMPLE_TEXT = `Hi team — onboarding the new customer from Acme Corp.
 
@@ -56,7 +57,7 @@ interface PolicyResponse {
 }
 
 /**
- * Playground — the main attraction. Two columns: input | redacted output.
+ * Playground — the main attraction. Two liquid-glass columns: input | output.
  * Live-highlights detections in the source text and renders a rehydration proof.
  */
 export function AegisPlayground() {
@@ -231,32 +232,40 @@ export function AegisPlayground() {
   };
 
   return (
-    <section id="playground" className="scroll-mt-20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-16 sm:py-24">
+    <section id="playground" className="scroll-mt-20 py-20 sm:py-28">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <SectionHeading
           num="01"
           eyebrow="Live Playground"
           title={
             <>
               Paste your prompt. <br className="hidden sm:block" />
-              <span className="italic text-muted-foreground">Watch the PII vanish.</span>
+              <span className="italic text-muted-foreground">
+                Watch the <span className="aegis-text-gradient">PII</span> vanish.
+              </span>
             </>
           }
           description="Every detection is highlighted in place, swapped for a reversible token, and logged in the audit chain. Edit the text or change strictness — the live policy is yours."
         />
 
-        {/* Strictness segmented control + actions */}
-        <div className="mt-8 flex flex-wrap items-center gap-3 justify-between">
-          <div className="inline-flex items-center rounded-md border border-border bg-card p-1">
+        {/* Strictness pill bar + actions */}
+        <motion.div
+          initial={prefersReduced ? false : { opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
+          className="mt-10 flex flex-wrap items-center gap-3 justify-between"
+        >
+          <div className="glass glass-glare inline-flex items-center rounded-full p-1 gap-0.5">
             {STRICTNESS_OPTIONS.map((opt) => (
               <button
                 key={opt.value}
                 onClick={() => setStrictness(opt.value)}
                 className={cn(
-                  'inline-flex items-center gap-2 rounded px-3 py-1.5 text-sm font-medium transition-colors active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+                  'inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium transition-colors active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
                   strictness === opt.value
                     ? 'bg-primary text-primary-foreground'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-accent/50',
+                    : 'text-muted-foreground hover:text-foreground',
                 )}
                 title={opt.desc}
                 aria-pressed={strictness === opt.value}
@@ -267,28 +276,52 @@ export function AegisPlayground() {
           </div>
 
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" onClick={refreshPolicy} title="Reload policy from server">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={refreshPolicy}
+              title="Reload policy from server"
+              className="rounded-full active:scale-[0.97]"
+            >
               <RefreshCw className="size-3.5" />
               Sync
             </Button>
-            <Button variant="outline" size="sm" onClick={() => setText(SAMPLE_TEXT)}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setText(SAMPLE_TEXT)}
+              className="rounded-full active:scale-[0.97] hover:bg-foreground/5"
+            >
               <Sparkles className="size-3.5" />
               Sample
             </Button>
-            <Button variant="outline" size="sm" onClick={() => { setText(''); setResult(null); setRehydrated(null); }}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setText('');
+                setResult(null);
+                setRehydrated(null);
+              }}
+              className="rounded-full active:scale-[0.97] hover:bg-foreground/5"
+            >
               <Eraser className="size-3.5" />
               Clear
             </Button>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="mt-6 grid gap-px bg-border border border-border lg:grid-cols-2">
-          {/* LEFT: input + highlight preview — hard-edged editorial panel */}
-          <div className="bg-card flex flex-col gap-4 p-5 sm:p-6">
-            <div className="flex items-center justify-between border-b border-border pb-3">
-              <span className="aegis-eyebrow text-muted-foreground">
-                Input
-              </span>
+        <motion.div
+          initial={prefersReduced ? false : { opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+          className="mt-6 grid gap-4 lg:grid-cols-2"
+        >
+          {/* LEFT: input + highlight preview */}
+          <GlassPanel liquid glare className="rounded-3xl p-6">
+            <div className="flex items-center justify-between pb-3 border-b border-foreground/10">
+              <span className="aegis-eyebrow text-muted-foreground">Input</span>
               <span className="text-[11px] text-muted-foreground aegis-mono">
                 {text.length} chars
               </span>
@@ -299,23 +332,25 @@ export function AegisPlayground() {
               onKeyDown={onKeyDown}
               rows={8}
               spellCheck={false}
-              className="min-h-40 resize-y aegis-mono text-[13px] leading-relaxed border-0 bg-transparent focus-visible:ring-0 p-0"
+              className="mt-4 min-h-40 resize-y aegis-mono text-[13px] leading-relaxed border-0 bg-transparent focus-visible:ring-0 p-0 placeholder:text-muted-foreground/60"
               placeholder="Paste anything containing PII — emails, keys, cards, Aadhaar, PAN, IPs, your codenames…"
             />
-            <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+            <div className="mt-3 flex items-center justify-between text-[10px] text-muted-foreground">
               <span>
-                <kbd className="rounded border border-border bg-muted px-1 py-0.5 text-[9px] aegis-mono">⌘/Ctrl</kbd>{' '}
+                <kbd className="rounded-full border border-foreground/15 bg-foreground/5 px-1.5 py-0.5 text-[9px] aegis-mono">
+                  ⌘/Ctrl
+                </kbd>{' '}
                 +{' '}
-                <kbd className="rounded border border-border bg-muted px-1 py-0.5 text-[9px] aegis-mono">↵</kbd>{' '}
+                <kbd className="rounded-full border border-foreground/15 bg-foreground/5 px-1.5 py-0.5 text-[9px] aegis-mono">
+                  ↵
+                </kbd>{' '}
                 to redact
               </span>
-              <span className="aegis-mono">
-                {strictness}
-              </span>
+              <span className="aegis-mono">{strictness}</span>
             </div>
 
-            <div>
-              <div className="flex items-center justify-between mb-2 border-t border-border pt-3">
+            <div className="mt-4">
+              <div className="flex items-center justify-between mb-2 pt-3 border-t border-foreground/10">
                 <span className="aegis-eyebrow text-muted-foreground">
                   Highlighted preview
                 </span>
@@ -325,7 +360,7 @@ export function AegisPlayground() {
                   </span>
                 )}
               </div>
-              <div className="rounded border border-border bg-background/60 p-3 text-[13px] leading-relaxed aegis-mono whitespace-pre-wrap break-words min-h-24 max-h-72 overflow-y-auto">
+              <div className="glass rounded-2xl p-3 text-[13px] leading-relaxed aegis-mono whitespace-pre-wrap break-words min-h-24 max-h-72 overflow-y-auto">
                 {result && result.detections.length > 0 ? (
                   <HighlightedText text={text} detections={result.detections} />
                 ) : (
@@ -341,7 +376,7 @@ export function AegisPlayground() {
             <Button
               onClick={onRedact}
               disabled={loading || !text.trim()}
-              className="mt-1 h-11 self-start active:scale-[0.98] group"
+              className="mt-4 h-11 self-start rounded-full active:scale-[0.98] group"
             >
               {loading ? (
                 <>
@@ -355,35 +390,39 @@ export function AegisPlayground() {
                 </>
               )}
             </Button>
-          </div>
+          </GlassPanel>
 
           {/* RIGHT: redacted output */}
-          <div className="bg-card flex flex-col gap-4 p-5 sm:p-6">
-            <div className="flex items-center justify-between border-b border-border pb-3">
+          <GlassPanel liquid glare className="rounded-3xl p-6">
+            <div className="flex items-center justify-between pb-3 border-b border-foreground/10">
               <span className="aegis-eyebrow text-muted-foreground">
                 Redacted output
               </span>
               <div className="flex items-center gap-1.5">
                 {result && Object.keys(result.tokenMap).length > 0 && (
-                  <span className="aegis-mono text-[10px] text-muted-foreground border border-border px-1.5 py-0.5 rounded">
+                  <span className="aegis-mono text-[10px] text-muted-foreground glass rounded-full px-2 py-0.5">
                     {Object.keys(result.tokenMap).length} tokens
                   </span>
                 )}
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="size-8"
+                  className="size-8 rounded-full hover:bg-foreground/10"
                   onClick={onCopy}
                   disabled={!result}
                   title="Copy redacted text"
                   aria-label="Copy redacted text"
                 >
-                  {copied ? <Check className="size-3.5 text-primary" /> : <Copy className="size-3.5" />}
+                  {copied ? (
+                    <Check className="size-3.5 text-primary" />
+                  ) : (
+                    <Copy className="size-3.5" />
+                  )}
                 </Button>
               </div>
             </div>
 
-            <div className="rounded border border-border bg-background/60 p-3 text-[13px] leading-relaxed aegis-mono whitespace-pre-wrap break-words min-h-44 max-h-72 overflow-y-auto">
+            <div className="glass rounded-2xl p-3 mt-4 text-[13px] leading-relaxed aegis-mono whitespace-pre-wrap break-words min-h-44 max-h-72 overflow-y-auto">
               {loading ? (
                 <div className="space-y-2">
                   <Skeleton className="h-3 w-3/4" />
@@ -396,7 +435,9 @@ export function AegisPlayground() {
               ) : (
                 <span className="text-muted-foreground">
                   Redacted output appears here. Tokens like{' '}
-                  <span className="aegis-token entity-chip entity-EMAIL">[AEGIS:EMAIL:A1B2]</span>{' '}
+                  <span className="aegis-token entity-chip entity-EMAIL">
+                    [AEGIS:EMAIL:A1B2]
+                  </span>{' '}
                   stand in for real values — they restore 1:1 on rehydration.
                 </span>
               )}
@@ -404,7 +445,7 @@ export function AegisPlayground() {
 
             {/* Detection chips */}
             {result && result.detections.length > 0 && (
-              <div>
+              <div className="mt-4">
                 <span className="aegis-eyebrow text-muted-foreground">
                   Detected entities
                 </span>
@@ -415,6 +456,7 @@ export function AegisPlayground() {
                       type={d.entityType}
                       value={d.value}
                       confidence={d.confidence}
+                      className="rounded-lg"
                     />
                   ))}
                 </div>
@@ -422,13 +464,13 @@ export function AegisPlayground() {
             )}
 
             {/* Rehydrate */}
-            <div className="mt-1 flex flex-wrap items-center gap-2 border-t border-border pt-4">
+            <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-foreground/10 pt-4">
               <Button
                 variant="secondary"
                 size="sm"
                 onClick={onRehydrate}
                 disabled={!result || rehydrating}
-                className="active:scale-[0.98]"
+                className="rounded-full active:scale-[0.98]"
               >
                 {rehydrating ? (
                   <Loader2 className="size-3.5 animate-spin" />
@@ -438,13 +480,13 @@ export function AegisPlayground() {
                 Rehydrate
               </Button>
               {roundTripOk === true && (
-                <span className="inline-flex items-center gap-1.5 rounded border border-primary/30 bg-primary/10 px-2 py-1 text-[11px] text-primary">
+                <span className="inline-flex items-center gap-1.5 rounded-full glass text-primary px-2.5 py-1 text-[11px] aegis-mono">
                   <ShieldCheck className="size-3" />
                   Round-trip ✓ verified
                 </span>
               )}
               {roundTripOk === false && (
-                <span className="inline-flex items-center gap-1.5 rounded border border-destructive/40 bg-destructive/10 px-2 py-1 text-[11px] text-destructive">
+                <span className="inline-flex items-center gap-1.5 rounded-full glass text-destructive px-2.5 py-1 text-[11px] aegis-mono">
                   <AlertTriangle className="size-3" />
                   Round-trip ✗ mismatch
                 </span>
@@ -452,17 +494,17 @@ export function AegisPlayground() {
             </div>
 
             {rehydrated !== null && (
-              <div>
+              <div className="mt-4">
                 <span className="aegis-eyebrow text-muted-foreground">
                   Rehydrated original
                 </span>
-                <div className="mt-2 rounded border border-border bg-background/60 p-3 text-[13px] leading-relaxed aegis-mono whitespace-pre-wrap break-words max-h-40 overflow-y-auto">
+                <div className="glass mt-2 rounded-2xl p-3 text-[13px] leading-relaxed aegis-mono whitespace-pre-wrap break-words max-h-40 overflow-y-auto">
                   {rehydrated}
                 </div>
               </div>
             )}
-          </div>
-        </div>
+          </GlassPanel>
+        </motion.div>
       </div>
     </section>
   );

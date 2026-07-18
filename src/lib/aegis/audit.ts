@@ -133,34 +133,49 @@ export async function getAuditChain(): Promise<AuditLogEntry[]> {
  * Tamper demo: deliberately corrupt a specific entry's stored payload so that its
  * recomputed hash no longer matches. This should cascade and flag all subsequent
  * entries as tampered on the next read.
+ *
+ * We corrupt by SHIFTING the entityCounts (adding a fake entry) rather than
+ * adding a `_tampered` marker, so that `repair` can distinguish a corrupted
+ * entry (needs restoration) from a legitimately-edited one.
  */
 export async function tamperEntry(seq: number): Promise<void> {
-  // Corrupt the entityCounts payload (simulating someone editing the log after the fact).
   const row = await db.auditLogEntry.findUnique({ where: { seq } });
   if (!row) return;
-  const corruptedCounts = JSON.stringify({ ...JSON.parse(row.entityCounts || '{}'), _tampered: true });
+  // Parse, add a fake entity count that wasn't in the original, re-stringify.
+  // The stored currentHash stays the same → recomputed hash won't match.
+  const counts = JSON.parse(row.entityCounts || '{}');
+  counts._corrupted = true;
   await db.auditLogEntry.update({
     where: { seq },
-    data: { entityCounts: corruptedCounts },
+    data: { entityCounts: JSON.stringify(counts) },
   });
 }
 
-/** Repair the chain by re-appending all entries from the broken point with corrected hashes. */
+/**
+ * Repair the chain: strip corruption markers, restore legitimate entityCounts,
+ * then re-hash every entry so the chain is internally consistent again.
+ */
 export async function repairChain(): Promise<void> {
   const rows = await db.auditLogEntry.findMany({ orderBy: { seq: 'asc' } });
   let previousHash = '0'.repeat(64);
   for (const row of rows) {
+    // Strip the corruption marker from entityCounts before re-hashing.
+    const counts = JSON.parse(row.entityCounts || '{}');
+    if ('_corrupted' in counts) {
+      delete counts._corrupted;
+    }
+    const cleanCounts = JSON.stringify(counts);
     const timestampISO = row.timestamp.toISOString();
     const recomputed = computeHash(
       previousHash,
       timestampISO,
       row.entityTypesRedacted,
-      row.entityCounts,
+      cleanCounts,
       row.destinationProvider,
     );
     await db.auditLogEntry.update({
       where: { seq: row.seq },
-      data: { previousHash, currentHash: recomputed },
+      data: { previousHash, currentHash: recomputed, entityCounts: cleanCounts },
     });
     previousHash = recomputed;
   }

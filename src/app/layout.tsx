@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, JetBrains_Mono, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import { SmoothScrollProvider } from "@/components/aegis/smooth-scroll-provider";
+import { AmbientBackground } from "@/components/aegis/ambient-background";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,30 +28,28 @@ const instrumentSerif = Instrument_Serif({
 export const metadata: Metadata = {
   title: "Aegis — Verify, don't trust.",
   description:
-    "A local-first redaction layer for AI. Strip PII before it leaves your device. Tamper-evident audit chain. Streaming-aware. $0 infra.",
+    "A local-first redaction layer for AI. Liquid-glass interface, streaming-aware redaction, tamper-evident audit chain. $0 infra.",
   keywords: [
     "Aegis",
     "AI redaction",
     "PII detection",
-    "data loss prevention",
-    "MCP",
-    "tamper-evident audit log",
+    "liquid glass",
+    "tamper-evident audit",
     "local-first",
-    "developer security",
     "LLM privacy",
   ],
   authors: [{ name: "Aegis" }],
   openGraph: {
     title: "Aegis — Verify, don't trust.",
     description:
-      "Local-first, provider-agnostic redaction layer with a tamper-evident hash-chained audit log. Zero infrastructure cost.",
+      "Local-first, provider-agnostic redaction layer with a tamper-evident hash-chained audit log.",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "Aegis — Verify, don't trust.",
     description:
-      "Strip sensitive data before it leaves your device. Cryptographically provable audit trail. $0 infra.",
+      "Strip sensitive data before it leaves your device. Cryptographically provable audit trail.",
   },
 };
 
@@ -63,8 +63,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${jetbrainsMono.variable} ${instrumentSerif.variable} antialiased bg-background text-foreground`}
       >
-        {children}
-        <Toaster richColors position="bottom-right" />
+        <SmoothScrollProvider>
+          <AmbientBackground />
+          {children}
+          <Toaster richColors position="bottom-right" />
+        </SmoothScrollProvider>
       </body>
     </html>
   );

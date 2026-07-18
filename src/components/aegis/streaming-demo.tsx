@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils';
 import { ENTITY_META, type EntityType } from '@/lib/aegis/types';
 import { SectionHeading } from './section-heading';
 import { EntityChip } from './entity-chip';
+import { GlassPanel } from './glass-panel';
 
 interface StreamChunkEvent {
   type: 'chunk';
@@ -30,7 +31,7 @@ type StreamEvent = StreamChunkEvent | StreamDoneEvent;
  * Streaming-aware redaction demo.
  *
  * Connects to `/api/stream` via EventSource and shows:
- *   - the redacted stream arriving live in a monospace panel
+ *   - the redacted stream arriving live in a monospace terminal panel
  *   - a "buffering" indicator whenever `buffered > 0`
  *   - a running count + chips of completed detections
  *   - the final token map size when the stream completes
@@ -135,24 +136,33 @@ export function AegisStreamingDemo() {
   const totalRedacted = completed.length;
 
   return (
-    <section id="streaming" className="scroll-mt-20 border-t border-border bg-card/20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-16 sm:py-24">
+    <section id="streaming" className="scroll-mt-20 py-20 sm:py-28">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <SectionHeading
           num="02"
           eyebrow="Streaming Demo"
           title={
             <>
               Redaction that keeps up <br className="hidden sm:block" />
-              <span className="italic text-muted-foreground">with the stream.</span>
+              <span className="italic text-muted-foreground">
+                with the <span className="aegis-text-gradient">stream.</span>
+              </span>
             </>
           }
           description="LLM responses arrive token-by-token. A PII entity like john@acme.com can split across chunk boundaries (john@ac | me.com). Aegis holds back a sliding window and redacts live as the stream flows — no broken tokens, no missed entities."
         />
 
-        <div className="mt-8 grid gap-px bg-border border border-border lg:grid-cols-[1fr_300px]">
+        <motion.div
+          initial={prefersReduced ? false : { opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
+          className="mt-10 grid gap-4 lg:grid-cols-[1fr_300px]"
+        >
           {/* Stream output panel — terminal feel */}
-          <div className="bg-card flex flex-col">
-            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border px-5 py-3">
+          <GlassPanel liquid glare className="rounded-3xl overflow-hidden flex flex-col">
+            {/* Header bar with traffic-light dots + URL + status badges */}
+            <div className="flex flex-wrap items-center justify-between gap-2 px-5 py-3 border-b border-foreground/10">
               <div className="flex items-center gap-2.5">
                 <div className="flex items-center gap-1.5">
                   <span className="size-2.5 rounded-full bg-destructive/60" />
@@ -163,13 +173,13 @@ export function AegisStreamingDemo() {
                   aegis://stream
                 </span>
                 {streaming && (
-                  <span className="inline-flex items-center gap-1.5 border border-primary/30 bg-primary/10 px-1.5 py-0.5 rounded text-[10px] text-primary aegis-mono">
+                  <span className="inline-flex items-center gap-1.5 glass text-primary rounded-full px-2 py-0.5 text-[10px] aegis-mono">
                     <span className="size-1.5 rounded-full bg-primary aegis-live-dot" />
                     LIVE
                   </span>
                 )}
                 {done && (
-                  <span className="inline-flex items-center gap-1 border border-primary/30 bg-primary/10 px-1.5 py-0.5 rounded text-[10px] text-primary aegis-mono">
+                  <span className="inline-flex items-center gap-1 glass text-primary rounded-full px-2 py-0.5 text-[10px] aegis-mono">
                     <CheckCircle2 className="size-3" />
                     COMPLETE
                   </span>
@@ -178,12 +188,22 @@ export function AegisStreamingDemo() {
 
               <div className="flex items-center gap-2">
                 {!streaming ? (
-                  <Button size="sm" onClick={start} disabled={streaming} className="h-9 active:scale-[0.98]">
+                  <Button
+                    size="sm"
+                    onClick={start}
+                    disabled={streaming}
+                    className="h-9 rounded-full active:scale-[0.98]"
+                  >
                     <Play className="size-3.5" />
                     {done ? 'Replay' : 'Start stream'}
                   </Button>
                 ) : (
-                  <Button size="sm" variant="destructive" onClick={stop} className="h-9 active:scale-[0.98]">
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    onClick={stop}
+                    className="h-9 rounded-full active:scale-[0.98]"
+                  >
                     <Square className="size-3.5" />
                     Stop
                   </Button>
@@ -192,24 +212,29 @@ export function AegisStreamingDemo() {
             </div>
 
             {/* Buffering indicator bar */}
-            <div className="flex items-center gap-3 border-b border-border px-5 py-2.5">
+            <div className="flex items-center gap-3 px-5 py-2.5 border-b border-foreground/10">
               <div
                 className={cn(
-                  'inline-flex items-center gap-2 border px-2 py-1 text-[11px] transition-colors rounded-sm',
+                  'inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-[11px] transition-colors',
                   buffered > 0
-                    ? 'border-amber-400/40 bg-amber-400/10 text-amber-300'
-                    : 'border-border bg-background/50 text-muted-foreground',
+                    ? 'glass text-amber-300'
+                    : 'glass text-muted-foreground',
                 )}
               >
                 <span
                   className={cn(
                     'size-1.5 rounded-full',
-                    buffered > 0 ? 'bg-amber-400 aegis-live-dot' : 'bg-muted-foreground/40',
+                    buffered > 0
+                      ? 'bg-amber-400 aegis-live-dot'
+                      : 'bg-muted-foreground/40',
                   )}
                 />
                 <span className="aegis-mono">
                   {buffered > 0 ? (
-                    <>buffering · <span className="font-semibold">{buffered}</span> held</>
+                    <>
+                      buffering · <span className="font-semibold">{buffered}</span>{' '}
+                      held
+                    </>
                   ) : (
                     'buffer empty'
                   )}
@@ -221,13 +246,17 @@ export function AegisStreamingDemo() {
             </div>
 
             {/* Output — terminal with scanlines */}
-            <div ref={scrollContainerRef} className="relative aegis-scanlines bg-background/80 p-5 min-h-72 max-h-[28rem] overflow-y-auto">
+            <div
+              ref={scrollContainerRef}
+              className="relative aegis-scanlines bg-background/40 p-5 min-h-72 max-h-[28rem] overflow-y-auto"
+            >
               <pre className="whitespace-pre-wrap break-words text-[13px] leading-relaxed aegis-mono text-foreground/90">
                 {output || (
                   <span className="text-muted-foreground">
-                    <span className="text-primary">$</span> press{" "}
-                    <span className="text-primary">“Start stream”</span> to simulate an
-                    LLM response arriving token-by-token. Watch PII get redacted live.
+                    <span className="text-primary">$</span> press{' '}
+                    <span className="text-primary">“Start stream”</span> to simulate
+                    an LLM response arriving token-by-token. Watch PII get redacted
+                    live.
                   </span>
                 )}
                 {streaming && (
@@ -238,14 +267,12 @@ export function AegisStreamingDemo() {
                 )}
               </pre>
             </div>
-          </div>
+          </GlassPanel>
 
           {/* Live side panel: counts + chips */}
-          <div className="bg-card flex flex-col gap-4 p-5">
-            <div className="flex items-center justify-between border-b border-border pb-3">
-              <span className="aegis-eyebrow text-muted-foreground">
-                Live stats
-              </span>
+          <GlassPanel className="rounded-3xl p-5 flex flex-col gap-4">
+            <div className="flex items-center justify-between pb-3 border-b border-foreground/10">
+              <span className="aegis-eyebrow text-muted-foreground">Live stats</span>
               {streaming ? (
                 <Loader2 className="size-3.5 animate-spin text-primary" />
               ) : done ? (
@@ -255,17 +282,15 @@ export function AegisStreamingDemo() {
               )}
             </div>
 
-            <div className="grid grid-cols-2 gap-px bg-border border border-border">
+            <div className="grid grid-cols-2 gap-2">
               <Stat label="Redacted" value={totalRedacted} accent />
               <Stat label="Tokens" value={tokenCount} />
               <Stat label="Buffered" value={buffered} />
               <Stat label="Chars" value={output.length} />
             </div>
 
-            <div className="border-t border-border pt-3">
-              <span className="aegis-eyebrow text-muted-foreground">
-                In flight
-              </span>
+            <div className="pt-3 border-t border-foreground/10">
+              <span className="aegis-eyebrow text-muted-foreground">In flight</span>
               <div className="mt-2 flex flex-wrap gap-1.5 min-h-10">
                 <AnimatePresence mode="popLayout">
                   {completed.length === 0 && !streaming && (
@@ -284,6 +309,7 @@ export function AegisStreamingDemo() {
                         type={d.entityType}
                         value={d.value}
                         confidence={d.confidence}
+                        className="rounded-lg"
                       />
                     </motion.div>
                   ))}
@@ -292,7 +318,7 @@ export function AegisStreamingDemo() {
             </div>
 
             {done && (
-              <div className="border border-primary/30 bg-primary/5 p-3 text-xs rounded-sm">
+              <div className="glass rounded-2xl p-3 text-xs">
                 <div className="flex items-center gap-1.5 text-primary font-medium">
                   <CheckCircle2 className="size-3.5" />
                   Stream complete
@@ -307,27 +333,27 @@ export function AegisStreamingDemo() {
               </div>
             )}
 
-            <div className="mt-auto text-[11px] text-muted-foreground leading-relaxed border-t border-border pt-3">
+            <div className="mt-auto text-[11px] text-muted-foreground leading-relaxed pt-3 border-t border-foreground/10">
               <span className="text-foreground/80 aegis-mono">{'// how it works'}</span>
               <br />
               Aegis runs detection on each chunk against the sliding window buffer.
-              Confirmed-safe text flushes immediately; ambiguous tails are held.
-              When an entity completes, a token replaces it in-flight.
+              Confirmed-safe text flushes immediately; ambiguous tails are held. When
+              an entity completes, a token replaces it in-flight.
             </div>
 
             {/* Legend */}
-            <div className="flex flex-wrap gap-1.5 border-t border-border pt-3">
+            <div className="flex flex-wrap gap-1.5 pt-3 border-t border-foreground/10">
               {Object.entries(ENTITY_META).slice(0, 5).map(([type, meta]) => (
                 <span
                   key={type}
-                  className={`entity-${type} entity-chip inline-flex items-center rounded px-1.5 py-0.5 text-[10px]`}
+                  className={`entity-${type} entity-chip inline-flex items-center rounded-lg px-1.5 py-0.5 text-[10px]`}
                 >
                   {meta.label}
                 </span>
               ))}
             </div>
-          </div>
-        </div>
+          </GlassPanel>
+        </motion.div>
       </div>
     </section>
   );
@@ -336,20 +362,22 @@ export function AegisStreamingDemo() {
 function Stat({
   label,
   value,
-  suffix = '',
   accent = false,
 }: {
   label: string;
   value: number;
-  suffix?: string;
   accent?: boolean;
 }) {
   return (
-    <div className="bg-card px-3 py-2.5">
+    <div className="glass rounded-xl p-3">
       <div className="aegis-eyebrow text-muted-foreground text-[9px]">{label}</div>
-      <div className={cn('text-xl font-semibold aegis-mono mt-0.5', accent && 'text-primary')}>
+      <div
+        className={cn(
+          'text-2xl font-semibold aegis-mono mt-1 leading-none',
+          accent && 'text-primary',
+        )}
+      >
         {value}
-        {suffix && <span className="text-[10px] text-muted-foreground font-normal ml-0.5">{suffix}</span>}
       </div>
     </div>
   );

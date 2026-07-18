@@ -9,12 +9,12 @@ import { AegisSiteFooter } from '@/components/aegis/site-footer';
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen flex-col overflow-x-hidden bg-background text-foreground">
+    <>
       <a href="#playground" className="aegis-skip-link">
         Skip to playground
       </a>
       <AegisNav />
-      <main className="flex-1">
+      <main className="relative min-h-screen">
         <AegisHero />
         <AegisPlayground />
         <AegisStreamingDemo />
@@ -23,6 +23,6 @@ export default function Home() {
         <AegisArchitecture />
       </main>
       <AegisSiteFooter />
-    </div>
+    </>
   );
 }

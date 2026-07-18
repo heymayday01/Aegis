@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { toast } from 'sonner';
 import { Plus, X, Loader2, Sliders, BookMarked } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -10,6 +11,7 @@ import { cn } from '@/lib/utils';
 import type { EntityType, Policy, Strictness } from '@/lib/aegis/types';
 import { ALL_ENTITY_TYPES, ENTITY_META } from '@/lib/aegis/types';
 import { SectionHeading } from './section-heading';
+import { GlassPanel } from './glass-panel';
 
 interface PolicyResponse {
   policy: Policy;
@@ -36,6 +38,7 @@ const STRICTNESS_META: Record<
 };
 
 export function AegisPolicyEditor() {
+  const prefersReduced = useReducedMotion();
   const [policy, setPolicy] = React.useState<Policy | null>(null);
   const [glossaryTerms, setGlossaryTerms] = React.useState<string[]>([]);
   const [loading, setLoading] = React.useState(true);
@@ -152,41 +155,52 @@ export function AegisPolicyEditor() {
   };
 
   return (
-    <section id="policy" className="scroll-mt-20 border-t border-border bg-card/20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-16 sm:py-24">
+    <section id="policy" className="scroll-mt-20 py-20 sm:py-28">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <SectionHeading
           num="04"
-          eyebrow="Policy Editor"
+          eyebrow="Policy"
           title={
             <>
               Policy <br className="hidden sm:block" />
-              <span className="italic text-muted-foreground">configuration.</span>
+              <span className="italic text-muted-foreground">
+                <span className="aegis-text-gradient">configuration.</span>
+              </span>
             </>
           }
           description="Changes here apply live to the playground and streaming demo. The active policy is persisted server-side and re-read on every detection call."
         />
 
         {loading || !policy ? (
-          <div className="mt-8 grid gap-px bg-border border border-border lg:grid-cols-2">
-            <div className="bg-card p-6 space-y-3">
-              <div className="h-5 w-1/3 bg-muted animate-pulse" />
-              <div className="h-10 w-full bg-muted animate-pulse" />
+          <div className="mt-10 grid gap-4 lg:grid-cols-2">
+            <div className="glass rounded-3xl p-6 space-y-3">
+              <div className="h-5 w-1/3 bg-foreground/10 animate-pulse rounded-full" />
+              <div className="h-10 w-full bg-foreground/5 animate-pulse rounded-2xl" />
             </div>
-            <div className="bg-card p-6 space-y-3">
-              <div className="h-5 w-1/3 bg-muted animate-pulse" />
+            <div className="glass rounded-3xl p-6 space-y-3">
+              <div className="h-5 w-1/3 bg-foreground/10 animate-pulse rounded-full" />
               <div className="grid grid-cols-2 gap-2">
                 {Array.from({ length: 8 }).map((_, i) => (
-                  <div key={i} className="h-12 bg-muted animate-pulse" />
+                  <div
+                    key={i}
+                    className="h-12 bg-foreground/5 animate-pulse rounded-xl"
+                  />
                 ))}
               </div>
             </div>
           </div>
         ) : (
-          <div className="mt-8 grid gap-px bg-border border border-border lg:grid-cols-2">
+          <motion.div
+            initial={prefersReduced ? false : { opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-80px' }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
+            className="mt-10 grid gap-4 lg:grid-cols-2"
+          >
             {/* Strictness + entity toggles — left panel */}
-            <div className="bg-card flex flex-col">
+            <GlassPanel className="rounded-3xl p-6 flex flex-col">
               {/* Strictness radio cards */}
-              <div className="border-b border-border p-5 sm:p-6">
+              <div className="pb-6 border-b border-foreground/10">
                 <div className="flex items-center gap-2 mb-4">
                   <Sliders className="size-4 text-primary" />
                   <h3 className="aegis-eyebrow text-muted-foreground">Strictness</h3>
@@ -201,22 +215,26 @@ export function AegisPolicyEditor() {
                         disabled={busy}
                         aria-pressed={selected}
                         className={cn(
-                          'flex items-start gap-3 border p-3 text-left transition-colors active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+                          'glass glass-glare flex items-start gap-3 rounded-2xl p-4 text-left transition-all active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
                           selected
-                            ? 'border-primary ring-1 ring-primary/30 bg-primary/5'
-                            : 'border-border bg-background/40 hover:border-foreground/20 hover:bg-accent/30',
+                            ? 'ring-2 ring-primary bg-primary/5'
+                            : 'hover:ring-1 hover:ring-foreground/15',
                         )}
                       >
                         <span
                           className={cn(
-                            'mt-0.5 grid size-4 place-items-center rounded-full border-2 shrink-0',
+                            'mt-0.5 grid size-5 place-items-center rounded-full border-2 shrink-0',
                             selected ? 'border-primary' : 'border-muted-foreground/40',
                           )}
                         >
-                          {selected && <span className="size-2 rounded-full bg-primary" />}
+                          {selected && (
+                            <span className="size-2.5 rounded-full bg-primary" />
+                          )}
                         </span>
                         <div className="min-w-0">
-                          <div className="text-sm font-medium">{STRICTNESS_META[s].label}</div>
+                          <div className="text-sm font-medium">
+                            {STRICTNESS_META[s].label}
+                          </div>
                           <div className="text-xs text-muted-foreground leading-relaxed">
                             {STRICTNESS_META[s].desc}
                           </div>
@@ -227,15 +245,15 @@ export function AegisPolicyEditor() {
                 </div>
               </div>
 
-              {/* Entity type toggles — gap-px grid */}
-              <div className="p-5 sm:p-6">
+              {/* Entity type toggles — glass cell grid */}
+              <div className="pt-6">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="aegis-eyebrow text-muted-foreground">Entity types</h3>
                   <span className="text-[11px] text-muted-foreground aegis-mono">
                     {policy.enabledEntityTypes.length}/{ALL_ENTITY_TYPES.length} on
                   </span>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-border border border-border">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {ALL_ENTITY_TYPES.map((type) => {
                     const meta = ENTITY_META[type];
                     const enabled = policy.enabledEntityTypes.includes(type);
@@ -243,7 +261,7 @@ export function AegisPolicyEditor() {
                       <div
                         key={type}
                         className={cn(
-                          'bg-card flex items-center justify-between gap-3 px-3 py-2.5 transition-colors',
+                          'glass rounded-xl p-3 flex items-center justify-between gap-3 transition-opacity',
                           !enabled && 'opacity-60',
                         )}
                       >
@@ -252,7 +270,9 @@ export function AegisPolicyEditor() {
                             className={`entity-${type} entity-dot inline-block size-2.5 rounded-full shrink-0`}
                           />
                           <div className="min-w-0">
-                            <div className="text-sm font-medium truncate">{meta.label}</div>
+                            <div className="text-sm font-medium truncate">
+                              {meta.label}
+                            </div>
                             <div className="text-[11px] text-muted-foreground truncate">
                               {meta.description}
                             </div>
@@ -269,19 +289,21 @@ export function AegisPolicyEditor() {
                   })}
                 </div>
               </div>
-            </div>
+            </GlassPanel>
 
             {/* Custom glossary — right panel */}
-            <div className="bg-card flex flex-col">
-              <div className="border-b border-border p-5 sm:p-6">
+            <GlassPanel className="rounded-3xl p-6 flex flex-col">
+              <div className="pb-6 border-b border-foreground/10">
                 <div className="flex items-center gap-2 mb-3">
                   <BookMarked className="size-4 text-primary" />
-                  <h3 className="aegis-eyebrow text-muted-foreground">Custom glossary</h3>
+                  <h3 className="aegis-eyebrow text-muted-foreground">
+                    Custom glossary
+                  </h3>
                 </div>
                 <p className="text-xs text-muted-foreground leading-relaxed">
                   Codenames, customer names, internal project labels. Matched
                   case-insensitively as whole words. Uses the{' '}
-                  <span className="entity-CUSTOM_GLOSSARY entity-chip px-1.5 py-0.5 text-[10px] aegis-mono">
+                  <span className="entity-CUSTOM_GLOSSARY entity-chip rounded-lg px-1.5 py-0.5 text-[10px] aegis-mono">
                     Glossary
                   </span>{' '}
                   colour everywhere.
@@ -299,23 +321,32 @@ export function AegisPolicyEditor() {
                     onChange={(e) => setNewTerm(e.target.value)}
                     placeholder="e.g. Project Phoenix, Acme Corp, Codename Atlas"
                     disabled={busy}
-                    className="h-9"
+                    className="h-9 rounded-full"
                   />
-                  <Button type="submit" size="sm" disabled={busy || !newTerm.trim()} className="h-9">
-                    {busy ? <Loader2 className="size-3.5 animate-spin" /> : <Plus className="size-3.5" />}
+                  <Button
+                    type="submit"
+                    size="sm"
+                    disabled={busy || !newTerm.trim()}
+                    className="h-9 rounded-full active:scale-[0.98]"
+                  >
+                    {busy ? (
+                      <Loader2 className="size-3.5 animate-spin" />
+                    ) : (
+                      <Plus className="size-3.5" />
+                    )}
                     Add
                   </Button>
                 </form>
               </div>
 
-              <div className="p-5 sm:p-6 flex-1 flex flex-col">
+              <div className="pt-6 flex-1 flex flex-col">
                 <div className="flex items-center justify-between mb-2">
                   <span className="aegis-eyebrow text-muted-foreground">
                     Current terms ({glossaryTerms.length})
                   </span>
                 </div>
                 {glossaryTerms.length === 0 ? (
-                  <div className="border border-dashed border-border p-4 text-center text-xs text-muted-foreground">
+                  <div className="glass rounded-2xl p-4 text-center text-xs text-muted-foreground">
                     No glossary terms yet. Add one above.
                   </div>
                 ) : (
@@ -323,14 +354,14 @@ export function AegisPolicyEditor() {
                     {glossaryTerms.map((term) => (
                       <span
                         key={term}
-                        className="entity-CUSTOM_GLOSSARY entity-chip inline-flex items-center gap-1.5 px-2 py-1 text-xs aegis-mono"
+                        className="entity-CUSTOM_GLOSSARY entity-chip inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs aegis-mono"
                       >
                         {term}
                         <button
                           onClick={() => removeTerm(term)}
                           disabled={busy}
                           aria-label={`Remove ${term}`}
-                          className="grid size-5 place-items-center hover:bg-destructive/20 hover:text-destructive transition-colors active:scale-[0.9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                          className="grid size-5 place-items-center rounded-full hover:bg-destructive/20 hover:text-destructive transition-colors active:scale-[0.9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                         >
                           <X className="size-3" />
                         </button>
@@ -340,16 +371,16 @@ export function AegisPolicyEditor() {
                 )}
 
                 {/* // live — comment-style note, mono */}
-                <div className="mt-auto pt-4 border-t border-border text-[11px] text-muted-foreground leading-relaxed">
+                <div className="mt-auto pt-4 border-t border-foreground/10 text-[11px] text-muted-foreground leading-relaxed">
                   <span className="text-foreground/80 aegis-mono">{'// live'}</span>
                   <br />
-                  Changes apply immediately to the playground above and to streaming
-                  detection. The server stores one active policy; future org-scoping is
-                  documented in the architecture section.
+                  Changes apply immediately to the playground above and to
+                  streaming detection. The server stores one active policy;
+                  future org-scoping is documented in the architecture section.
                 </div>
               </div>
-            </div>
-          </div>
+            </GlassPanel>
+          </motion.div>
         )}
       </div>
     </section>

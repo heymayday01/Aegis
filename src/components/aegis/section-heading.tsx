@@ -1,11 +1,18 @@
 'use client';
 
 import * as React from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 /**
- * SectionHeading — editorial magazine style.
+ * SectionHeading — editorial magazine style, now with a liquid-glass reveal.
+ *
  * A numbered eyebrow ("01 / Playground") + serif title + muted description.
+ * The whole block animates in once on scroll-into-view (opacity 0→1, y 20→0),
+ * respecting prefers-reduced-motion.
+ *
+ * The title can contain `<span className="aegis-text-gradient">accent</span>`
+ * for one gradient word per section.
  */
 export function SectionHeading({
   num,
@@ -22,8 +29,13 @@ export function SectionHeading({
   className?: string;
   align?: 'left' | 'center';
 }) {
+  const prefersReduced = useReducedMotion();
   return (
-    <div
+    <motion.div
+      initial={prefersReduced ? false : { opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-80px' }}
+      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
       className={cn(
         'flex flex-col gap-3',
         align === 'center' && 'items-center text-center',
@@ -46,6 +58,6 @@ export function SectionHeading({
           {description}
         </p>
       )}
-    </div>
+    </motion.div>
   );
 }

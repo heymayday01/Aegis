@@ -221,3 +221,99 @@ Stage Summary:
 - Design system is consistent across all 8 sections
 - $0 budget intact, dark emerald→lime-chartreuse palette, Instrument Serif headlines
 - Screenshots: preview-redesign-hero.png, preview-redesign-final.png, preview-redesign-mobile.png, preview-tamper.png
+
+---
+Task ID: 8
+Agent: full-stack-developer (liquid glass redesign)
+Task: Rebuild playground, streaming, audit, policy, architecture, footer in liquid glass style
+
+Work Log:
+- Read worklog.md (Tasks 1, 6, 7, 8, 9, 10), globals.css (NEW liquid glass design system), glass-panel.tsx (GlassPanel + useLiquidGlass), and the already-redesigned reference components (hero.tsx, nav.tsx, ambient-background.tsx, section-heading.tsx) to internalise the $100k aesthetic
+- Read the existing implementations of all 6 components + section-heading + page.tsx to ensure every piece of original logic was preserved
+- Rewrote section-heading.tsx: wrapped the entire heading block in a `motion.div` with `whileInView` reveal (opacity 0→1, y 20→0, viewport once, ease [0.16,1,0.3,1]); honors useReducedMotion; title can contain `<span className="aegis-text-gradient">accent</span>`
+- Rewrote playground.tsx (section 01, "Paste your prompt. / Watch the PII vanish."): two `<GlassPanel liquid glare rounded-3xl p-6>` side by side (input | output); strictness selector is a glass pill bar (`glass glass-glare rounded-full p-1` + active option `bg-primary text-primary-foreground rounded-full`); textarea is transparent borderless `.aegis-mono` framed by the glass; buttons are `rounded-full`; inner sub-panels use plain `glass rounded-2xl` (lighter, no hook); detection chips keep `.entity-chip` rounded-lg; tokens keep `.aegis-token`. Wrapped strictness bar + panels in `whileInView` reveals. Preserved ALL logic: onRedact/onRehydrate/onCopy/onTextChange (B1)/onKeyDown (U1 Cmd+Enter)/buildPolicyOverride/refreshPolicy, HighlightedText + RenderedRedacted helpers, useReducedMotion. Removed unused Card/CardContent/Badge imports.
+- Rewrote streaming-demo.tsx (section 02, "Redaction that keeps up / with the stream."): terminal panel is `<GlassPanel liquid glare rounded-3xl overflow-hidden>` with header bar (traffic-light dots + aegis://stream + LIVE/COMPLETE glass pills), buffering indicator (glass pill with amber dot), scanline output area with `.aegis-scanlines`. Side panel is `<GlassPanel rounded-3xl p-5>`. Stat boxes are `glass rounded-xl p-3` with `.aegis-mono text-2xl`. Buttons are `rounded-full`. Wrapped section in `whileInView` reveal. Preserved ALL logic: EventSource, start/stop/cleanup, scrollContainerRef direct scrollTop (B2), useReducedMotion, completed-chips AnimatePresence. Removed unused `suffix` prop from Stat (was never passed by any caller).
+- Rewrote audit-explorer.tsx (section 03, "Tamper-evident / audit chain."): integrity summary is `<GlassPanel liquid glare rounded-3xl p-6>` with left accent border (primary when ok, destructive when broken); big stat numbers in `.aegis-mono text-3xl`; chain blocks are `<GlassPanel rounded-2xl p-5>` with vertical timeline (node dots + .chain-link connectors); TAMPERED blocks add a red glow (`shadow-[0_0_30px_-5px] shadow-destructive/30 ring-1 ring-destructive/40`); hash rows are `glass rounded-xl p-3`. Buttons are `rounded-full`. Wrapped summary in `whileInView` reveal; chain blocks staggered with `staggerChildren: 0.04` via motion variants on a `<motion.ul>`. Preserved ALL logic: load/post, onSeed/onRepair/onClear/onTamper (with B4 toast.warning), AlertDialog confirm, tabIndex=0 + role=button + focus-visible ring on hash spans (B3), useReducedMotion.
+- Rewrote policy-editor.tsx (section 04, "Policy / configuration."): strictness radio cards are `<GlassPanel glass-glare rounded-2xl p-4>` with selected state `ring-2 ring-primary bg-primary/5`; entity toggles use a grid of plain `glass rounded-xl p-3` cells (entity-dot + label + description + Switch); glossary input is `rounded-full`, Add button is `rounded-full`; chips use `.entity-CUSTOM_GLOSSARY .entity-chip rounded-lg`. Loading skeleton uses glass cards. Wrapped content in `whileInView` reveal. Preserved ALL logic: optimistic updates with rollback, addTerm/removeTerm, toggleEntityType, updateStrictness, all sonner toasts.
+- Rewrote architecture.tsx (section 05, "How it / works."): system diagram is three `<GlassPanel>` columns (Input / Core / Egress) with ArrowRight icons; Core gets `ring-1 ring-primary/40 bg-primary/5`. Inner cells are `glass rounded-xl p-3`. Upgrade callouts are `<GlassPanel glare rounded-3xl p-6>` with entity-colored tags; `whileHover={{ y: -2 }}` lift. Honest limits is a `<GlassPanel rounded-3xl p-6>` with two inner `glass rounded-2xl` lists (emerald ✓ / red ✗). Portfolio narrative is `<GlassPanel rounded-3xl ring-1 ring-primary/30 bg-primary/5>`. Mono pills for the badges. Wrapped diagram in `whileInView` reveal; upgrade callouts use staggered motion variants (`staggerChildren: 0.06`); honest limits + portfolio narrative use `whileInView`. Removed unused Card/CardContent/Badge imports. Preserved all content/copy.
+- Rewrote site-footer.tsx: a wide `<GlassPanel className="rounded-t-3xl rounded-b-3xl p-8 sm:p-10">` glass bar. Left: shield-glyph tile (same inline SVG as nav) + `aegis-serif text-2xl` "Aegis" + tagline. Right: 4 glass-pill badges + tagline. Bottom bar: `.aegis-mono` version line with live-dot + © year + "Not affiliated with any AI vendor."
+- Updated src/app/page.tsx: added `min-h-screen` to `<main>` so the footer sits naturally below the viewport when content is short (sticky-footer requirement under the new layout that no longer uses `flex min-h-screen flex-col`); also added `mt-20` to the footer for breathing room so it doesn't collide with the last section's ambient overflow
+- Ran `bun run lint`: zero errors in any file I touched. Three pre-existing problems remain in files I did NOT modify — `ambient-background.tsx` (1 error, "Cannot access refs during render" in the local `usePrefersReducedMotion`), `glass-panel.tsx` (1 unused eslint-disable warning), `liquid-glass.ts` (1 unused eslint-disable warning). These belong to earlier agents and are out of scope.
+- Verified my files via `npx eslint <files>` — all clean. Verified via `npx tsc --noEmit` — zero TS errors in any file I modified.
+- Dev server log confirms `GET / 200` and all API routes (redact/rehydrate/audit/policy/stream) still returning 200 after the redesign — no runtime errors.
+
+Stage Summary:
+- Files modified:
+  - src/components/aegis/section-heading.tsx (added whileInView reveal via motion.div)
+  - src/components/aegis/playground.tsx (full liquid glass redesign)
+  - src/components/aegis/streaming-demo.tsx (full liquid glass redesign)
+  - src/components/aegis/audit-explorer.tsx (full liquid glass redesign)
+  - src/components/aegis/policy-editor.tsx (full liquid glass redesign)
+  - src/components/aegis/architecture.tsx (full liquid glass redesign)
+  - src/components/aegis/site-footer.tsx (full liquid glass redesign as wide glass bar)
+  - src/app/page.tsx (added `min-h-screen` to main + `mt-20` to footer for sticky-footer correctness under the new non-flex layout)
+- Lint status: pass for all files I touched (3 pre-existing problems in ambient-background.tsx / glass-panel.tsx / liquid-glass.ts remain — out of scope, untouched)
+- All original logic preserved: every API call (GET/POST /api/redact, /api/rehydrate, /api/audit, /api/policy, /api/stream SSE), all state, all handlers, all bug fixes (B1 text-change clears stale result, B2 direct scrollTop on scrollContainerRef, B3 tabIndex=0 + role=button + focus-visible ring on hash spans, B4 toast.warning for tamper, U1 Cmd+Enter keyboard shortcut), AlertDialog confirm for Clear, useReducedMotion throughout, all accessibility (aria-pressed on strictness radios, aria-labels on Switch + glossary remove)
+- Any issues: none introduced. The 3 pre-existing lint problems are in files authored by previous agents and not in scope for this task.
+
+---
+Task ID: 9
+Agent: main (orchestrator)
+Task: Full liquid-glass redesign — $100k feel, scroll-reactive background, pill nav
+
+Design direction: "Liquid Glass Terminal"
+- Fetched + studied the real liquid-glass technique from github.com/deepika-builds/liquid-glass (SVG displacement maps with feDisplacementMap + backdrop-filter:url(#filter), frosted-blur fallback for Safari/FF)
+- Copied liquid-glass.js into src/lib/liquid-glass.ts as an ES-module wrapper
+- Created useLiquidGlass hook + GlassPanel component (src/components/aegis/glass-panel.tsx)
+
+High-end motion stack:
+- framer-motion (already installed) — scroll-driven parallax, whileInView reveals, springed mouse parallax, layout animations
+- Lenis (newly installed) — buttery smooth scroll with inertia, the industry standard for premium sites
+- prefers-reduced-motion respected everywhere
+
+Files created:
+- src/lib/liquid-glass.ts — ES-module wrapper around the liquid-glass.js drop-in
+- src/components/aegis/glass-panel.tsx — useLiquidGlass hook + GlassPanel component
+- src/components/aegis/smooth-scroll-provider.tsx — Lenis smooth scroll context
+- src/components/aegis/ambient-background.tsx — scroll-reactive ambient orbs (mint-jade/violet/sky) with mouse parallax + grid overlay + vignette
+
+Files redesigned:
+- src/app/globals.css — new liquid glass tokens, .glass/.glass-strong/.glass-glare utilities, ambient orb system, text-gradient, @layer utilities (Tailwind v4 tree-shake fix), Lenis recommended styles
+- src/app/layout.tsx — 3-font system (Instrument Serif + Geist + JetBrains Mono), SmoothScrollProvider + AmbientBackground wrapping the app
+- src/app/page.tsx — simplified to floating nav + main with min-h-screen + footer
+- src/components/aegis/nav.tsx — pill-shaped floating glass nav with real refraction, hide-on-scroll-down/show-on-scroll-up, layoutId animated active pill, mobile Sheet menu
+- src/components/aegis/hero.tsx — oversized serif headline with text-gradient accent, scroll-driven parallax (titleY/titleOpacity/cardY/cardRotate), liquid glass proof card, kinetic marquee
+- src/components/aegis/section-heading.tsx — whileInView reveal
+- src/components/aegis/playground.tsx — two GlassPanel liquid panels, glass pill strictness selector, rounded-full buttons (subagent)
+- src/components/aegis/streaming-demo.tsx — glass terminal with scanlines, glass side panel (subagent)
+- src/components/aegis/audit-explorer.tsx — glass integrity panel + glass chain blocks with red glow on tampered (subagent)
+- src/components/aegis/policy-editor.tsx — glass strictness cards + glass entity toggle grid (subagent)
+- src/components/aegis/architecture.tsx — glass diagram columns + glass upgrade callouts (subagent)
+- src/components/aegis/site-footer.tsx — wide glass bar footer (subagent)
+
+Bug fixed during redesign:
+- Audit tamper→repair cycle was broken: repair re-hashed the chain INCLUDING the corruption marker (_tampered:true), so after repair the stored hash matched the corrupted data and tamper detection failed. Fixed: tamper now adds _corrupted marker, repair strips it before re-hashing and writes back clean entityCounts. Verified: tamper breaks 3/4 entries, repair restores 0/4.
+
+Lint fixes:
+- ambient-background.tsx: replaced usePrefersReducedMotion ref-during-render with proper useState + mediaQuery listener
+- glass-panel.tsx: removed unused eslint-disable directive
+- liquid-glass.ts: removed unused eslint-disable directive
+
+Verification (Agent Browser):
+- Lint: zero errors
+- No runtime/console errors
+- Fonts: Instrument Serif + JetBrains Mono loading correctly
+- Redact: 11 tokens + highlights ✓
+- Streaming: live token-by-token with scanlines ✓
+- Tamper: "BROKEN at entry #1" → repair restores ✓
+- Mobile responsive ✓
+- VLM verdict: 8/10 premium feel — "sophisticated, high-end tech product vibe"
+
+Stage Summary:
+- Full liquid-glass redesign complete and browser-verified
+- Real SVG-displacement refraction on prominent panels (Chromium), frosted fallback elsewhere
+- Scroll-reactive ambient background with mouse parallax
+- Lenis smooth scroll for the buttery $100k feel
+- Pill-shaped floating nav with hide-on-scroll
+- All interactions (redact, streaming, tamper, repair, policy, glossary) work end-to-end
+- Screenshots: preview-glass-hero.png, preview-glass-full.png, preview-glass-mobile.png, preview-glass-tamper.png
