@@ -26,8 +26,8 @@ export function AegisHero() {
   const cardY = useTransform(scrollYProgress, [0, 1], [0, -50]);
   const cardOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
   const cardRotate = useTransform(scrollYProgress, [0, 1], [0, -3]);
-  // Dot-matrix fades from 0.15 (subtle) to 0.03 (barely visible) on scroll.
-  const dotOpacity = useTransform(scrollYProgress, [0, 0.5], [0.15, 0.03]);
+  // Dot-matrix fades from 0.25 (visible texture) to 0.05 (barely visible) on scroll.
+  const dotOpacity = useTransform(scrollYProgress, [0, 0.5], [0.25, 0.05]);
 
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
@@ -46,7 +46,7 @@ export function AegisHero() {
       <motion.div
         className="absolute inset-0 pointer-events-none"
         aria-hidden
-        style={prefersReduced ? { opacity: 0.15 } : { opacity: dotOpacity }}
+        style={prefersReduced ? { opacity: 0.25 } : { opacity: dotOpacity }}
       >
         <DotMatrixBackground
           frequency={2}
@@ -58,10 +58,10 @@ export function AegisHero() {
           bgColor="transparent"
         />
       </motion.div>
-      {/* Scrim — uniform dark overlay for text legibility, plus radial vignette for depth.
-          The uniform layer ensures the dot-matrix never competes with text. */}
+      {/* Scrim — lighter uniform overlay + radial vignette. The uniform layer
+          softens the dots without killing them; the vignette adds depth. */}
       <div
-        className="absolute inset-0 bg-background/65 pointer-events-none"
+        className="absolute inset-0 bg-background/40 pointer-events-none"
         aria-hidden
       />
       <div
@@ -69,7 +69,7 @@ export function AegisHero() {
         aria-hidden
         style={{
           background:
-            'radial-gradient(80% 60% at 40% 40%, transparent 0%, color-mix(in oklch, var(--background) 50%, transparent) 100%)',
+            'radial-gradient(70% 50% at 35% 35%, transparent 0%, color-mix(in oklch, var(--background) 45%, transparent) 100%)',
         }}
       />
 
@@ -100,7 +100,7 @@ export function AegisHero() {
             </motion.div>
 
             {/* Headline — refined hierarchy: first line muted, second line bold + gradient */}
-            <h1 className="aegis-serif text-[2.75rem] sm:text-6xl lg:text-7xl xl:text-[5.5rem] leading-[0.95] tracking-tight">
+            <h1 className="aegis-serif text-[2.25rem] sm:text-5xl lg:text-7xl xl:text-[5.5rem] leading-[0.98] tracking-tight">
               <motion.span
                 initial={prefersReduced ? false : { opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
