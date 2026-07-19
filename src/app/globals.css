@@ -180,6 +180,12 @@
     color: var(--muted-foreground);
     letter-spacing: 0.1em;
   }
+  /* Display font — Space Grotesk for headlines. Trending, geometric, premium. */
+  .aegis-display {
+    font-family: "Space Grotesk", "Geist", system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+  }
 
   /* ---- Liquid Glass system ----
      The .glass class is the material; liquidGlass() from src/lib/liquid-glass.ts
