@@ -3,8 +3,9 @@
 import * as React from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { toast } from 'sonner';
-import { Play, Square, Loader2, CheckCircle2, Gauge } from 'lucide-react';
+import { Play, Square, Loader2, CheckCircle2, Gauge, Sparkles, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { ENTITY_META, type EntityType } from '@/lib/aegis/types';
 import { SectionHeading } from './section-heading';
@@ -24,21 +25,40 @@ interface StreamChunkEvent {
 }
 interface StreamDoneEvent {
   type: 'done';
-  tokenMap: Record<string, string>;
+  tokenCount?: number;
+  tokenMap?: Record<string, string>;
+  source?: string;
+  redactedPrompt?: string;
 }
-type StreamEvent = StreamChunkEvent | StreamDoneEvent;
+interface StreamStatusEvent {
+  type: 'status';
+  message: string;
+}
+interface StreamErrorEvent {
+  type: 'error';
+  message: string;
+}
+type StreamEvent = StreamChunkEvent | StreamDoneEvent | StreamStatusEvent | StreamErrorEvent;
+
+type Mode = 'demo' | 'live';
+
+const SAMPLE_PROMPT = 'Tell me about the new customer from Acme Corp. Their email is jane.doe@example.com and their API key is sk_live_51HqXyZabcDEF1234567890abcd.';
 
 /**
  * Streaming-aware redaction demo.
  *
- * Connects to `/api/stream` via EventSource and shows:
- *   - the redacted stream arriving live in a monospace terminal panel
- *   - a "buffering" indicator whenever `buffered > 0`
- *   - a running count + chips of completed detections
- *   - the final token map size when the stream completes
+ * Two modes:
+ *   - "Demo" — simulated stream via GET /api/stream (always works)
+ *   - "Live LLM" — real z-ai LLM via POST /api/stream-llm (redacts prompt,
+ *     sends to LLM, redacts the response stream)
+ *
+ * Shows the redacted stream arriving live, a buffering indicator, and
+ * completed detection chips.
  */
 export function AegisStreamingDemo() {
   const prefersReduced = useReducedMotion();
+  const [mode, setMode] = React.useState<Mode>('demo');
+  const [prompt, setPrompt] = React.useState(SAMPLE_PROMPT);
   const [streaming, setStreaming] = React.useState(false);
   const [output, setOutput] = React.useState('');
   const [buffered, setBuffered] = React.useState(0);
@@ -47,91 +67,141 @@ export function AegisStreamingDemo() {
   >([]);
   const [done, setDone] = React.useState(false);
   const [tokenCount, setTokenCount] = React.useState(0);
+  const [source, setSource] = React.useState<string>('');
+  const [redactedPrompt, setRedactedPrompt] = React.useState<string>('');
 
-  const sourceRef = React.useRef<EventSource | null>(null);
+  const abortRef = React.useRef<AbortController | null>(null);
+  const eventSourceRef = React.useRef<EventSource | null>(null);
   const scrollContainerRef = React.useRef<HTMLDivElement | null>(null);
 
-  // B2 fix: auto-scroll the container directly during streaming.
-  // Using scrollIntoView({behavior:'smooth'}) on every chunk (~35ms) caused
-  // janky, laggy scrolling because smooth-scroll animations queue up.
-  // Instead we set scrollTop directly — instant, no animation queue.
   React.useEffect(() => {
     const el = scrollContainerRef.current;
-    if (el) {
-      el.scrollTop = el.scrollHeight;
-    }
+    if (el) el.scrollTop = el.scrollHeight;
   }, [output, streaming]);
 
   const cleanup = React.useCallback(() => {
-    if (sourceRef.current) {
-      sourceRef.current.close();
-      sourceRef.current = null;
+    abortRef.current?.abort();
+    abortRef.current = null;
+    if (eventSourceRef.current) {
+      eventSourceRef.current.close();
+      eventSourceRef.current = null;
     }
     setStreaming(false);
   }, []);
 
   React.useEffect(() => () => cleanup(), [cleanup]);
 
-  const start = () => {
-    if (streaming) return;
+  const handleEvent = (data: StreamEvent) => {
+    if (data.type === 'status') {
+      toast.info(data.message);
+    } else if (data.type === 'chunk') {
+      if (data.output) setOutput((prev) => prev + data.output);
+      setBuffered(data.buffered ?? 0);
+      if (data.completedDetections?.length) {
+        setCompleted((prev) => [...prev, ...data.completedDetections]);
+      }
+    } else if (data.type === 'done') {
+      setTokenCount(data.tokenCount ?? Object.keys(data.tokenMap ?? {}).length);
+      setBuffered(0);
+      setDone(true);
+      setStreaming(false);
+      if (data.source) setSource(data.source);
+      if (data.redactedPrompt) setRedactedPrompt(data.redactedPrompt);
+      toast.success('Stream complete', {
+        description: `${data.tokenCount ?? Object.keys(data.tokenMap ?? {}).length} entities redacted in flight.`,
+      });
+    } else if (data.type === 'error') {
+      toast.error('Stream error', { description: data.message });
+      setStreaming(false);
+    }
+  };
+
+  const startDemo = () => {
     setOutput('');
     setBuffered(0);
     setCompleted([]);
     setDone(false);
     setTokenCount(0);
+    setSource('');
+    setRedactedPrompt('');
     setStreaming(true);
 
-    const source = new EventSource('/api/stream');
-    sourceRef.current = source;
-    // Local flag so the error handler doesn't read stale React state.
-    let isDone = false;
+    const es = new EventSource('/api/stream');
+    eventSourceRef.current = es;
 
-    source.onmessage = (ev) => {
-      let data: StreamEvent;
+    es.onmessage = (ev) => {
       try {
-        data = JSON.parse(ev.data) as StreamEvent;
+        handleEvent(JSON.parse(ev.data) as StreamEvent);
       } catch {
-        return;
-      }
-      if (data.type === 'chunk') {
-        if (data.output) {
-          setOutput((prev) => prev + data.output);
-        }
-        setBuffered(data.buffered ?? 0);
-        if (data.completedDetections?.length) {
-          setCompleted((prev) => [...prev, ...data.completedDetections]);
-        }
-      } else if (data.type === 'done') {
-        isDone = true;
-        setTokenCount(Object.keys(data.tokenMap ?? {}).length);
-        setBuffered(0);
-        setDone(true);
-        setStreaming(false);
-        source.close();
-        sourceRef.current = null;
-        toast.success('Stream complete', {
-          description: `${Object.keys(data.tokenMap ?? {}).length} entities redacted in flight.`,
-        });
+        // skip
       }
     };
-
-    source.onerror = () => {
-      // EventSource fires `error` after a clean server-side close (we already
-      // handled `done`); only treat as fatal if we never saw `done` and the
-      // source is genuinely closed.
-      if (isDone) return;
-      if (source.readyState === EventSource.CLOSED) {
+    es.onerror = () => {
+      if (es.readyState === EventSource.CLOSED) {
         setStreaming(false);
-        source.close();
-        sourceRef.current = null;
-        toast.error('Stream closed unexpectedly');
       }
     };
   };
 
+  const startLive = async () => {
+    setOutput('');
+    setBuffered(0);
+    setCompleted([]);
+    setDone(false);
+    setTokenCount(0);
+    setSource('');
+    setRedactedPrompt('');
+    setStreaming(true);
+
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    try {
+      const res = await fetch('/api/stream-llm', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt }),
+        signal: controller.signal,
+      });
+      if (!res.ok || !res.body) {
+        throw new Error(`HTTP ${res.status}`);
+      }
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+      while (true) {
+        const { done: readerDone, value } = await reader.read();
+        if (readerDone) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n\n');
+        buffer = lines.pop() ?? '';
+        for (const block of lines) {
+          const line = block.trim();
+          if (!line.startsWith('data: ')) continue;
+          try {
+            handleEvent(JSON.parse(line.slice(6)) as StreamEvent);
+          } catch {
+            // partial
+          }
+        }
+      }
+    } catch (err) {
+      if ((err as Error).name !== 'AbortError') {
+        toast.error('Live LLM failed', { description: (err as Error).message });
+      }
+      setStreaming(false);
+    }
+  };
+
+  const start = () => {
+    if (streaming) return;
+    if (mode === 'live') startLive();
+    else startDemo();
+  };
+
   const stop = () => {
     cleanup();
-    toast('Stream stopped', { description: 'EventSource closed by user.' });
+    toast('Stream stopped');
   };
 
   const totalRedacted = completed.length;
@@ -145,21 +215,16 @@ export function AegisStreamingDemo() {
           title={
             <>
               Redaction that keeps up <br className="hidden sm:block" />
-              <span className="italic text-muted-foreground">
-                with the <span className="aegis-text-gradient">stream.</span>
-              </span>
+              <span className="italic text-muted-foreground">with the stream.</span>
             </>
           }
-          description="LLM responses arrive token-by-token. A PII entity like john@acme.com can split across chunk boundaries (john@ac | me.com). Aegis holds back a sliding window and redacts live as the stream flows — no broken tokens, no missed entities."
+          description="LLM responses arrive token-by-token. Aegis holds back a sliding window and redacts live as the stream flows. Try the live LLM mode — your prompt is redacted before it reaches the model, and the response is redacted as it arrives."
         />
 
-        <ScrollReveal
-          delay={0.1}
-          className="mt-6 sm:mt-10 grid gap-4 lg:grid-cols-[1fr_300px]"
-        >
+        <ScrollReveal delay={0.1} className="mt-6 sm:mt-10 grid gap-4 lg:grid-cols-[1fr_300px]">
           {/* Stream output panel — terminal feel */}
           <GlassPanel className="rounded-3xl overflow-hidden flex flex-col">
-            {/* Header bar with traffic-light dots + URL + status badges */}
+            {/* Header bar with mode toggle */}
             <div className="flex flex-wrap items-center justify-between gap-2 px-5 py-3 border-b border-foreground/10">
               <div className="flex items-center gap-2.5">
                 <div className="flex items-center gap-1.5">
@@ -171,67 +236,83 @@ export function AegisStreamingDemo() {
                   aegis://stream
                 </span>
                 {streaming && (
-                  <span className="inline-flex items-center gap-1.5 glass text-primary rounded-full px-2 py-0.5 text-[10px] aegis-mono">
+                  <span className="inline-flex items-center gap-1.5 border border-primary/30 bg-primary/10 px-1.5 py-0.5 rounded text-[10px] text-primary aegis-mono">
                     <span className="size-1.5 rounded-full bg-primary aegis-live-dot" />
                     LIVE
                   </span>
                 )}
                 {done && (
-                  <span className="inline-flex items-center gap-1 glass text-primary rounded-full px-2 py-0.5 text-[10px] aegis-mono">
+                  <span className="inline-flex items-center gap-1 border border-primary/30 bg-primary/10 px-1.5 py-0.5 rounded text-[10px] text-primary aegis-mono">
                     <CheckCircle2 className="size-3" />
                     COMPLETE
                   </span>
                 )}
               </div>
 
-              <div className="flex items-center gap-2">
-                {!streaming ? (
-                  <Button
-                    variant="glass-primary"
-                    size="md-pill"
-                    onClick={start}
-                    disabled={streaming}
-                  >
-                    <Play className="size-3.5" />
-                    {done ? 'Replay' : 'Start stream'}
-                  </Button>
-                ) : (
-                  <Button
-                    variant="destructive"
-                    size="md-pill"
-                    onClick={stop}
-                  >
-                    <Square className="size-3.5" />
-                    Stop
-                  </Button>
-                )}
+              {/* Mode toggle */}
+              <div className="flex items-center gap-1 glass rounded-full p-0.5">
+                <button
+                  onClick={() => setMode('demo')}
+                  className={cn(
+                    'flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium transition-colors active:scale-[0.96]',
+                    mode === 'demo' ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:text-foreground',
+                  )}
+                  aria-pressed={mode === 'demo'}
+                >
+                  <Zap className="size-3" />
+                  Demo
+                </button>
+                <button
+                  onClick={() => setMode('live')}
+                  className={cn(
+                    'flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium transition-colors active:scale-[0.96]',
+                    mode === 'live' ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:text-foreground',
+                  )}
+                  aria-pressed={mode === 'live'}
+                >
+                  <Sparkles className="size-3" />
+                  Live LLM
+                </button>
               </div>
             </div>
 
+            {/* Prompt input (live mode only) */}
+            {mode === 'live' && (
+              <div className="px-5 py-3 border-b border-foreground/10">
+                <label className="aegis-eyebrow text-muted-foreground block mb-1.5">
+                  Your prompt (redacted before sending)
+                </label>
+                <Textarea
+                  value={prompt}
+                  onChange={(e) => setPrompt(e.target.value)}
+                  rows={2}
+                  spellCheck={false}
+                  className="aegis-mono text-[12px] resize-none border-0 bg-transparent focus-visible:ring-0 p-0"
+                  placeholder="Type a prompt containing PII…"
+                  disabled={streaming}
+                />
+              </div>
+            )}
+
             {/* Buffering indicator bar */}
-            <div className="flex items-center gap-3 px-5 py-2.5 border-b border-foreground/10">
+            <div className="flex items-center gap-3 border-b border-foreground/10 px-5 py-2.5">
               <div
                 className={cn(
-                  'inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-[11px] transition-colors',
+                  'inline-flex items-center gap-2 border px-2 py-1 text-[11px] rounded-sm transition-colors',
                   buffered > 0
-                    ? 'glass text-amber-300'
-                    : 'glass text-muted-foreground',
+                    ? 'border-amber-400/40 bg-amber-400/10 text-amber-300'
+                    : 'border-border bg-background/50 text-muted-foreground',
                 )}
               >
                 <span
                   className={cn(
                     'size-1.5 rounded-full',
-                    buffered > 0
-                      ? 'bg-amber-400 aegis-live-dot'
-                      : 'bg-muted-foreground/40',
+                    buffered > 0 ? 'bg-amber-400 aegis-live-dot' : 'bg-muted-foreground/40',
                   )}
                 />
                 <span className="aegis-mono">
                   {buffered > 0 ? (
-                    <>
-                      buffering · <span className="font-semibold">{buffered}</span>{' '}
-                      held
-                    </>
+                    <>buffering · <span className="font-semibold">{buffered}</span> held</>
                   ) : (
                     'buffer empty'
                   )}
@@ -243,17 +324,13 @@ export function AegisStreamingDemo() {
             </div>
 
             {/* Output — terminal with scanlines */}
-            <div
-              ref={scrollContainerRef}
-              className="relative aegis-scanlines bg-background/40 p-5 min-h-72 max-h-[28rem] overflow-y-auto"
-            >
+            <div ref={scrollContainerRef} className="relative aegis-scanlines bg-background/80 p-5 min-h-64 max-h-80 overflow-y-auto">
               <pre className="whitespace-pre-wrap break-words text-[13px] leading-relaxed aegis-mono text-foreground/90">
                 {output || (
                   <span className="text-muted-foreground">
-                    <span className="text-primary">$</span> press{' '}
-                    <span className="text-primary">“Start stream”</span> to simulate
-                    an LLM response arriving token-by-token. Watch PII get redacted
-                    live.
+                    <span className="text-primary">$</span> press{" "}
+                    <span className="text-primary">“Start”</span> to {mode === 'live' ? 'send your prompt to the LLM' : 'simulate a stream'}.
+                    Watch PII get redacted live.
                   </span>
                 )}
                 {streaming && (
@@ -264,12 +341,36 @@ export function AegisStreamingDemo() {
                 )}
               </pre>
             </div>
+
+            {/* Action bar */}
+            <div className="flex items-center justify-between px-5 py-3 border-t border-foreground/10">
+              <div className="flex items-center gap-2">
+                {!streaming ? (
+                  <Button variant="glass-primary" size="md-pill" onClick={start} disabled={streaming}>
+                    <Play className="size-3.5" />
+                    {done ? 'Replay' : 'Start'}
+                  </Button>
+                ) : (
+                  <Button variant="destructive" size="md-pill" onClick={stop}>
+                    <Square className="size-3.5" />
+                    Stop
+                  </Button>
+                )}
+              </div>
+              {source && (
+                <span className="text-[10px] text-muted-foreground aegis-mono">
+                  source: {source === 'live-llm' ? '✦ live LLM' : 'simulated'}
+                </span>
+              )}
+            </div>
           </GlassPanel>
 
           {/* Live side panel: counts + chips */}
           <GlassPanel className="rounded-3xl p-4 sm:p-5 flex flex-col gap-4">
-            <div className="flex items-center justify-between pb-3 border-b border-foreground/10">
-              <span className="aegis-eyebrow text-muted-foreground">Live stats</span>
+            <div className="flex items-center justify-between border-b border-foreground/10 pb-3">
+              <span className="aegis-eyebrow text-muted-foreground">
+                Live stats
+              </span>
               {streaming ? (
                 <Loader2 className="size-3.5 animate-spin text-primary" />
               ) : done ? (
@@ -279,15 +380,26 @@ export function AegisStreamingDemo() {
               )}
             </div>
 
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-px bg-foreground/8 border border-foreground/8 rounded-lg overflow-hidden">
               <Stat label="Redacted" value={totalRedacted} accent />
               <Stat label="Tokens" value={tokenCount} />
               <Stat label="Buffered" value={buffered} />
               <Stat label="Chars" value={output.length} />
             </div>
 
-            <div className="pt-3 border-t border-foreground/10">
-              <span className="aegis-eyebrow text-muted-foreground">In flight</span>
+            {redactedPrompt && mode === 'live' && (
+              <div className="border border-primary/20 bg-primary/5 rounded-lg p-2.5">
+                <div className="aegis-eyebrow text-primary mb-1">Prompt sent to LLM</div>
+                <div className="text-[10px] text-muted-foreground aegis-mono leading-relaxed max-h-20 overflow-y-auto break-words">
+                  {redactedPrompt}
+                </div>
+              </div>
+            )}
+
+            <div className="border-t border-foreground/10 pt-3">
+              <span className="aegis-eyebrow text-muted-foreground">
+                In flight
+              </span>
               <div className="mt-2 flex flex-wrap gap-1.5 min-h-10">
                 <AnimatePresence mode="popLayout">
                   {completed.length === 0 && !streaming && (
@@ -306,7 +418,6 @@ export function AegisStreamingDemo() {
                         type={d.entityType}
                         value={d.value}
                         confidence={d.confidence}
-                        className="rounded-lg"
                       />
                     </motion.div>
                   ))}
@@ -315,7 +426,7 @@ export function AegisStreamingDemo() {
             </div>
 
             {done && (
-              <div className="glass rounded-2xl p-3 text-xs">
+              <div className="border border-primary/30 bg-primary/5 p-3 text-xs rounded-sm">
                 <div className="flex items-center gap-1.5 text-primary font-medium">
                   <CheckCircle2 className="size-3.5" />
                   Stream complete
@@ -330,20 +441,20 @@ export function AegisStreamingDemo() {
               </div>
             )}
 
-            <div className="mt-auto text-[11px] text-muted-foreground leading-relaxed pt-3 border-t border-foreground/10">
+            <div className="mt-auto text-[11px] text-muted-foreground leading-relaxed border-t border-foreground/10 pt-3">
               <span className="text-foreground/80 aegis-mono">{'// how it works'}</span>
               <br />
               Aegis runs detection on each chunk against the sliding window buffer.
-              Confirmed-safe text flushes immediately; ambiguous tails are held. When
-              an entity completes, a token replaces it in-flight.
+              Confirmed-safe text flushes immediately; ambiguous tails are held.
+              When an entity completes, a token replaces it in-flight.
             </div>
 
             {/* Legend */}
-            <div className="flex flex-wrap gap-1.5 pt-3 border-t border-foreground/10">
+            <div className="flex flex-wrap gap-1.5 border-t border-foreground/10 pt-3">
               {Object.entries(ENTITY_META).slice(0, 5).map(([type, meta]) => (
                 <span
                   key={type}
-                  className={`entity-${type} entity-chip inline-flex items-center rounded-lg px-1.5 py-0.5 text-[10px]`}
+                  className={`entity-${type} entity-chip inline-flex items-center rounded px-1.5 py-0.5 text-[10px]`}
                 >
                   {meta.label}
                 </span>
@@ -366,14 +477,9 @@ function Stat({
   accent?: boolean;
 }) {
   return (
-    <div className="glass rounded-xl p-3">
+    <div className="bg-card px-3 py-2.5">
       <div className="aegis-eyebrow text-muted-foreground text-[9px]">{label}</div>
-      <div
-        className={cn(
-          'text-2xl font-semibold aegis-mono mt-1 leading-none',
-          accent && 'text-primary',
-        )}
-      >
+      <div className={cn('text-xl font-semibold aegis-mono mt-0.5', accent && 'text-primary')}>
         {value}
       </div>
     </div>

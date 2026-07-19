@@ -14,6 +14,7 @@ import {
   Loader2,
   Database,
   ScanLine,
+  Download,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -233,6 +234,32 @@ export function AegisAuditExplorer() {
                 >
                   <ScanLine className="size-3.5" />
                   Re-verify
+                </Button>
+                <Button
+                  variant="glass"
+                  size="sm-pill"
+                  onClick={() => {
+                    window.open('/api/export?format=csv', '_blank');
+                    toast.success('Exporting CSV report');
+                  }}
+                  disabled={chain.length === 0}
+                  title="Export audit chain as CSV"
+                >
+                  <Download className="size-3.5" />
+                  CSV
+                </Button>
+                <Button
+                  variant="glass"
+                  size="sm-pill"
+                  onClick={() => {
+                    window.open('/api/export?format=json', '_blank');
+                    toast.success('Exporting JSON report');
+                  }}
+                  disabled={chain.length === 0}
+                  title="Export audit chain as JSON"
+                >
+                  <Download className="size-3.5" />
+                  JSON
                 </Button>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>

@@ -60,6 +60,31 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
+      <head>
+        {/* JSON-LD structured data for rich search results */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'SoftwareApplication',
+              name: 'Aegis',
+              applicationCategory: 'SecurityApplication',
+              operatingSystem: 'Web',
+              description:
+                'A local-first redaction layer for AI. Strip PII before it leaves your device. Tamper-evident audit chain. Streaming-aware.',
+              offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+              featureList: [
+                '8 entity-type PII detection (email, API keys, cards, Aadhaar, PAN, IP, glossary)',
+                'SHA-256 hash-chained tamper-evident audit log',
+                'Streaming-aware redaction with sliding window',
+                'Reversible tokenization with round-trip proof',
+                'Compliance report export (CSV/JSON)',
+              ],
+            }),
+          }}
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${jetbrainsMono.variable} ${instrumentSerif.variable} antialiased bg-background text-foreground`}
       >
