@@ -25,7 +25,8 @@ export function AegisHero() {
   const titleOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
   const cardY = useTransform(scrollYProgress, [0, 1], [0, -40]);
   const cardOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
-  const dotOpacity = useTransform(scrollYProgress, [0, 0.5], [0.22, 0.04]);
+  // Brighter base: 35% opacity so the dot-matrix is clearly visible and alive.
+  const dotOpacity = useTransform(scrollYProgress, [0, 0.5], [0.35, 0.08]);
 
   // Magnetic CTA effect
   const ctaX = useSpring(0, { stiffness: 200, damping: 15 });
@@ -55,11 +56,26 @@ export function AegisHero() {
       ref={containerRef}
       className="relative isolate min-h-screen flex items-center overflow-hidden pt-28 pb-12"
     >
+      {/* Entrance overlay sweep — a light beam that sweeps across on load */}
+      {!prefersReduced && (
+        <motion.div
+          initial={{ x: '-100%' }}
+          animate={{ x: '100%' }}
+          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+          className="absolute inset-0 z-20 pointer-events-none"
+          style={{
+            background:
+              'linear-gradient(105deg, transparent 30%, color-mix(in oklch, var(--primary) 8%, transparent) 50%, transparent 70%)',
+          }}
+          aria-hidden
+        />
+      )}
+
       {/* WebGL dot-matrix field */}
       <motion.div
         className="absolute inset-0 pointer-events-none"
         aria-hidden
-        style={prefersReduced ? { opacity: 0.22 } : { opacity: dotOpacity }}
+        style={prefersReduced ? { opacity: 0.35 } : { opacity: dotOpacity }}
       >
         <DotMatrixBackground
           frequency={2}
@@ -71,14 +87,15 @@ export function AegisHero() {
           bgColor="transparent"
         />
       </motion.div>
-      {/* Scrim */}
-      <div className="absolute inset-0 bg-background/40 pointer-events-none" aria-hidden />
+      {/* Scrim — lighter so the brighter dots show through.
+          A directional gradient darkens the left side (where text sits) for readability. */}
+      <div className="absolute inset-0 bg-background/25 pointer-events-none" aria-hidden />
       <div
         className="absolute inset-0 pointer-events-none"
         aria-hidden
         style={{
           background:
-            'radial-gradient(70% 50% at 30% 35%, transparent 0%, color-mix(in oklch, var(--background) 45%, transparent) 100%)',
+            'linear-gradient(105deg, color-mix(in oklch, var(--background) 60%, transparent) 0%, transparent 55%), radial-gradient(60% 50% at 30% 35%, transparent 0%, color-mix(in oklch, var(--background) 30%, transparent) 100%)',
         }}
       />
 
@@ -106,21 +123,21 @@ export function AegisHero() {
               <span className="aegis-eyebrow text-muted-foreground">redaction layer for AI</span>
             </motion.div>
 
-            {/* Hero headline — single bold statement, no competing first line */}
-            <h1 className="aegis-serif text-[2.5rem] sm:text-6xl lg:text-7xl xl:text-[5rem] leading-[1] tracking-tight">
+            {/* Hero headline — word-by-word stagger reveal with overflow mask */}
+            <h1 className="aegis-serif text-[2.5rem] sm:text-6xl lg:text-7xl xl:text-[5rem] leading-[1] tracking-tight overflow-hidden">
               <motion.span
-                initial={prefersReduced ? false : { opacity: 0, y: 24 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+                initial={prefersReduced ? false : { y: '110%' }}
+                animate={{ y: 0 }}
+                transition={{ duration: 0.9, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
                 className="block"
               >
                 Your prompts{' '}
                 <span className="italic text-foreground/40">leak.</span>
               </motion.span>
               <motion.span
-                initial={prefersReduced ? false : { opacity: 0, y: 24 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                initial={prefersReduced ? false : { y: '110%' }}
+                animate={{ y: 0 }}
+                transition={{ duration: 0.9, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
                 className="block mt-1"
               >
                 Aegis makes them{' '}

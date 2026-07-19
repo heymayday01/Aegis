@@ -294,31 +294,36 @@ function MobileExpandingNav({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-40 bg-background/40 backdrop-blur-[2px] pointer-events-auto md:hidden"
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className="fixed inset-0 z-40 bg-background/60 backdrop-blur-[4px] pointer-events-auto md:hidden"
           />
 
-          {/* Expanding menu panel */}
+          {/* Expanding menu panel — spring-based, clips from top */}
           <motion.div
             key="menu"
-            initial={prefersReduced ? { opacity: 0 } : { opacity: 0, scale: 0.92, y: -12 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={prefersReduced ? { opacity: 0 } : { opacity: 0, scale: 0.95, y: -8 }}
-            transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+            initial={prefersReduced ? { opacity: 0 } : { opacity: 0, scale: 0.9, y: -16, filter: 'blur(8px)' }}
+            animate={{ opacity: 1, scale: 1, y: 0, filter: 'blur(0px)' }}
+            exit={prefersReduced ? { opacity: 0 } : { opacity: 0, scale: 0.95, y: -10, filter: 'blur(4px)' }}
+            transition={{ type: 'spring', stiffness: 320, damping: 28, mass: 0.8 }}
             style={{ transformOrigin: 'top center' }}
             className="fixed top-20 left-3 right-3 z-50 pointer-events-auto md:hidden"
           >
             <div
               ref={ref}
-              className="glass rounded-3xl p-3 flex flex-col gap-0.5 shadow-2xl shadow-black/40"
+              className="glass rounded-3xl p-3 flex flex-col gap-0.5 shadow-2xl shadow-black/50"
             >
               {/* Header row */}
-              <div className="flex items-center justify-between px-3 py-2 mb-1">
+              <motion.div
+                initial={prefersReduced ? false : { opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: prefersReduced ? 0 : 0.1, duration: 0.3 }}
+                className="flex items-center justify-between px-3 py-2 mb-1"
+              >
                 <span className="aegis-eyebrow text-muted-foreground">Sections</span>
                 <span className="aegis-mono text-[10px] text-muted-foreground/60">05</span>
-              </div>
+              </motion.div>
 
-              {/* Staggered link list */}
+              {/* Staggered link list — y-translate + fade for fluid feel */}
               {NAV_ITEMS.map((item, i) => {
                 const isActive = active === item.id;
                 return (
@@ -326,15 +331,17 @@ function MobileExpandingNav({
                     key={item.id}
                     href={`#${item.id}`}
                     onClick={(e) => onItemClick(e, item.id)}
-                    initial={prefersReduced ? false : { opacity: 0, x: -12 }}
-                    animate={{ opacity: 1, x: 0 }}
+                    initial={prefersReduced ? false : { opacity: 0, y: 14 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={prefersReduced ? false : { opacity: 0, y: 8 }}
                     transition={{
-                      delay: prefersReduced ? 0 : 0.06 + i * 0.04,
-                      duration: 0.3,
-                      ease: [0.16, 1, 0.3, 1],
+                      delay: prefersReduced ? 0 : 0.12 + i * 0.05,
+                      type: 'spring',
+                      stiffness: 400,
+                      damping: 30,
                     }}
                     className={cn(
-                      'group flex items-center gap-3 rounded-2xl px-3 py-3 min-h-11 transition-colors active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                      'group flex items-center gap-3 rounded-2xl px-3 py-3 min-h-12 transition-colors active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
                       isActive
                         ? 'text-foreground bg-primary/10'
                         : 'text-muted-foreground hover:text-foreground hover:bg-foreground/5',
@@ -358,9 +365,9 @@ function MobileExpandingNav({
 
               {/* Footer row — GitHub + local-first badge */}
               <motion.div
-                initial={prefersReduced ? false : { opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: prefersReduced ? 0 : 0.06 + NAV_ITEMS.length * 0.04 + 0.04 }}
+                initial={prefersReduced ? false : { opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: prefersReduced ? 0 : 0.12 + NAV_ITEMS.length * 0.05 + 0.05, type: 'spring', stiffness: 400, damping: 30 }}
                 className="flex items-center justify-between px-3 py-2 mt-1 border-t border-foreground/8"
               >
                 <a
