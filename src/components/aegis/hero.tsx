@@ -26,7 +26,8 @@ export function AegisHero() {
   const cardY = useTransform(scrollYProgress, [0, 1], [0, -50]);
   const cardOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
   const cardRotate = useTransform(scrollYProgress, [0, 1], [0, -3]);
-  const dotOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0.2]);
+  // Dot-matrix fades from 0.15 (subtle) to 0.03 (barely visible) on scroll.
+  const dotOpacity = useTransform(scrollYProgress, [0, 0.5], [0.15, 0.03]);
 
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
@@ -39,11 +40,13 @@ export function AegisHero() {
       ref={containerRef}
       className="relative isolate min-h-screen flex items-center overflow-hidden pt-28 pb-12"
     >
-      {/* WebGL dot-matrix field — flowing Perlin-noise dots in the Aegis palette. */}
+      {/* WebGL dot-matrix field — flowing Perlin-noise dots in the Aegis palette.
+          Low opacity (15%) so it reads as subtle texture, not a competing layer.
+          The motion style controls opacity directly (fades on scroll). */}
       <motion.div
-        className="absolute inset-0 opacity-30 pointer-events-none"
+        className="absolute inset-0 pointer-events-none"
         aria-hidden
-        style={prefersReduced ? undefined : { opacity: dotOpacity }}
+        style={prefersReduced ? { opacity: 0.15 } : { opacity: dotOpacity }}
       >
         <DotMatrixBackground
           frequency={2}
@@ -55,13 +58,18 @@ export function AegisHero() {
           bgColor="transparent"
         />
       </motion.div>
-      {/* Radial scrim — darker at edges for text legibility + depth */}
+      {/* Scrim — uniform dark overlay for text legibility, plus radial vignette for depth.
+          The uniform layer ensures the dot-matrix never competes with text. */}
+      <div
+        className="absolute inset-0 bg-background/65 pointer-events-none"
+        aria-hidden
+      />
       <div
         className="absolute inset-0 pointer-events-none"
         aria-hidden
         style={{
           background:
-            'radial-gradient(80% 60% at 40% 40%, transparent 0%, color-mix(in oklch, var(--background) 55%, transparent) 100%)',
+            'radial-gradient(80% 60% at 40% 40%, transparent 0%, color-mix(in oklch, var(--background) 50%, transparent) 100%)',
         }}
       />
 
