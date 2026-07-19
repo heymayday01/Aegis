@@ -223,7 +223,7 @@
     position: absolute;
     border-radius: 50%;
     filter: blur(60px);
-    opacity: 0.45;
+    opacity: 0.35;
     will-change: transform;
   }
   .aegis-orb-1 {
@@ -232,7 +232,8 @@
     top: -10vw;
     left: -10vw;
     background: radial-gradient(circle, oklch(0.72 0.19 165) 0%, transparent 70%);
-    animation: aegis-drift-1 28s ease-in-out infinite;
+    animation: aegis-drift-1 32s ease-in-out infinite;
+    opacity: 0.35;
   }
   .aegis-orb-2 {
     width: 45vw;
@@ -240,7 +241,8 @@
     top: 30vh;
     right: -15vw;
     background: radial-gradient(circle, oklch(0.7 0.16 280) 0%, transparent 70%);
-    animation: aegis-drift-2 34s ease-in-out infinite;
+    animation: aegis-drift-2 38s ease-in-out infinite;
+    opacity: 0.3;
   }
   .aegis-orb-3 {
     width: 40vw;
