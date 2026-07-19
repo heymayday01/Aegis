@@ -106,11 +106,34 @@ export function AegisHero() {
               transition={{ duration: 0.6, delay: 0.45 }}
               className="text-base sm:text-lg text-muted-foreground max-w-xl leading-relaxed"
             >
-              Sits between you and any AI provider. Strips emails, keys, cards,
-              Aadhaar, PAN and IPs <em className="aegis-serif text-foreground/90 not-italic font-normal">before</em> they
-              leave the device — then writes a SHA-256 hash-chained audit log you
-              can verify yourself. No black-box DLP. No trust required.
+              When you paste a prompt into ChatGPT, Claude, or Gemini, your emails,
+              API keys, credit cards and IDs go with it. <strong className="text-foreground font-medium">Aegis strips them out
+              before they leave your device</strong> — and gives you a cryptographic receipt
+              proving exactly what was sent.
             </motion.p>
+
+            {/* 3-step "how it works" — makes the value instantly clear */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.55 }}
+              className="flex flex-col sm:flex-row gap-3 sm:gap-2 max-w-2xl"
+            >
+              {[
+                { num: '01', title: 'You paste', desc: 'A prompt with emails, keys, cards, IDs' },
+                { num: '02', title: 'Aegis strips', desc: 'PII replaced with tokens — before it leaves' },
+                { num: '03', title: 'You verify', desc: 'Tamper-proof log of what was actually sent' },
+              ].map((step, i) => (
+                <div key={step.num} className="flex items-center gap-2.5 flex-1">
+                  {i > 0 && <span className="text-muted-foreground/40 text-sm hidden sm:block">→</span>}
+                  <div className="glass rounded-2xl px-3 py-2.5 flex-1 min-w-0">
+                    <div className="aegis-mono text-[10px] text-primary">{step.num}</div>
+                    <div className="text-xs font-semibold text-foreground">{step.title}</div>
+                    <div className="text-[10px] text-muted-foreground leading-tight mt-0.5">{step.desc}</div>
+                  </div>
+                </div>
+              ))}
+            </motion.div>
 
             <motion.div
               initial={{ opacity: 0, y: 10 }}

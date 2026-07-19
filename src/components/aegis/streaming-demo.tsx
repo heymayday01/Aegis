@@ -5,7 +5,6 @@ import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { toast } from 'sonner';
 import { Play, Square, Loader2, CheckCircle2, Gauge, Sparkles, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { ENTITY_META, type EntityType } from '@/lib/aegis/types';
 import { SectionHeading } from './section-heading';
@@ -73,6 +72,15 @@ export function AegisStreamingDemo() {
   const abortRef = React.useRef<AbortController | null>(null);
   const eventSourceRef = React.useRef<EventSource | null>(null);
   const scrollContainerRef = React.useRef<HTMLDivElement | null>(null);
+  const promptRef = React.useRef<HTMLTextAreaElement | null>(null);
+
+  // Auto-resize the prompt textarea to fit its content (no clipping).
+  React.useEffect(() => {
+    const el = promptRef.current;
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = el.scrollHeight + 'px';
+  }, [prompt, mode]);
 
   React.useEffect(() => {
     const el = scrollContainerRef.current;
@@ -276,18 +284,19 @@ export function AegisStreamingDemo() {
               </div>
             </div>
 
-            {/* Prompt input (live mode only) */}
+            {/* Prompt input (live mode only) — auto-resizes to fit content */}
             {mode === 'live' && (
               <div className="px-5 py-3 border-b border-foreground/10">
                 <label className="aegis-eyebrow text-muted-foreground block mb-1.5">
                   Your prompt (redacted before sending)
                 </label>
-                <Textarea
+                <textarea
+                  ref={promptRef}
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
-                  rows={2}
                   spellCheck={false}
-                  className="aegis-mono text-[12px] resize-none border-0 bg-transparent focus-visible:ring-0 p-0"
+                  rows={1}
+                  className="w-full aegis-mono text-[12px] resize-none border-0 bg-transparent focus-visible:outline-none focus-visible:ring-0 p-0 min-h-[44px] overflow-hidden leading-relaxed"
                   placeholder="Type a prompt containing PII…"
                   disabled={streaming}
                 />
