@@ -86,7 +86,7 @@ export function AegisHero() {
                 <span className="size-1.5 rounded-full bg-primary aegis-live-dot" />
                 <span className="aegis-eyebrow text-primary">local-first</span>
               </span>
-              <span className="aegis-eyebrow text-muted-foreground/70">
+              <span className="aegis-eyebrow text-muted-foreground">
                 redaction layer for AI
               </span>
             </motion.div>
@@ -97,7 +97,7 @@ export function AegisHero() {
                 initial={prefersReduced ? false : { opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.15 }}
-                className="block text-muted-foreground/80 italic"
+                className="block text-foreground/50 italic"
               >
                 Your prompts leak.
               </motion.span>
