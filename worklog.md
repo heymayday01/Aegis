@@ -601,3 +601,42 @@ Stage Summary:
 - CSS cascade fixed: .glass in global scope + arbitrary backdrop-filter props on button variants
 - Lint clean, zero errors, all interactions verified
 - Screenshots: preview-dotmatrix-hero.png, preview-glass-buttons-final.png, preview-glass-buttons-playground.png, preview-hero-glass-cta.png
+
+---
+Task ID: 14
+Agent: main (orchestrator)
+Task: Fix marquee placement + spacing, clean up codespace, remove screenshots and unused files
+
+1. Fixed curved marquee placement + spacing:
+   - Problem: SVG viewBox 1440x800 with curveAmount:-340 caused the SVG (aspect-ratio 1.8:1) to render at ~578px tall in a 320px container, bleeding 192px top + bottom (clipped, mis-centered)
+   - Fix in curved-marquee-section.tsx:
+     - Reduced curveAmount from -340 to -120 (gentler arc, text stays legible)
+     - Reduced fontSize from 64 to 56
+     - Changed container height from `min(38vh, 320px)` to fixed `h-[180px] sm:h-[220px]`
+     - Adjusted section padding from `py-8 sm:py-12` to `py-10 sm:py-14`
+   - Fix in curved-marquee.tsx:
+     - Removed `aspectRatio: '1440 / 800'` + `overflow: 'visible'` (caused the bleed)
+     - Added `preserveAspectRatio: 'xMidYMid meet'` + `height: '100%'` so the SVG scales to fit the container, centered, no clip
+   - Verified: section 332px, SVG 211px, 60px padding top/bottom, no clipping
+   - VLM: "well-placed, centered, and spaced, with no issues"
+
+2. Cleaned up codespace:
+   - Removed 39 PNG screenshots from root (preview-*.png, audit-*.png, tmp-*.png)
+   - Removed tool-results/ directory (5 temp bash output files)
+   - Removed agent-ctx/ directory (5 subagent work-record files — worklog.md is the canonical record)
+   - Removed src/lib/liquid-glass.js (the original drop-in — unused; the .ts ES-module wrapper is what's imported)
+   - Cleared .next/ build cache (185MB → regenerates on dev)
+   - Root now contains only: AEGIS-UPGRADED-PLAN.md, worklog.md, config files, bun.lock, dev.log
+
+Verification:
+- Lint: zero errors
+- No runtime errors
+- Marquee: properly contained, centered, no clipping
+- Redact: 11 tokens + highlights ✓
+- Root directory: clean of all screenshots and temp files
+- All 18 aegis components + 6 API routes + 9 engine modules intact
+
+Stage Summary:
+- Marquee placement fixed (gentler curve, proper SVG fit, balanced spacing)
+- Codespace cleaned: 39 screenshots + tool-results + agent-ctx + unused .js removed
+- Lint clean, all interactions verified

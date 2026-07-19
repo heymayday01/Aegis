@@ -213,13 +213,13 @@ export default function CurvedLoop({
     >
       <svg
         viewBox="0 0 1440 800"
+        preserveAspectRatio="xMidYMid meet"
         style={{
           position: 'relative',
           userSelect: 'none',
           width: '100%',
+          height: '100%',
           maxWidth: '1440px',
-          aspectRatio: '1440 / 800',
-          overflow: 'visible',
           display: 'block',
           fill: color,
           fontFamily: font.fontFamily,
