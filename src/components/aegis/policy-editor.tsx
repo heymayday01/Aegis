@@ -322,9 +322,9 @@ export function AegisPolicyEditor() {
                   />
                   <Button
                     type="submit"
-                    size="sm"
+                    variant="glass-primary"
+                    size="sm-pill"
                     disabled={busy || !newTerm.trim()}
-                    className="h-9 rounded-full active:scale-[0.98]"
                   >
                     {busy ? (
                       <Loader2 className="size-3.5 animate-spin" />

@@ -5,6 +5,7 @@ import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion
 import { ArrowRight, ArrowDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLiquidGlass } from './glass-panel';
+import DotMatrixBackground from './dot-matrix-background';
 
 const MARQUEE_ITEMS = [
   'EMAIL', 'API KEY', 'PHONE', 'CREDIT CARD', 'AADHAAR', 'PAN',
@@ -37,6 +38,22 @@ export function AegisHero() {
       ref={containerRef}
       className="relative isolate min-h-screen flex items-center overflow-hidden pt-24"
     >
+      {/* WebGL dot-matrix field — flowing Perlin-noise dots in the Aegis palette.
+          Low opacity so it reads as ambient texture behind the glass + orbs. */}
+      <div className="absolute inset-0 opacity-30 pointer-events-none" aria-hidden>
+        <DotMatrixBackground
+          frequency={2}
+          speed={3}
+          cellSize={14}
+          gamma={5}
+          paletteBias={6}
+          colors={['#0a0f14', '#0f3a2a', '#5eead4']}
+          bgColor="transparent"
+        />
+      </div>
+      {/* Dark scrim so text stays legible over the dot field */}
+      <div className="absolute inset-0 bg-background/40 pointer-events-none" aria-hidden />
+
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 w-full">
         <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           {/* Left: editorial headline */}
@@ -102,18 +119,19 @@ export function AegisHero() {
               className="flex flex-wrap items-center gap-3"
             >
               <Button
-                size="lg"
+                variant="glass-primary"
+                size="lg-pill"
                 onClick={() => scrollTo('playground')}
-                className="h-12 px-6 rounded-full active:scale-[0.98] group"
+                className="h-12 group"
               >
                 Try the playground
                 <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
               </Button>
               <Button
-                size="lg"
-                variant="ghost"
+                variant="glass"
+                size="lg-pill"
                 onClick={() => scrollTo('architecture')}
-                className="h-12 px-6 rounded-full active:scale-[0.98] text-muted-foreground hover:text-foreground hover:bg-foreground/5"
+                className="h-12 text-muted-foreground hover:text-foreground"
               >
                 See the architecture
               </Button>

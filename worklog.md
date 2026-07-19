@@ -516,3 +516,88 @@ Stage Summary:
 - Uses Instrument Serif + primary color, matches the liquid glass aesthetic
 - Fully responsive, draggable with inertia, respects reduced motion
 - Screenshots: preview-curved-marquee.png, preview-curved-marquee-mobile.png
+
+---
+Task ID: 13
+Agent: full-stack-developer (glass buttons)
+Task: Upgrade all buttons to liquid-glass variants
+
+Work Log:
+- src/components/aegis/playground.tsx — 6 buttons upgraded:
+  - Sync: ghost/sm → glass/sm-pill
+  - Sample: ghost/sm → glass/sm-pill
+  - Clear: ghost/sm → glass/sm-pill
+  - Redact (CTA): default/h-11 → glass-primary/lg-pill
+  - Copy icon: ghost/icon → glass/icon-sm
+  - Rehydrate: secondary/sm → glass/sm-pill
+- src/components/aegis/streaming-demo.tsx — 2 buttons upgraded:
+  - Start stream (CTA): default/h-9 → glass-primary/md-pill
+  - Stop: destructive/sm → destructive/md-pill (kept destructive per task — deliberate interrupt)
+- src/components/aegis/audit-explorer.tsx — 7 buttons upgraded:
+  - Seed demo entries (actions cell, CTA): default/h-10 → glass-primary/md-pill
+  - Seed demo entries (empty state, CTA): default/h-10 → glass-primary/md-pill
+  - Repair chain: ghost/sm → glass/sm-pill
+  - Re-verify: ghost/sm → glass/sm-pill
+  - Clear (AlertDialogTrigger): ghost/sm → glass/sm-pill (kept text-destructive)
+  - Tamper this: ghost/sm → glass/sm-pill (kept text-muted-foreground hover:text-destructive)
+  - AlertDialogAction "Clear chain": kept destructive (in-dialog, not glass context)
+- src/components/aegis/policy-editor.tsx — 1 button upgraded:
+  - Add (glossary submit, CTA): default/h-9 → glass-primary/sm-pill
+  - Strictness radio <button> cards and glossary remove X <button> left as-is per task
+- src/components/aegis/nav.tsx — 1 button upgraded:
+  - Mobile hamburger toggle: ghost/icon → glass/icon-sm
+  - GitHub <a> link left as-is per task
+- All edits only changed variant/size/className props; removed redundant classes (rounded-full, active:scale-[0.97/0.98], h-9/h-10/h-11, size-9, hover backgrounds) covered by the new glass variants.
+- Did NOT add useLiquidGlass to any button (per task rules — .glass CSS class provides the material without SVG refraction; buttons too small/numerous).
+- Kept ALL onClick handlers, disabled states, loading spinners, aria-labels, and other behavior intact.
+
+Stage Summary:
+- Lint: PASS (0 errors). 4 pre-existing warnings in dot-matrix-background.tsx (untouched, unrelated to this task).
+- Buttons upgraded: 17
+
+---
+Task ID: 13
+Agent: main (orchestrator)
+Task: Integrate dot-matrix WebGL background + rebuild buttons with liquid glass
+
+1. Dot-matrix WebGL background:
+   - Installed `ogl` package
+   - Created src/components/aegis/dot-matrix-background.tsx — adapted Originkit's Dot Matrix component
+   - Tuned palette to Aegis: ['#0a0f14', '#0f3a2a', '#5eead4'] (midnight → deep-jade → mint)
+   - frequency=2, speed=3, cellSize=14, gamma=5 — ambient, not distracting
+   - Added IntersectionObserver scroll-pause (isVisibleRef) — renders only when hero in view, big perf win
+   - 30fps cap, DPR capped at 2
+   - Integrated into hero.tsx as a background layer at opacity-30 with a bg-background/40 scrim for text legibility
+   - Fixed 4 lint warnings: removed unused eslint-disable, replaced `destroy?.() || delete?.()` expression statements with proper if/else
+
+2. Liquid glass buttons:
+   - Rebuilt src/components/ui/button.tsx with new variants:
+     - `glass` — tinted glass material, rounded-full, hover brightens
+     - `glass-strong` — stronger tint + shadow
+     - `glass-primary` — glass with mint accent ring (for CTAs)
+   - New pill sizes: lg-pill (h-11), md-pill (h-9), sm-pill (h-8), icon-sm (size-8)
+   - All glass variants auto-include active:scale-[0.97] + rounded-full
+   - Applied across 17 buttons: hero (2), playground (6), streaming (2), audit (7), policy (1), nav (1)
+
+3. Critical CSS fix — glass material wasn't applying to buttons:
+   - Root cause: .glass rule was inside @layer utilities, which Tailwind v4 gives LOWER priority than utility classes (bg-*, shadow-*, backdrop-filter). The button cva's utility classes were overriding the glass material.
+   - Fix: moved .glass + .glass-strong rules to GLOBAL scope (outside @layer) with !important on background, box-shadow
+   - Backdrop-filter fix: Tailwind's backdrop-* utilities set backdrop-filter to a CSS variable chain that resolved to 'none', overriding the .glass rule even with !important in global scope. Fixed by adding [backdrop-filter:blur(12px)_saturate(1.3)] as arbitrary properties directly on the button cva glass variants — these generate inline utilities that win.
+   - Verified: button.glass computed style now has backdrop-filter: blur(12px) saturate(1.3), background-image: linear-gradient(...), box-shadow with inset highlights, pill border-radius
+
+Verification (Agent Browser):
+- Lint: zero errors, zero warnings
+- No runtime errors
+- WebGL canvas renders: 1440x900, dot-matrix texture visible at opacity-30
+- VLM dot-matrix hero: 8/10 visual richness — "subtle dot-matrix/noise texture"
+- 17 glass buttons with backdrop-filter confirmed via computed style
+- VLM glass buttons over dot-matrix: 7/10 — "semi-translucent, frosted appearance showing the dot-matrix background"
+- Redact: 11 tokens + highlights ✓
+- All interactions working
+
+Stage Summary:
+- Dot-matrix WebGL background integrated as hero layer (scroll-paused for perf)
+- 17 buttons upgraded to liquid glass (translucent tint + frosted blur + inset highlights + pill shape)
+- CSS cascade fixed: .glass in global scope + arbitrary backdrop-filter props on button variants
+- Lint clean, zero errors, all interactions verified
+- Screenshots: preview-dotmatrix-hero.png, preview-glass-buttons-final.png, preview-glass-buttons-playground.png, preview-hero-glass-cta.png

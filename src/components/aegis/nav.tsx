@@ -219,9 +219,9 @@ function PillNav({
         </a>
         {/* Mobile toggle — morphs between Menu and X */}
         <Button
-          variant="ghost"
-          size="icon"
-          className="md:hidden size-9 rounded-full hover:bg-foreground/10 relative"
+          variant="glass"
+          size="icon-sm"
+          className="md:hidden relative"
           aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'}
           aria-expanded={mobileOpen}
           onClick={onMobileToggle}

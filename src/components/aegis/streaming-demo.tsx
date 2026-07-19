@@ -187,20 +187,19 @@ export function AegisStreamingDemo() {
               <div className="flex items-center gap-2">
                 {!streaming ? (
                   <Button
-                    size="sm"
+                    variant="glass-primary"
+                    size="md-pill"
                     onClick={start}
                     disabled={streaming}
-                    className="h-9 rounded-full active:scale-[0.98]"
                   >
                     <Play className="size-3.5" />
                     {done ? 'Replay' : 'Start stream'}
                   </Button>
                 ) : (
                   <Button
-                    size="sm"
                     variant="destructive"
+                    size="md-pill"
                     onClick={stop}
-                    className="h-9 rounded-full active:scale-[0.98]"
                   >
                     <Square className="size-3.5" />
                     Stop

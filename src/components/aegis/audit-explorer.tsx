@@ -199,9 +199,10 @@ export function AegisAuditExplorer() {
           <GlassPanel className="rounded-3xl p-4 sm:p-6 flex flex-wrap items-center gap-2 justify-end">
             {chain.length === 0 && !loading && (
               <Button
+                variant="glass-primary"
+                size="md-pill"
                 onClick={onSeed}
                 disabled={busy !== null}
-                className="h-10 rounded-full active:scale-[0.98]"
               >
                 {busy === 'Seeded demo entries' ? (
                   <Loader2 className="size-3.5 animate-spin" />
@@ -214,11 +215,10 @@ export function AegisAuditExplorer() {
             {chain.length > 0 && (
               <>
                 <Button
-                  variant="ghost"
-                  size="sm"
+                  variant="glass"
+                  size="sm-pill"
                   onClick={onRepair}
                   disabled={busy !== null}
-                  className="h-10 rounded-full hover:bg-foreground/5 active:scale-[0.98]"
                 >
                   {busy === 'Chain repaired' ? (
                     <Loader2 className="size-3.5 animate-spin" />
@@ -228,11 +228,10 @@ export function AegisAuditExplorer() {
                   Repair chain
                 </Button>
                 <Button
-                  variant="ghost"
-                  size="sm"
+                  variant="glass"
+                  size="sm-pill"
                   onClick={load}
                   disabled={busy !== null}
-                  className="h-10 rounded-full hover:bg-foreground/5 active:scale-[0.98]"
                 >
                   <ScanLine className="size-3.5" />
                   Re-verify
@@ -240,9 +239,9 @@ export function AegisAuditExplorer() {
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-10 rounded-full text-destructive hover:bg-destructive/10 active:scale-[0.98]"
+                      variant="glass"
+                      size="sm-pill"
+                      className="text-destructive"
                     >
                       <Trash2 className="size-3.5" />
                       Clear
@@ -329,9 +328,11 @@ function EmptyState({
         </p>
       </div>
       <Button
+        variant="glass-primary"
+        size="md-pill"
         onClick={onSeed}
         disabled={busy !== null}
-        className="mt-2 h-10 rounded-full active:scale-[0.98]"
+        className="mt-2"
       >
         {busy === 'Seeded demo entries' ? (
           <Loader2 className="size-3.5 animate-spin" />
@@ -417,11 +418,11 @@ function ChainBlock({
             <div className="flex items-center gap-1.5">
               {!tampered && (
                 <Button
-                  variant="ghost"
-                  size="sm"
+                  variant="glass"
+                  size="sm-pill"
                   onClick={onTamper}
                   disabled={busy}
-                  className="h-8 px-3 rounded-full text-[10px] sm:text-[11px] text-muted-foreground hover:text-destructive hover:bg-destructive/10 active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="text-[10px] sm:text-[11px] text-muted-foreground hover:text-destructive"
                 >
                   <Hammer className="size-3" />
                   Tamper this

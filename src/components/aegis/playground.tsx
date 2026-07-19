@@ -273,33 +273,30 @@ export function AegisPlayground() {
 
           <div className="flex items-center gap-2">
             <Button
-              variant="ghost"
-              size="sm"
+              variant="glass"
+              size="sm-pill"
               onClick={refreshPolicy}
               title="Reload policy from server"
-              className="rounded-full active:scale-[0.97]"
             >
               <RefreshCw className="size-3.5" />
               Sync
             </Button>
             <Button
-              variant="ghost"
-              size="sm"
+              variant="glass"
+              size="sm-pill"
               onClick={() => setText(SAMPLE_TEXT)}
-              className="rounded-full active:scale-[0.97] hover:bg-foreground/5"
             >
               <Sparkles className="size-3.5" />
               Sample
             </Button>
             <Button
-              variant="ghost"
-              size="sm"
+              variant="glass"
+              size="sm-pill"
               onClick={() => {
                 setText('');
                 setResult(null);
                 setRehydrated(null);
               }}
-              className="rounded-full active:scale-[0.97] hover:bg-foreground/5"
             >
               <Eraser className="size-3.5" />
               Clear
@@ -367,9 +364,11 @@ export function AegisPlayground() {
             </div>
 
             <Button
+              variant="glass-primary"
+              size="lg-pill"
               onClick={onRedact}
               disabled={loading || !text.trim()}
-              className="mt-4 h-11 self-start rounded-full active:scale-[0.98] group"
+              className="mt-4 self-start group"
             >
               {loading ? (
                 <>
@@ -398,9 +397,8 @@ export function AegisPlayground() {
                   </span>
                 )}
                 <Button
-                  variant="ghost"
-                  size="icon"
-                  className="size-8 rounded-full hover:bg-foreground/10"
+                  variant="glass"
+                  size="icon-sm"
                   onClick={onCopy}
                   disabled={!result}
                   title="Copy redacted text"
@@ -459,11 +457,10 @@ export function AegisPlayground() {
             {/* Rehydrate */}
             <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-foreground/10 pt-4">
               <Button
-                variant="secondary"
-                size="sm"
+                variant="glass"
+                size="sm-pill"
                 onClick={onRehydrate}
                 disabled={!result || rehydrating}
-                className="rounded-full active:scale-[0.98]"
               >
                 {rehydrating ? (
                   <Loader2 className="size-3.5 animate-spin" />
