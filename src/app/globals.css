@@ -222,7 +222,7 @@
   .aegis-orb {
     position: absolute;
     border-radius: 50%;
-    filter: blur(80px);
+    filter: blur(60px);
     opacity: 0.45;
     will-change: transform;
   }
@@ -411,6 +411,14 @@
       inset 0 1px 1px rgba(255, 255, 255, 0.1),
       inset 0 0 0 1px rgba(255, 255, 255, 0.06) !important;
   }
+}
+
+/* ---- Perf: skip rendering offscreen sections ----
+   content-visibility:auto lets the browser skip layout/paint for sections
+   that aren't in the viewport. Huge win for long pages with glass + WebGL. */
+section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 600px;
 }
 
 /* ---- Reduced motion ---- */

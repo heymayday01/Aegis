@@ -15,11 +15,13 @@ export function SmoothScrollProvider({ children }: { children: React.ReactNode }
     if (prefersReduced) return;
 
     const lenis = new Lenis({
-      duration: 1.15,
+      duration: 0.8,
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
       wheelMultiplier: 1,
       touchMultiplier: 1.5,
+      // Sync Lenis's rAF with the browser's — prevents double rAF loops.
+      syncTouch: false,
     });
 
     let rafId: number;

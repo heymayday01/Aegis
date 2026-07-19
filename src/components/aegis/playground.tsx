@@ -309,7 +309,7 @@ export function AegisPlayground() {
           className="mt-6 grid gap-4 lg:grid-cols-2"
         >
           {/* LEFT: input + highlight preview */}
-          <GlassPanel liquid glare className="rounded-3xl p-4 sm:p-6">
+          <GlassPanel className="rounded-3xl p-4 sm:p-6">
             <div className="flex items-center justify-between pb-3 border-b border-foreground/10">
               <span className="aegis-eyebrow text-muted-foreground">Input</span>
               <span className="text-[11px] text-muted-foreground aegis-mono">
@@ -385,7 +385,7 @@ export function AegisPlayground() {
           </GlassPanel>
 
           {/* RIGHT: redacted output */}
-          <GlassPanel liquid glare className="rounded-3xl p-4 sm:p-6">
+          <GlassPanel className="rounded-3xl p-4 sm:p-6">
             <div className="flex items-center justify-between pb-3 border-b border-foreground/10">
               <span className="aegis-eyebrow text-muted-foreground">
                 Redacted output

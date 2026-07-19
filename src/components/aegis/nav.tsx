@@ -144,7 +144,7 @@ function PillNav({
   onItemClick: (e: React.MouseEvent<HTMLAnchorElement>, id: string) => void;
   onMobileToggle: () => void;
 }) {
-  const ref = useLiquidGlass<HTMLDivElement>({
+  const ref = useLiquidGlass<HTMLDivElement>(true, {
     scale: -60,
     chroma: 4,
     border: 0.1,
@@ -278,7 +278,7 @@ function MobileExpandingNav({
   onItemClick: (e: React.MouseEvent<HTMLAnchorElement>, id: string) => void;
   onClose: () => void;
 }) {
-  const ref = useLiquidGlass<HTMLDivElement>({ scale: -45, chroma: 3, blur: 6, saturate: 1.4 });
+  const ref = useLiquidGlass<HTMLDivElement>(true, { scale: -45, chroma: 3, blur: 6, saturate: 1.4 });
   const prefersReduced = useReducedMotion();
 
   return (

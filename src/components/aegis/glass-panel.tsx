@@ -10,12 +10,18 @@ import { cn } from '@/lib/utils';
  * Performance: lazy-inits via IntersectionObserver — only creates the SVG
  * filter + displacement map when the element scrolls into view. This keeps
  * the initial render fast even with many glass panels on the page.
+ *
+ * Pass `enabled: false` to skip entirely (no observer, no SVG filter) —
+ * the element just uses the .glass CSS frosted blur instead. This is the
+ * default for GlassPanel to avoid GPU cost on every panel.
  */
 export function useLiquidGlass<T extends HTMLElement>(
+  enabled: boolean = true,
   opts?: { scale?: number; chroma?: number; border?: number; mapBlur?: number; blur?: number; saturate?: number; radius?: number; fallbackBlur?: number },
 ) {
   const ref = useRef<T>(null);
   useEffect(() => {
+    if (!enabled) return; // skip entirely — no observer, no SVG filter
     const el = ref.current;
     if (!el) return;
 
@@ -79,13 +85,13 @@ interface GlassPanelProps {
 export function GlassPanel({
   children,
   className,
-  liquid = true,
+  liquid = false,
   strong = false,
   glare = false,
   glassOptions,
   as: Comp = 'div',
 }: GlassPanelProps) {
-  const ref = useLiquidGlass<HTMLDivElement>(liquid ? glassOptions : undefined);
+  const ref = useLiquidGlass<HTMLDivElement>(liquid, glassOptions);
   return (
     <Comp
       ref={ref as React.Ref<HTMLDivElement>}

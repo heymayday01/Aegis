@@ -136,8 +136,6 @@ export function AegisAuditExplorer() {
         >
           {/* Integrity summary glass panel with left accent */}
           <GlassPanel
-            liquid
-            glare
             className={cn(
               'rounded-3xl p-4 sm:p-6 flex flex-wrap items-center gap-5 border-l-2',
               integrityOk ? 'border-l-primary' : 'border-l-destructive',

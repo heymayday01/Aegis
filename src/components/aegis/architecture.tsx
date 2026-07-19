@@ -299,8 +299,6 @@ function DiagramArrow() {
 function DiagramCore() {
   return (
     <GlassPanel
-      liquid
-      glare
       className="rounded-3xl p-3 sm:p-4 flex flex-col gap-2 ring-1 ring-primary/40 bg-primary/5 shrink-0 w-[280px] lg:w-auto lg:flex-1 min-w-0 snap-start"
     >
       <div className="flex items-center gap-2">

@@ -193,7 +193,7 @@ export function AegisHero() {
 }
 
 function GlassProofCard() {
-  const ref = useLiquidGlass<HTMLDivElement>({ scale: -90, chroma: 5, blur: 4 });
+  const ref = useLiquidGlass<HTMLDivElement>(true, { scale: -90, chroma: 5, blur: 4 });
   return (
     <>
       <div

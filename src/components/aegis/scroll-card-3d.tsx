@@ -1,16 +1,16 @@
 'use client';
 
 import { useRef, type ReactNode } from 'react';
-import { motion, useScroll, useTransform, useReducedMotion, type MotionStyle } from 'framer-motion';
+import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 /**
- * ScrollCard3D — a card that rotates in 3D as it scrolls through the viewport.
+ * ScrollCard3D — a card that subtly reacts as it scrolls through the viewport.
  *
- * As the card enters from the bottom, it starts rotated -8° on Y and slightly
- * scaled down; as it centers it's flat (0°, scale 1); as it exits the top it
- * rotates +8°. This gives a "cards fanning through 3D space" feel that's the
- * signature of premium scroll-driven sites.
+ * Perf-optimized: opacity-only scroll-linked transform (1 transform instead of
+ * the old rotateY+scale+opacity = 3 transforms). The 3D rotateY was causing
+ * scroll jank with 12+ cards each running their own useScroll listener.
+ * The visual difference is minimal but the scroll fluidity gain is large.
  *
  * Respects prefers-reduced-motion (renders static).
  */
@@ -21,7 +21,7 @@ export function ScrollCard3D({
 }: {
   children: ReactNode;
   className?: string;
-  /** Max rotation degrees. Default 8. */
+  /** Unused — kept for API compatibility. Intensity is now opacity-based. */
   intensity?: number;
 }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -32,20 +32,14 @@ export function ScrollCard3D({
     offset: ['start end', 'end start'],
   });
 
-  // 0 (entering) → 0.5 (centered) → 1 (exiting)
-  const rotateY = useTransform(scrollYProgress, [0, 0.5, 1], [-intensity, 0, intensity]);
-  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.94, 1, 0.94]);
-  const opacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0.4, 1, 1, 0.4]);
-
-  const style: MotionStyle = prefersReduced
-    ? {}
-    : { rotateY, scale, opacity, transformPerspective: 1000 };
+  // Single opacity transform — cheapest possible scroll-linked animation.
+  const opacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0.5, 1, 1, 0.5]);
 
   return (
     <motion.div
       ref={ref}
-      style={style}
-      className={cn('card-3d', className)}
+      style={prefersReduced ? undefined : { opacity }}
+      className={cn(className)}
     >
       {children}
     </motion.div>

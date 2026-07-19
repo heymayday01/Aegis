@@ -158,7 +158,7 @@ export function AegisStreamingDemo() {
           className="mt-6 sm:mt-10 grid gap-4 lg:grid-cols-[1fr_300px]"
         >
           {/* Stream output panel — terminal feel */}
-          <GlassPanel liquid glare className="rounded-3xl overflow-hidden flex flex-col">
+          <GlassPanel className="rounded-3xl overflow-hidden flex flex-col">
             {/* Header bar with traffic-light dots + URL + status badges */}
             <div className="flex flex-wrap items-center justify-between gap-2 px-5 py-3 border-b border-foreground/10">
               <div className="flex items-center gap-2.5">

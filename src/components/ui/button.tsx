@@ -22,15 +22,17 @@ const buttonVariants = cva(
         ghost:
           'hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 active:scale-[0.98]',
         link: 'text-primary underline-offset-4 hover:underline',
-        // Liquid glass — the premium variant. Tinted glass material + inset
-        // highlights + backdrop blur. Hover lifts slightly + brightens.
+        // Liquid glass — tinted glass material WITHOUT backdrop-filter (perf).
+        // backdrop-filter on every button was causing scroll lag (13 GPU layers).
+        // The .glass class provides the tint gradient + inset shadow; we skip
+        // the frosted blur on buttons since they're small and over dark bg.
         glass:
-          'glass rounded-full text-foreground shadow-sm hover:shadow-md hover:brightness-110 active:scale-[0.97] [backdrop-filter:blur(12px)_saturate(1.3)] [-webkit-backdrop-filter:blur(12px)_saturate(1.3)]',
+          'glass rounded-full text-foreground shadow-sm hover:shadow-md hover:brightness-110 active:scale-[0.97]',
         'glass-strong':
-          'glass glass-strong rounded-full text-foreground shadow-md hover:shadow-lg hover:brightness-110 active:scale-[0.97] [backdrop-filter:blur(14px)_saturate(1.4)] [-webkit-backdrop-filter:blur(14px)_saturate(1.4)]',
+          'glass glass-strong rounded-full text-foreground shadow-md hover:shadow-lg hover:brightness-110 active:scale-[0.97]',
         // Glass primary — mint accent text + ring, glass material provides the fill.
         'glass-primary':
-          'glass rounded-full text-primary shadow-sm hover:shadow-md hover:brightness-110 active:scale-[0.97] [backdrop-filter:blur(12px)_saturate(1.3)] [-webkit-backdrop-filter:blur(12px)_saturate(1.3)] [box-shadow:inset_0_0_0_1px_color-mix(in_oklch,var(--primary)_40%,transparent),0_16px_40px_-12px_rgba(0,0,0,0.45)]',
+          'glass rounded-full text-primary shadow-sm hover:shadow-md hover:brightness-110 active:scale-[0.97] [box-shadow:inset_0_0_0_1px_color-mix(in_oklch,var(--primary)_40%,transparent),0_16px_40px_-12px_rgba(0,0,0,0.45)]',
       },
       size: {
         default: 'h-9 px-4 py-2 has-[>svg]:px-3',
