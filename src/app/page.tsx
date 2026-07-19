@@ -1,5 +1,6 @@
 import { AegisNav } from '@/components/aegis/nav';
 import { AegisHero } from '@/components/aegis/hero';
+import { CurvedMarqueeSection } from '@/components/aegis/curved-marquee-section';
 import { AegisPlayground } from '@/components/aegis/playground';
 import { AegisStreamingDemo } from '@/components/aegis/streaming-demo';
 import { AegisAuditExplorer } from '@/components/aegis/audit-explorer';
@@ -16,6 +17,7 @@ export default function Home() {
       <AegisNav />
       <main className="relative min-h-screen">
         <AegisHero />
+        <CurvedMarqueeSection />
         <AegisPlayground />
         <AegisStreamingDemo />
         <AegisAuditExplorer />

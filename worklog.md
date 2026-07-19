@@ -475,3 +475,44 @@ Stage Summary:
 - Navbar redesigned with fluid springed motion, custom mobile expand animation, staggered link reveal
 - All interactions verified working
 - Screenshots: preview-nav-desktop.png, preview-nav-mobile-open.png
+
+---
+Task ID: 12
+Agent: main (orchestrator)
+Task: Integrate the Originkit curved marquee component as a section divider moment
+
+1. Created src/components/aegis/curved-marquee.tsx:
+   - Adapted the Originkit CurvedLoop component (draggable SVG-path curved marquee)
+   - Tuned defaults for Aegis: Instrument Serif font, var(--primary) color, curveAmount -340, baseVelocity 28
+   - Transparent background (sits over ambient orbs)
+   - Responsive: maxWidth 1440px, aspect-ratio preserved, scales on mobile
+   - Fixed lint: removed isDragging.current read during render (cursorStyle now static 'grab'; 'grabbing' set via direct DOM in handlers)
+   - Drag: pointer events with inertia (dragVelocity decays at 0.9/0.96), wraps around path
+
+2. Created src/components/aegis/curved-marquee-section.tsx:
+   - Wraps CurvedLoop in a section with top/bottom hairline dividers
+   - Height: min(38vh, 320px) with overflow hidden
+   - whileInView scale+fade reveal
+   - "drag to fling →" hint that fades in then out (3s timeline)
+   - aria-hidden (decorative moment, not content)
+   - Respects prefers-reduced-motion (velocity 0, no entrance animation)
+
+3. Wired into src/app/page.tsx between AegisHero and AegisPlayground:
+   - Acts as a "moment" that breaks the page's vertical rhythm
+   - Text: "VERIFY · DON'T TRUST · AEGIS · " repeating along a quadratic-bezier curve
+
+Verification (Agent Browser):
+- Lint: zero errors
+- No console/runtime errors
+- SVG renders: viewBox 1440x800, textPath with 4 tspan repeats
+- Drag works: tspan x moved from 578.7 → 754.2 on a 200px pointer drag (inertia applied)
+- Mobile: renders at 217px tall, visible, scales correctly
+- Desktop: renders at full width, elegant curved teal text over dark ambient background
+- VLM desktop verdict: 8/10 visual impact — "elegant curved teal text marquee"
+- VLM mobile verdict: 8/10 — "elegantly minimalist, smooth responsiveness to dragging"
+
+Stage Summary:
+- Curved draggable marquee integrated as a section divider between hero and playground
+- Uses Instrument Serif + primary color, matches the liquid glass aesthetic
+- Fully responsive, draggable with inertia, respects reduced motion
+- Screenshots: preview-curved-marquee.png, preview-curved-marquee-mobile.png
