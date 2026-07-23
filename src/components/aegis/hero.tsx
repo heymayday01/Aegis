@@ -155,20 +155,45 @@ export function AegisHero() {
               ))}
             </h1>
 
-            {/* Subhead — concise, bold the key phrase. Delayed to follow the smoky headline. */}
-            <motion.p
+            {/* Interactive before→after strip — replaces the paragraph.
+                Shows PII getting stripped visually instead of explaining in words. */}
+            <motion.div
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.8 }}
-              className="text-base sm:text-lg text-muted-foreground max-w-lg leading-relaxed"
+              className="glass glass-chromatic rounded-2xl p-3 max-w-lg"
             >
-              Every prompt you send to ChatGPT, Claude, or Gemini carries your emails,
-              keys, and IDs.{' '}
-              <span className="text-foreground font-medium">
-                Aegis strips them before they leave your device
-              </span>{' '}
-              — and proves it with a tamper-evident audit chain.
-            </motion.p>
+              <div className="flex items-center gap-3">
+                {/* Before: raw PII */}
+                <div className="flex-1 min-w-0">
+                  <div className="aegis-eyebrow text-muted-foreground/60 mb-1.5">Before</div>
+                  <div className="aegis-mono text-[11px] leading-relaxed text-foreground/80 break-all">
+                    <span className="text-rose-400">john@acme.com</span>{' '}
+                    <span className="text-rose-400">sk_live_51Hq...</span>{' '}
+                    <span className="text-rose-400">234123412346</span>
+                  </div>
+                </div>
+                {/* Arrow */}
+                <motion.div
+                  initial={prefersReduced ? false : { scale: 0, rotate: -90 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ duration: 0.5, delay: 1.0, type: 'spring', stiffness: 300, damping: 20 }}
+                  className="flex flex-col items-center gap-0.5 shrink-0"
+                >
+                  <ShieldCheck className="size-4 text-primary" />
+                  <span className="text-[8px] text-primary aegis-mono uppercase">strip</span>
+                </motion.div>
+                {/* After: tokens */}
+                <div className="flex-1 min-w-0">
+                  <div className="aegis-eyebrow text-primary/60 mb-1.5">After</div>
+                  <div className="aegis-mono text-[11px] leading-relaxed text-primary/80 break-all">
+                    <span className="aegis-token entity-chip entity-EMAIL">EMAIL</span>{' '}
+                    <span className="aegis-token entity-chip entity-API_KEY">KEY</span>{' '}
+                    <span className="aegis-token entity-chip entity-AADHAAR">ID</span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
 
             {/* Single dominant CTA — magnetic hover, delayed to follow the smoky headline. */}
             <motion.div

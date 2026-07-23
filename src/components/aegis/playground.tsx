@@ -262,7 +262,7 @@ export function AegisPlayground() {
               </span>
             </>
           }
-          description="Every detection is highlighted in place, swapped for a reversible token, and logged in the audit chain. Edit the text or change strictness — the live policy is yours."
+          description="Paste text. Watch PII vanish. Rehydrate to verify."
         />
 
         {/* Strictness pill bar + actions */}

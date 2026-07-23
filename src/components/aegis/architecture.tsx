@@ -52,7 +52,7 @@ export function AegisArchitecture() {
               </span>
             </>
           }
-          description="One core engine, four surfaces. The same @aegis/core that powers this dashboard ships in the MCP server, the SDK, and (eventually) the optional browser extension — so detection behaviour is identical everywhere."
+          description="One engine. Every surface. Zero forks."
         />
 
         {/* System diagram — horizontally scrollable on mobile (saves ~600px of
@@ -104,7 +104,7 @@ export function AegisArchitecture() {
               icon={Plug}
               title="MCP-first"
               tone="entity-IP_ADDRESS"
-              body="Model Context Protocol is the emerging standard for AI-client ↔ tool integration. Aegis ships as an MCP server so any compatible client — Claude Desktop, Cursor, Windsurf — gets redaction natively. No DOM scraping, no “third party reads my chats” trust paradox, future-proof against new AI clients."
+              body="Any MCP-compatible client gets redaction natively. No DOM scraping. No trust paradox."
             />
           </ScrollCard3D>
           <ScrollCard3D intensity={10}>
@@ -112,7 +112,7 @@ export function AegisArchitecture() {
               icon={ScanFace}
               title="Presidio-backed"
               tone="entity-AADHAAR"
-              body="Microsoft Presidio is the mature, battle-tested open-source detection engine. Rather than reinvent it, the SDK/server tier swaps the in-browser regex bank for Presidio via a thin adapter. Same DetectionResult contract, much better recall on names, orgs, and unstructured context."
+              body="Microsoft's battle-tested detection engine. Better recall on names, orgs, unstructured context."
             />
           </ScrollCard3D>
           <ScrollCard3D intensity={10}>
@@ -120,7 +120,7 @@ export function AegisArchitecture() {
               icon={Radio}
               title="Streaming-aware"
               tone="entity-CREDIT_CARD"
-              body="LLM responses stream token-by-token. PII like john@acme.com gets split across chunk boundaries (john@ac | me.com). Aegis holds back a sliding window, runs detection on the buffer, and flushes confirmed-safe text immediately while keeping ambiguous tails held. Watch it live above."
+              body="PII split across chunk boundaries? The sliding window catches it. Watch it live above."
             />
           </ScrollCard3D>
         </div>
@@ -134,11 +134,7 @@ export function AegisArchitecture() {
                 <ShieldCheck className="size-4 text-primary" />
                 <h3 className="aegis-eyebrow text-muted-foreground">Honest limits</h3>
               </div>
-              <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
-                A security product that overclaims is worse than one that doesn’t
-                ship. Here’s exactly what v1 can and can’t catch — stated on the
-                dashboard, not buried in a footnote.
-              </p>
+              
               <div className="grid gap-3 grid-cols-1 sm:grid-cols-2">
                 <div className="glass rounded-2xl p-3 sm:p-4">
                   <div className="aegis-eyebrow text-primary mb-2">
@@ -191,54 +187,15 @@ export function AegisArchitecture() {
               <div className="flex items-center gap-2 mb-3">
                 <Lightbulb className="size-4 text-primary" />
                 <h3 className="aegis-eyebrow text-muted-foreground">
-                  Why this is portfolio-worthy
+                  Why it matters
                 </h3>
               </div>
-              <div className="text-xs sm:text-sm text-muted-foreground leading-relaxed space-y-2.5">
-                <p>
-                  AI vendors make trust claims that are contractual, not provable.
-                  Enterprise DLP costs $25–30/user/month, locking out freelancers
-                  and SMBs. Aegis is local-first, provider-agnostic, with a
-                  tamper-evident hash chain so you can verify what was sent where.
-                </p>
-                <p>What it demonstrates that a CRUD app doesn’t:</p>
-                <ul className="grid gap-1.5 sm:grid-cols-2 text-xs">
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary font-semibold">·</span>
-                    <span><span className="text-foreground font-medium">Security-first</span> — hash-chained logs, AES-256-GCM vaults, local-only.</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary font-semibold">·</span>
-                    <span><span className="text-foreground font-medium">Arch judgment</span> — MCP over DOM scraping, Presidio reuse, shared core.</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary font-semibold">·</span>
-                    <span><span className="text-foreground font-medium">Modernity</span> — streaming-aware, MCP protocol, 2025 LLM features.</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary font-semibold">·</span>
-                    <span><span className="text-foreground font-medium">Maturity</span> — CI-gated accuracy, round-trip invariants, disclosure path.</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary font-semibold">·</span>
-                    <span><span className="text-foreground font-medium">Honesty</span> — stated limits, kill criteria, 0.x.x versioning.</span>
-                  </li>
-                </ul>
-              </div>
-              {/* Hard-edged badges (mono pills, primary-tinted) */}
-              <div className="mt-4 flex flex-wrap gap-1.5">
-                <span className="inline-flex items-center rounded-full border border-primary/30 text-primary px-2.5 py-0.5 text-[11px] aegis-mono">
-                  $0 infra
-                </span>
-                <span className="inline-flex items-center rounded-full border border-primary/30 text-primary px-2.5 py-0.5 text-[11px] aegis-mono">
-                  Open-source
-                </span>
-                <span className="inline-flex items-center rounded-full border border-primary/30 text-primary px-2.5 py-0.5 text-[11px] aegis-mono">
-                  TypeScript strict
-                </span>
-                <span className="inline-flex items-center rounded-full border border-primary/30 text-primary px-2.5 py-0.5 text-[11px] aegis-mono">
-                  CI-gated accuracy
-                </span>
+              <div className="flex flex-wrap gap-2">
+                {['Security-first', 'Hash-chained logs', 'AES-256 vaults', 'Local-only', 'MCP over DOM scraping', 'Presidio reuse', 'Streaming-aware', 'CI-gated accuracy', '$0 infra', 'Open-source'].map((tag) => (
+                  <span key={tag} className="glass rounded-full px-2.5 py-1 text-[10px] aegis-mono text-primary border border-primary/20">
+                    {tag}
+                  </span>
+                ))}
               </div>
             </GlassPanel>
           </ScrollReveal>
@@ -248,91 +205,6 @@ export function AegisArchitecture() {
   );
 }
 
-/**
- * DiagramColumn — outer panel is plain .glass (no liquid) for perf; sub-cells
- * are also plain .glass. On mobile the diagram is horizontally scrollable, so
- * each column gets a min-width to stay readable in the carousel.
- */
-function DiagramColumn({
-  title,
-  items,
-}: {
-  title: string;
-  items: { title: string; sub: string }[];
-}) {
-  return (
-    <div className="glass rounded-3xl p-3 sm:p-4 flex flex-col gap-2 shrink-0 w-[240px] lg:w-auto lg:flex-1 min-w-0 snap-start">
-      <div className="aegis-eyebrow text-muted-foreground text-[9px]">{title}</div>
-      <div className="flex flex-col gap-2 flex-1">
-        {items.map((it) => (
-          <div
-            key={it.title}
-            className="glass rounded-xl p-2.5 sm:p-3"
-          >
-            <div className="text-xs font-medium">{it.title}</div>
-            <div className="text-[10px] text-muted-foreground aegis-mono">
-              {it.sub}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/**
- * DiagramArrow — hidden on mobile (horizontal scroll conveys the flow), visible
- * as a right-pointing chevron on desktop.
- */
-function DiagramArrow() {
-  return (
-    <div className="hidden lg:flex items-center justify-center text-muted-foreground shrink-0">
-      <ArrowRight className="size-5" aria-hidden />
-    </div>
-  );
-}
-
-/**
- * DiagramCore — the focal element; keeps liquid glass + primary tint. Fixed
- * width on mobile (in the horizontal scroll), flexible on desktop.
- */
-function DiagramCore() {
-  return (
-    <GlassPanel
-      className="rounded-3xl p-3 sm:p-4 flex flex-col gap-2 ring-1 ring-primary/40 bg-primary/5 shrink-0 w-[280px] lg:w-auto lg:flex-1 min-w-0 snap-start"
-    >
-      <div className="flex items-center gap-2">
-        <ShieldCheck className="size-4 text-primary" />
-        <div className="text-xs font-semibold">Aegis Core Engine</div>
-        <span className="ml-auto text-[10px] aegis-mono glass rounded-full border border-primary/30 text-primary px-2 py-0.5">
-          @aegis/core
-        </span>
-      </div>
-      <div className="grid grid-cols-2 gap-2">
-        {[
-          { name: 'Detection', sub: 'regex bank + glossary' },
-          { name: 'Tokenization', sub: 'reversible pseudonyms' },
-          { name: 'Policy', sub: 'strictness + entities' },
-          { name: 'Audit', sub: 'SHA-256 hash chain' },
-          { name: 'Streaming', sub: 'sliding window' },
-          { name: 'Presidio adapter', sub: 'SDK tier (planned)' },
-        ].map((m) => (
-          <div key={m.name} className="glass rounded-xl p-2.5">
-            <div className="text-xs font-medium">{m.name}</div>
-            <div className="text-[10px] text-muted-foreground aegis-mono">
-              {m.sub}
-            </div>
-          </div>
-        ))}
-      </div>
-    </GlassPanel>
-  );
-}
-
-/**
- * UpgradeCard — interactive glass card with hover lift. Now used as the child
- * of a <ScrollCard3D> wrapper, so it owns only its hover motion.
- */
 function UpgradeCard({
   icon: Icon,
   title,
@@ -345,16 +217,13 @@ function UpgradeCard({
   tone: string;
 }) {
   return (
-    <motion.div whileHover={{ y: -2 }} className="h-full">
+    <motion.div whileHover={{ y: -2 }}>
       <GlassPanel
-        glare
         className={cn(
           'rounded-3xl p-4 sm:p-6 flex flex-col gap-3 h-full',
           tone,
         )}
       >
-        {/* Entity-colored tag — uses .entity-XXX (sets --ec) + .entity-chip for the
-            bg/border/color mix. */}
         <span className="entity-chip inline-flex items-center gap-1.5 rounded-lg px-2 py-1 self-start w-fit">
           <Icon className="size-3.5" />
           <span className="aegis-eyebrow text-[9px]">{title}</span>
@@ -362,5 +231,66 @@ function UpgradeCard({
         <p className="text-sm text-muted-foreground leading-relaxed">{body}</p>
       </GlassPanel>
     </motion.div>
+  );
+}
+
+function DiagramColumn({
+  title,
+  items,
+  accent,
+}: {
+  title: string;
+  items: { title: string; sub: string }[];
+  accent?: string;
+}) {
+  return (
+    <div className={cn('rounded-lg border p-3 shrink-0 w-[260px] lg:w-auto lg:flex-1 min-w-0 snap-start', accent ?? 'border-sky-400/30 bg-sky-400/5')}>
+      <div className="aegis-eyebrow text-muted-foreground mb-2">{title}</div>
+      <div className="flex flex-col gap-2">
+        {items.map((it) => (
+          <div key={it.title} className="rounded-md border border-border/60 bg-background/60 p-2">
+            <div className="text-xs font-medium">{it.title}</div>
+            <div className="text-[10px] text-muted-foreground">{it.sub}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function DiagramArrow() {
+  return (
+    <div className="hidden lg:flex items-center justify-center text-muted-foreground shrink-0">
+      <ArrowRight className="size-5" />
+    </div>
+  );
+}
+
+function DiagramCore() {
+  return (
+    <GlassPanel
+      className="rounded-3xl p-3 sm:p-4 flex flex-col gap-2 ring-1 ring-primary/40 bg-primary/5 shrink-0 w-[280px] lg:w-auto lg:flex-1 min-w-0 snap-start"
+    >
+      <div className="flex items-center gap-2">
+        <ShieldCheck className="size-4 text-primary" />
+        <div className="text-xs font-semibold">Aegis Core Engine</div>
+        <span className="ml-auto text-[10px] aegis-mono glass rounded-full border border-primary/30 text-primary px-2 py-0.5">@aegis/core</span>
+      </div>
+      <div className="grid grid-cols-2 gap-2">
+        {[
+          { name: 'Detection', sub: 'regex bank + glossary' },
+          { name: 'Tokenization', sub: 'reversible pseudonyms' },
+          { name: 'Policy', sub: 'strictness + entities' },
+          { name: 'Audit', sub: 'SHA-256 hash chain' },
+          { name: 'Streaming', sub: 'sliding window' },
+          { name: 'Presidio adapter', sub: 'SDK tier (planned)' },
+        ].map((m) => (
+          <div key={m.name} className="rounded-md border border-border/60 bg-background/60 p-2">
+            <div className="text-xs font-medium">{m.name}</div>
+            <div className="text-[10px] text-muted-foreground">{m.sub}</div>
+          </div>
+        ))}
+      </div>
+    </GlassPanel>
   );
 }

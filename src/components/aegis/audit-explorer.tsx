@@ -127,7 +127,7 @@ export function AegisAuditExplorer() {
               </span>
             </>
           }
-          description="Every redaction is appended to a SHA-256 hash-chained log. Edit any entry and watch the chain break downstream — then repair it with one click. Only entity TYPES and COUNTS are stored, never the values themselves."
+          description="Tamper any entry. Watch the chain break. Repair with one click."
         />
 
         {/* Integrity summary + actions — floating glass panels */}

@@ -167,7 +167,7 @@ export function AegisPolicyEditor() {
               </span>
             </>
           }
-          description="Changes here apply live to the playground and streaming demo. The active policy is persisted server-side and re-read on every detection call."
+          description="Toggle entities. Add glossary terms. Changes apply instantly."
         />
 
         {loading || !policy ? (
