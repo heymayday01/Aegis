@@ -61,7 +61,7 @@ export function AegisHero() {
         <motion.div
           initial={{ x: '-100%' }}
           animate={{ x: '100%' }}
-          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 1.9 }}
           className="absolute inset-0 z-20 pointer-events-none"
           style={{
             background:
@@ -104,7 +104,7 @@ export function AegisHero() {
             <motion.div
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
+              transition={{ duration: 0.5, delay: 1.9 }}
               className="flex items-center gap-2.5"
             >
               <span className="glass rounded-full px-3 py-1 flex items-center gap-2">
@@ -117,7 +117,7 @@ export function AegisHero() {
             {/* Hero headline — word-by-word blur reveal.
                 Each word independently slides up from behind a mask + unblurs,
                 creating a cinematic "focusing into existence" effect.
-                Stagger: 0.08s per word, starting at 0.3s after load. */}
+                Delayed to start AFTER the cinematic loader exits (1.8s + 0.3s curtain). */}
             <h1 className="aegis-display text-[2.25rem] sm:text-5xl lg:text-6xl xl:text-[4.5rem] leading-[1.05] tracking-tight">
               {[
                 { word: 'Your', className: '' },
@@ -128,7 +128,7 @@ export function AegisHero() {
                   <motion.span
                     initial={prefersReduced ? false : { y: '110%', filter: 'blur(10px)', opacity: 0 }}
                     animate={{ y: 0, filter: 'blur(0px)', opacity: 1 }}
-                    transition={{ duration: 0.7, delay: 0.3 + i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+                    transition={{ duration: 0.7, delay: 2.1 + i * 0.08, ease: [0.16, 1, 0.3, 1] }}
                     className={`inline-block ${item.className}`}
                   >
                     {item.word}
@@ -146,7 +146,7 @@ export function AegisHero() {
                   <motion.span
                     initial={prefersReduced ? false : { y: '110%', filter: 'blur(10px)', opacity: 0 }}
                     animate={{ y: 0, filter: 'blur(0px)', opacity: 1 }}
-                    transition={{ duration: 0.7, delay: 0.6 + i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+                    transition={{ duration: 0.7, delay: 2.4 + i * 0.08, ease: [0.16, 1, 0.3, 1] }}
                     className={`inline-block ${item.className}`}
                   >
                     {item.word}
@@ -160,7 +160,7 @@ export function AegisHero() {
             <motion.div
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.8 }}
+              transition={{ duration: 0.6, delay: 2.7 }}
               className="glass glass-chromatic rounded-2xl p-3 max-w-lg"
             >
               <div className="flex items-center gap-3">
@@ -177,7 +177,7 @@ export function AegisHero() {
                 <motion.div
                   initial={prefersReduced ? false : { scale: 0, rotate: -90 }}
                   animate={{ scale: 1, rotate: 0 }}
-                  transition={{ duration: 0.5, delay: 1.0, type: 'spring', stiffness: 300, damping: 20 }}
+                  transition={{ duration: 0.5, delay: 2.9, type: 'spring', stiffness: 300, damping: 20 }}
                   className="flex flex-col items-center gap-0.5 shrink-0"
                 >
                   <ShieldCheck className="size-4 text-primary" />
@@ -199,7 +199,7 @@ export function AegisHero() {
             <motion.div
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 1.0 }}
+              transition={{ duration: 0.6, delay: 3.0 }}
               className="flex items-center gap-4 pt-2"
             >
               <motion.div
@@ -229,7 +229,7 @@ export function AegisHero() {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 1.2 }}
+              transition={{ duration: 0.6, delay: 3.2 }}
               className="flex items-center gap-4 pt-2 text-[11px] text-muted-foreground/70"
             >
               <span className="flex items-center gap-1.5">
@@ -250,7 +250,7 @@ export function AegisHero() {
           <motion.div
             initial={prefersReduced ? false : { opacity: 0, y: 30, rotate: -1.5 }}
             animate={{ opacity: 1, y: 0, rotate: 0 }}
-            transition={{ duration: 0.9, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.9, delay: 2.3, ease: [0.16, 1, 0.3, 1] }}
             style={prefersReduced ? undefined : { y: cardY, opacity: cardOpacity }}
             className="lg:col-span-5 lg:-ml-4"
           >
@@ -262,7 +262,7 @@ export function AegisHero() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.85 }}
+          transition={{ duration: 0.8, delay: 3.4 }}
           className="mt-14 sm:mt-16 -mx-4 sm:-mx-6"
         >
           <div className="aegis-marquee py-2.5 border-y border-foreground/8">

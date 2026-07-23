@@ -41,7 +41,7 @@ export function CinematicLoader() {
       if (typeof document !== 'undefined') {
         document.body.style.overflow = '';
       }
-    }, prefersReduced ? 400 : 2200);
+    }, prefersReduced ? 400 : 1800);
     return () => {
       clearTimeout(timer);
       if (typeof document !== 'undefined') {
