@@ -319,11 +319,11 @@ function MobileExpandingNav({
                 transition={{ delay: prefersReduced ? 0 : 0.1, duration: 0.3 }}
                 className="flex items-center justify-between px-3 py-2 mb-1"
               >
-                <span className="aegis-eyebrow text-muted-foreground">Sections</span>
-                <span className="aegis-mono text-[10px] text-muted-foreground/60">05</span>
+                <span className="aegis-eyebrow text-foreground/80">Sections</span>
+                <span className="aegis-mono text-[11px] text-foreground/60">05</span>
               </motion.div>
 
-              {/* Staggered link list — y-translate + fade for fluid feel */}
+              {/* Staggered link list — accessible touch targets, high contrast */}
               {NAV_ITEMS.map((item, i) => {
                 const isActive = active === item.id;
                 return (
@@ -341,21 +341,26 @@ function MobileExpandingNav({
                       damping: 30,
                     }}
                     className={cn(
-                      'group flex items-center gap-3 rounded-2xl px-3 py-3 min-h-12 transition-colors active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                      'group flex items-center gap-3 rounded-2xl px-4 py-3.5 min-h-[52px] transition-colors active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background',
                       isActive
-                        ? 'text-foreground bg-primary/10'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-foreground/5',
+                        ? 'text-foreground bg-primary/15 ring-1 ring-primary/30'
+                        : 'text-foreground/80 hover:text-foreground hover:bg-foreground/8',
                     )}
-                    aria-current={isActive ? 'true' : undefined}
+                    aria-current={isActive ? 'page' : undefined}
+                    role="link"
+                    tabIndex={0}
                   >
-                    <span className="aegis-mono text-[11px] text-muted-foreground/50 group-hover:text-primary transition-colors w-6">
+                    <span className={cn(
+                      'aegis-mono text-[12px] font-medium w-6 transition-colors',
+                      isActive ? 'text-primary' : 'text-foreground/60 group-hover:text-primary',
+                    )}>
                       {item.num}
                     </span>
-                    <span className="text-sm font-medium flex-1">{item.label}</span>
+                    <span className="text-[15px] font-medium flex-1">{item.label}</span>
                     {isActive && (
                       <motion.span
                         layoutId="mobile-nav-dot"
-                        className="size-1.5 rounded-full bg-primary"
+                        className="size-2 rounded-full bg-primary ring-2 ring-primary/30"
                         transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                       />
                     )}

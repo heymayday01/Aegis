@@ -6,7 +6,6 @@ import { ArrowRight, ArrowDown, ShieldCheck, Lock, Sparkles } from 'lucide-react
 import { Button } from '@/components/ui/button';
 import { useLiquidGlass } from './glass-panel';
 import { ParticleShield3D } from './particle-shield-3d';
-import SmokyText from './smoky-text';
 
 const MARQUEE_ITEMS = [
   'EMAIL', 'API KEY', 'PHONE', 'CREDIT CARD', 'AADHAAR', 'PAN',
@@ -115,50 +114,39 @@ export function AegisHero() {
               <span className="aegis-eyebrow text-muted-foreground">redaction layer for AI</span>
             </motion.div>
 
-            {/* Hero headline — SmokyText materialization in Space Grotesk.
-                The signature $100k moment: each character condenses from smoke. */}
-            <div className="aegis-display text-[2.25rem] sm:text-5xl lg:text-6xl xl:text-[4.5rem] leading-[1.05] tracking-tight">
-              <SmokyText
-                text="Your prompts leak."
-                font={{
-                  fontFamily: '"Space Grotesk", sans-serif',
-                  fontWeight: 600,
-                  fontSize: 'inherit',
-                  textAlign: 'left',
-                  lineHeight: 1.05,
-                }}
-                color="var(--foreground)"
-                appearTrigger="default"
-                appearTransition={{ type: 'tween', ease: 'easeOut', duration: 1.2, delay: 0.2 }}
-                intensity={8}
-                position="bottomLeft"
-                animationMode="singleLine"
-              />
-              <div className="mt-1">
-                <SmokyText
-                  text="Aegis makes them safe."
-                  font={{
-                    fontFamily: '"Space Grotesk", sans-serif',
-                    fontWeight: 700,
-                    fontSize: 'inherit',
-                    textAlign: 'left',
-                    lineHeight: 1.05,
-                  }}
-                  color="var(--primary)"
-                  appearTrigger="default"
-                  appearTransition={{ type: 'tween', ease: 'easeOut', duration: 1.2, delay: 0.6 }}
-                  intensity={10}
-                  position="bottomLeft"
-                  animationMode="singleLine"
-                />
-              </div>
-            </div>
+            {/* Hero headline — word-by-word blur-to-sharp reveal.
+                Each word slides up from behind a mask + unblurs, creating
+                a cinematic "focusing" effect that's more modern than smoky text. */}
+            <h1 className="aegis-display text-[2.25rem] sm:text-5xl lg:text-6xl xl:text-[4.5rem] leading-[1.05] tracking-tight">
+              <span className="block overflow-hidden">
+                <motion.span
+                  initial={prefersReduced ? false : { y: '110%', filter: 'blur(8px)' }}
+                  animate={{ y: 0, filter: 'blur(0px)' }}
+                  transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                  className="block"
+                >
+                  Your prompts{' '}
+                  <span className="text-foreground/40">leak.</span>
+                </motion.span>
+              </span>
+              <span className="block overflow-hidden mt-1">
+                <motion.span
+                  initial={prefersReduced ? false : { y: '110%', filter: 'blur(8px)' }}
+                  animate={{ y: 0, filter: 'blur(0px)' }}
+                  transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                  className="block"
+                >
+                  Aegis makes them{' '}
+                  <span className="aegis-text-gradient">safe.</span>
+                </motion.span>
+              </span>
+            </h1>
 
             {/* Subhead — concise, bold the key phrase. Delayed to follow the smoky headline. */}
             <motion.p
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 1.2 }}
+              transition={{ duration: 0.6, delay: 0.8 }}
               className="text-base sm:text-lg text-muted-foreground max-w-lg leading-relaxed"
             >
               Every prompt you send to ChatGPT, Claude, or Gemini carries your emails,
@@ -173,7 +161,7 @@ export function AegisHero() {
             <motion.div
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 1.5 }}
+              transition={{ duration: 0.6, delay: 1.0 }}
               className="flex items-center gap-4 pt-2"
             >
               <motion.div
@@ -203,7 +191,7 @@ export function AegisHero() {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 1.8 }}
+              transition={{ duration: 0.6, delay: 1.2 }}
               className="flex items-center gap-4 pt-2 text-[11px] text-muted-foreground/70"
             >
               <span className="flex items-center gap-1.5">
