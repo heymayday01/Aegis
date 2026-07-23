@@ -11,6 +11,7 @@ import { SectionHeading } from './section-heading';
 import { EntityChip } from './entity-chip';
 import { GlassPanel } from './glass-panel';
 import { ScrollReveal } from './scroll-card-3d';
+import { LiquidGlassToggle } from './liquid-glass-toggle';
 
 interface StreamChunkEvent {
   type: 'chunk';
@@ -257,31 +258,16 @@ export function AegisStreamingDemo() {
                 )}
               </div>
 
-              {/* Mode toggle */}
-              <div className="flex items-center gap-1 glass rounded-full p-0.5">
-                <button
-                  onClick={() => setMode('demo')}
-                  className={cn(
-                    'flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium transition-colors active:scale-[0.96]',
-                    mode === 'demo' ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:text-foreground',
-                  )}
-                  aria-pressed={mode === 'demo'}
-                >
-                  <Zap className="size-3" />
-                  Demo
-                </button>
-                <button
-                  onClick={() => setMode('live')}
-                  className={cn(
-                    'flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium transition-colors active:scale-[0.96]',
-                    mode === 'live' ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:text-foreground',
-                  )}
-                  aria-pressed={mode === 'live'}
-                >
-                  <Sparkles className="size-3" />
-                  Live LLM
-                </button>
-              </div>
+              {/* Mode toggle — premium liquid glass */}
+              <LiquidGlassToggle
+                size="sm"
+                value={mode}
+                onChange={(v) => setMode(v as Mode)}
+                options={[
+                  { value: 'demo', label: 'Demo', icon: <Zap className="size-3" /> },
+                  { value: 'live', label: 'Live LLM', icon: <Sparkles className="size-3" /> },
+                ]}
+              />
             </div>
 
             {/* Prompt input (live mode only) — auto-resizes to fit content */}

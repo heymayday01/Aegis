@@ -223,21 +223,83 @@
   .aegis-scanlines { background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, color-mix(in oklch, var(--foreground) 2.5%, transparent) 2px, color-mix(in oklch, var(--foreground) 2.5%, transparent) 3px); }
 }
 
-/* Glass — global scope, !important to win over Tailwind utilities */
+/* Glass — global scope, !important to win over Tailwind utilities.
+   Upgraded to match the reference: thick smoked-glass material with
+   multi-layered lighting (specular top highlight, inner shadow, chromatic edge). */
 .glass {
   position: relative;
-  background: linear-gradient(135deg, color-mix(in oklch, var(--foreground) 12%, transparent) 0%, color-mix(in oklch, var(--foreground) 6%, transparent) 50%, color-mix(in oklch, var(--foreground) 10%, transparent) 100%) !important;
-  backdrop-filter: blur(8px) saturate(1.2) !important;
-  -webkit-backdrop-filter: blur(8px) saturate(1.2) !important;
-  box-shadow: 0 12px 32px -8px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.2), inset 0 0 0 1px rgba(255,255,255,0.1) !important;
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklch, var(--foreground) 14%, transparent) 0%,
+    color-mix(in oklch, var(--foreground) 7%, transparent) 50%,
+    color-mix(in oklch, var(--foreground) 10%, transparent) 100%
+  ) !important;
+  backdrop-filter: blur(16px) saturate(1.4) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(1.4) !important;
+  box-shadow:
+    0 8px 32px -4px rgba(0, 0, 0, 0.5),
+    inset 0 1px 1px rgba(255, 255, 255, 0.25),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.2),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08) !important;
   will-change: backdrop-filter;
   backface-visibility: hidden;
 }
 .glass-strong {
-  background: linear-gradient(135deg, color-mix(in oklch, var(--foreground) 16%, transparent) 0%, color-mix(in oklch, var(--foreground) 8%, transparent) 50%, color-mix(in oklch, var(--foreground) 12%, transparent) 100%) !important;
-  box-shadow: 0 20px 50px -12px rgba(0,0,0,0.55), inset 0 1px 1px rgba(255,255,255,0.25), inset 0 0 0 1px rgba(255,255,255,0.14) !important;
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklch, var(--foreground) 18%, transparent) 0%,
+    color-mix(in oklch, var(--foreground) 10%, transparent) 50%,
+    color-mix(in oklch, var(--foreground) 14%, transparent) 100%
+  ) !important;
+  backdrop-filter: blur(20px) saturate(1.5) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(1.5) !important;
+  box-shadow:
+    0 12px 40px -6px rgba(0, 0, 0, 0.6),
+    inset 0 1px 1px rgba(255, 255, 255, 0.3),
+    inset 0 -1px 3px rgba(0, 0, 0, 0.25),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12) !important;
   will-change: backdrop-filter;
   backface-visibility: hidden;
+}
+
+/* Chromatic glass edge — rainbow refraction on the border.
+   Applied via .glass-chromatic class. Uses a conic-gradient border-image. */
+.glass-chromatic {
+  position: relative;
+}
+.glass-chromatic::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(
+    from 180deg,
+    rgba(94, 234, 212, 0.3),
+    rgba(255, 255, 255, 0.15),
+    rgba(94, 234, 212, 0.2),
+    rgba(255, 255, 255, 0.1),
+    rgba(94, 234, 212, 0.3)
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Specular top highlight — the bright 1px line at the top interior edge. */
+.glass-specular::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  border-radius: 999px;
+  pointer-events: none;
+  z-index: 2;
 }
 @media (max-width: 640px) {
   .glass {

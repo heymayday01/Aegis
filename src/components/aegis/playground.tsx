@@ -26,6 +26,7 @@ import { ENTITY_META } from '@/lib/aegis/types';
 import { SectionHeading } from './section-heading';
 import { EntityChip } from './entity-chip';
 import { ScrollReveal } from './scroll-card-3d';
+import { LiquidGlassToggle } from './liquid-glass-toggle';
 
 const SAMPLE_TEXT = `Hi team — onboarding the new customer from Acme Corp.
 
@@ -269,24 +270,11 @@ export function AegisPlayground() {
           delay={0.05}
           className="mt-6 sm:mt-10 flex flex-wrap items-center gap-3 justify-between"
         >
-          <div className="glass inline-flex items-center rounded-full p-1 gap-0.5">
-            {STRICTNESS_OPTIONS.map((opt) => (
-              <button
-                key={opt.value}
-                onClick={() => setStrictness(opt.value)}
-                className={cn(
-                  'inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium transition-colors active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-                  strictness === opt.value
-                    ? 'bg-primary text-primary-foreground'
-                    : 'text-muted-foreground hover:text-foreground',
-                )}
-                title={opt.desc}
-                aria-pressed={strictness === opt.value}
-              >
-                {opt.label}
-              </button>
-            ))}
-          </div>
+          <LiquidGlassToggle
+            value={strictness}
+            onChange={(v) => setStrictness(v as Strictness)}
+            options={STRICTNESS_OPTIONS.map((opt) => ({ value: opt.value, label: opt.label }))}
+          />
 
           <div className="flex items-center gap-2">
             <Button
