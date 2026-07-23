@@ -3,6 +3,7 @@
 
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { AegisLogo3D } from './aegis-logo';
 
 /**
  * CinematicLoader — a branded preloader that plays once on first visit.
@@ -74,27 +75,13 @@ export function CinematicLoader() {
 
           {/* Centered content */}
           <div className="relative z-10 flex flex-col items-center gap-6">
-            {/* Shield */}
+            {/* 3D Aegis Logo — branded, animated, glowing */}
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              className="relative"
             >
-              {/* Glow behind shield */}
-              <motion.div
-                className="absolute -inset-8 rounded-full"
-                style={{ background: 'radial-gradient(circle, color-mix(in oklch, var(--primary) 30%, transparent) 0%, transparent 70%)' }}
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: [0, 0.6, 0.8], scale: [0.5, 1.2, 1] }}
-                transition={{ duration: 1.2, ease: 'easeOut' }}
-              />
-              <div className="relative grid size-16 place-items-center rounded-2xl bg-primary/15 text-primary ring-1 ring-primary/30">
-                <svg viewBox="0 0 24 24" className="size-9" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 2 4 5v6c0 5 3.5 8.5 8 11 4.5-2.5 8-6 8-11V5l-8-3Z" />
-                  <path d="M9 12l2 2 4-4" />
-                </svg>
-              </div>
+              <AegisLogo3D size={64} />
             </motion.div>
 
             {/* Wordmark */}

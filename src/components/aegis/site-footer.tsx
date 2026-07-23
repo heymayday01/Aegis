@@ -1,6 +1,7 @@
 'use client';
 
 import { GlassPanel } from './glass-panel';
+import { AegisLogo } from './aegis-logo';
 
 const FOOTER_BADGES = ['Local-first', '$0 infra', 'Open-source', 'MCP-ready'];
 
@@ -23,24 +24,9 @@ export function AegisSiteFooter() {
         <GlassPanel className="rounded-t-3xl rounded-b-3xl p-6 sm:p-8">
           {/* Main row */}
           <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
-            {/* Left: shield-glyph wordmark + tagline */}
+            {/* Left: branded logo + tagline */}
             <div className="flex items-start gap-3">
-              <span className="grid size-10 place-items-center rounded-2xl bg-primary/12 text-primary ring-1 ring-primary/30 shrink-0">
-                {/* Same inline SVG shield as nav.tsx */}
-                <svg
-                  viewBox="0 0 24 24"
-                  className="size-5"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden
-                >
-                  <path d="M12 2 4 5v6c0 5 3.5 8.5 8 11 4.5-2.5 8-6 8-11V5l-8-3Z" />
-                  <path d="M9 12l2 2 4-4" />
-                </svg>
-              </span>
+              <AegisLogo variant="icon" size={40} className="shrink-0" />
               <div>
                 <div className="aegis-display text-2xl leading-none">Aegis</div>
                 <p className="mt-2 text-xs text-muted-foreground max-w-xs leading-relaxed">

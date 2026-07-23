@@ -13,6 +13,7 @@ import { Github, Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { useLiquidGlass } from './glass-panel';
+import { AegisLogo } from './aegis-logo';
 
 const NAV_ITEMS = [
   { id: 'playground', label: 'Playground', num: '01' },
@@ -167,12 +168,7 @@ function PillNav({
         className="flex items-center gap-2 group rounded-full active:scale-[0.97] transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         aria-label="Aegis home"
       >
-        <span className="grid size-6 sm:size-7 place-items-center rounded-full bg-primary/15 text-primary ring-1 ring-primary/30 group-hover:bg-primary/25 group-active:bg-primary/30 transition-colors">
-          <svg viewBox="0 0 24 24" className="size-3.5 sm:size-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 2 4 5v6c0 5 3.5 8.5 8 11 4.5-2.5 8-6 8-11V5l-8-3Z" />
-            <path d="M9 12l2 2 4-4" />
-          </svg>
-        </span>
+        <AegisLogo variant="icon" size={28} className="group-hover:scale-110 transition-transform" />
         <span className="aegis-display text-lg sm:text-xl leading-none">Aegis</span>
       </a>
 
