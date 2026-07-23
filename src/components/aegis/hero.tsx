@@ -5,7 +5,7 @@ import { motion, useReducedMotion, useScroll, useTransform, useSpring } from 'fr
 import { ArrowRight, ArrowDown, ShieldCheck, Lock, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLiquidGlass } from './glass-panel';
-import DotMatrixBackground from './dot-matrix-background';
+import { ParticleShield3D } from './particle-shield-3d';
 import SmokyText from './smoky-text';
 
 const MARQUEE_ITEMS = [
@@ -26,8 +26,8 @@ export function AegisHero() {
   const titleOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
   const cardY = useTransform(scrollYProgress, [0, 1], [0, -40]);
   const cardOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
-  // Brighter base: 35% opacity so the dot-matrix is clearly visible and alive.
-  const dotOpacity = useTransform(scrollYProgress, [0, 0.5], [0.35, 0.08]);
+  // 3D shield fades from 0.8 (clearly visible) to 0.2 on scroll.
+  const dotOpacity = useTransform(scrollYProgress, [0, 0.5], [0.8, 0.2]);
 
   // Magnetic CTA effect
   const ctaX = useSpring(0, { stiffness: 200, damping: 15 });
@@ -72,31 +72,22 @@ export function AegisHero() {
         />
       )}
 
-      {/* WebGL dot-matrix field */}
+      {/* 3D particle shield — interactive, mouse-reactive, breathing */}
       <motion.div
         className="absolute inset-0 pointer-events-none"
         aria-hidden
-        style={prefersReduced ? { opacity: 0.35 } : { opacity: dotOpacity }}
+        style={prefersReduced ? { opacity: 0.6 } : { opacity: dotOpacity }}
       >
-        <DotMatrixBackground
-          frequency={2}
-          speed={3}
-          cellSize={14}
-          gamma={5}
-          paletteBias={6}
-          colors={['#0a0f14', '#0f3a2a', '#5eead4']}
-          bgColor="transparent"
-        />
+        <ParticleShield3D />
       </motion.div>
-      {/* Scrim — lighter so the brighter dots show through.
-          A directional gradient darkens the left side (where text sits) for readability. */}
-      <div className="absolute inset-0 bg-background/25 pointer-events-none" aria-hidden />
+      {/* Scrim — directional gradient darkens the left side for text readability. */}
+      <div className="absolute inset-0 bg-background/30 pointer-events-none" aria-hidden />
       <div
         className="absolute inset-0 pointer-events-none"
         aria-hidden
         style={{
           background:
-            'linear-gradient(105deg, color-mix(in oklch, var(--background) 60%, transparent) 0%, transparent 55%), radial-gradient(60% 50% at 30% 35%, transparent 0%, color-mix(in oklch, var(--background) 30%, transparent) 100%)',
+            'linear-gradient(105deg, color-mix(in oklch, var(--background) 65%, transparent) 0%, transparent 60%), radial-gradient(60% 50% at 30% 35%, transparent 0%, color-mix(in oklch, var(--background) 30%, transparent) 100%)',
         }}
       />
 
