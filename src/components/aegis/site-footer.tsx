@@ -42,7 +42,7 @@ export function AegisSiteFooter() {
                 </svg>
               </span>
               <div>
-                <div className="aegis-serif text-2xl leading-none">Aegis</div>
+                <div className="aegis-display text-2xl leading-none">Aegis</div>
                 <p className="mt-2 text-xs text-muted-foreground max-w-xs leading-relaxed">
                   A local-first trust &amp; redaction layer for AI. Verify,
                   don&apos;t trust.

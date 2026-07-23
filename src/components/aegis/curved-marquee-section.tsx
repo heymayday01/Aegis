@@ -18,7 +18,7 @@ export function CurvedMarqueeSection() {
   return (
     <section
       aria-hidden
-      className="relative w-full overflow-hidden py-20 sm:py-28"
+      className="relative w-full overflow-hidden py-16 sm:py-24"
     >
       {/* Ambient glow behind the marquee for depth */}
       <div

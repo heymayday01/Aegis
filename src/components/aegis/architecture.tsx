@@ -39,7 +39,7 @@ const CANNOT_RELIABLY_CATCH = [
 
 export function AegisArchitecture() {
   return (
-    <section id="architecture" className="scroll-mt-20 py-12 sm:py-20">
+    <section id="architecture" className="scroll-mt-20 py-16 sm:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <SectionHeading
           num="05"

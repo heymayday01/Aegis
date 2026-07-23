@@ -173,7 +173,7 @@ function PillNav({
             <path d="M9 12l2 2 4-4" />
           </svg>
         </span>
-        <span className="aegis-serif text-lg sm:text-xl leading-none">Aegis</span>
+        <span className="aegis-display text-lg sm:text-xl leading-none">Aegis</span>
       </a>
 
       {/* Desktop links — hidden on <md. The active pill slides via layoutId. */}

@@ -114,7 +114,7 @@ export function AegisAuditExplorer() {
   );
 
   return (
-    <section id="audit" className="scroll-mt-20 py-12 sm:py-20">
+    <section id="audit" className="scroll-mt-20 py-16 sm:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <SectionHeading
           num="03"

@@ -8,6 +8,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-jetbrains-mono);
+  --font-display: var(--font-space-grotesk);
   --font-serif: var(--font-instrument-serif);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -45,55 +46,52 @@
 }
 
 :root {
-  --radius: 1.25rem;
-  --background: oklch(0.13 0.008 250);
+  --radius: 1rem;
+  --background: oklch(0.13 0.005 250);
   --foreground: oklch(0.96 0.006 250);
-  --card: oklch(0.16 0.01 250);
+  --card: oklch(0.16 0.008 250);
   --card-foreground: oklch(0.96 0.006 250);
-  --popover: oklch(0.16 0.01 250);
+  --popover: oklch(0.16 0.008 250);
   --popover-foreground: oklch(0.96 0.006 250);
-  --primary: oklch(0.82 0.19 165);
-  --primary-foreground: oklch(0.13 0.03 165);
-  --secondary: oklch(0.22 0.012 250);
-  --secondary-foreground: oklch(0.96 0.006 250);
-  --muted: oklch(0.2 0.01 250);
-  --muted-foreground: oklch(0.68 0.012 250);
-  --accent: oklch(0.26 0.04 165);
-  --accent-foreground: oklch(0.96 0.006 250);
-  --destructive: oklch(0.62 0.21 22);
-  --border: oklch(0.96 0.006 250 / 10%);
-  --input: oklch(0.96 0.006 250 / 14%);
-  --ring: oklch(0.82 0.19 165 / 55%);
-  --chart-1: oklch(0.82 0.19 165);
-  --chart-2: oklch(0.78 0.15 70);
-  --chart-3: oklch(0.7 0.2 350);
-  --chart-4: oklch(0.72 0.15 200);
-  --chart-5: oklch(0.72 0.16 130);
-  --sidebar: oklch(0.15 0.01 250);
-  --sidebar-foreground: oklch(0.96 0.006 250);
-  --sidebar-primary: oklch(0.82 0.19 165);
-  --sidebar-primary-foreground: oklch(0.13 0.03 165);
-  --sidebar-accent: oklch(0.22 0.012 250);
-  --sidebar-accent-foreground: oklch(0.96 0.006 250);
-  --sidebar-border: oklch(0.96 0.006 250 / 10%);
-  --sidebar-ring: oklch(0.82 0.19 165 / 55%);
-}
-
-.dark {
-  /* Deep midnight base with a faint cool undertone — the canvas for glass.
-     Not pure black, not zinc — a touch of blue depth so glass refraction reads. */
-  --background: oklch(0.12 0.008 250);
-  --foreground: oklch(0.96 0.006 250);
-  --card: oklch(0.155 0.01 250);
-  --card-foreground: oklch(0.96 0.006 250);
-  --popover: oklch(0.155 0.01 250);
-  --popover-foreground: oklch(0.96 0.006 250);
-  /* Mint-jade primary — luminous, premium, NOT generic emerald. */
   --primary: oklch(0.84 0.19 165);
   --primary-foreground: oklch(0.12 0.03 165);
   --secondary: oklch(0.21 0.012 250);
   --secondary-foreground: oklch(0.96 0.006 250);
-  --muted: oklch(0.19 0.01 250);
+  --muted: oklch(0.19 0.008 250);
+  --muted-foreground: oklch(0.66 0.012 250);
+  --accent: oklch(0.25 0.04 165);
+  --accent-foreground: oklch(0.96 0.006 250);
+  --destructive: oklch(0.62 0.21 22);
+  --border: oklch(0.96 0.006 250 / 10%);
+  --input: oklch(0.96 0.006 250 / 14%);
+  --ring: oklch(0.84 0.19 165 / 55%);
+  --chart-1: oklch(0.84 0.19 165);
+  --chart-2: oklch(0.78 0.15 70);
+  --chart-3: oklch(0.7 0.2 350);
+  --chart-4: oklch(0.72 0.15 200);
+  --chart-5: oklch(0.72 0.16 130);
+  --sidebar: oklch(0.14 0.01 250);
+  --sidebar-foreground: oklch(0.96 0.006 250);
+  --sidebar-primary: oklch(0.84 0.19 165);
+  --sidebar-primary-foreground: oklch(0.12 0.03 165);
+  --sidebar-accent: oklch(0.21 0.012 250);
+  --sidebar-accent-foreground: oklch(0.96 0.006 250);
+  --sidebar-border: oklch(0.96 0.006 250 / 10%);
+  --sidebar-ring: oklch(0.84 0.19 165 / 55%);
+}
+
+.dark {
+  --background: oklch(0.12 0.005 250);
+  --foreground: oklch(0.96 0.006 250);
+  --card: oklch(0.155 0.008 250);
+  --card-foreground: oklch(0.96 0.006 250);
+  --popover: oklch(0.155 0.008 250);
+  --popover-foreground: oklch(0.96 0.006 250);
+  --primary: oklch(0.84 0.19 165);
+  --primary-foreground: oklch(0.12 0.03 165);
+  --secondary: oklch(0.21 0.012 250);
+  --secondary-foreground: oklch(0.96 0.006 250);
+  --muted: oklch(0.19 0.008 250);
   --muted-foreground: oklch(0.66 0.012 250);
   --accent: oklch(0.25 0.04 165);
   --accent-foreground: oklch(0.96 0.006 250);
@@ -121,7 +119,7 @@
     @apply border-border outline-ring/50;
   }
   html {
-    scroll-behavior: auto; /* Lenis handles smooth scroll */
+    scroll-behavior: auto;
   }
   body {
     @apply bg-background text-foreground;
@@ -129,14 +127,13 @@
     position: relative;
     overflow-x: hidden;
   }
-  /* Subtle film grain — kills the flat AI look, adds organic texture. */
   body::before {
     content: "";
     position: fixed;
     inset: 0;
     z-index: 1;
     pointer-events: none;
-    opacity: 0.04;
+    opacity: 0.03;
     mix-blend-mode: overlay;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
@@ -145,23 +142,27 @@
     z-index: 2;
   }
   ::-webkit-scrollbar {
-    width: 0;
-    height: 0;
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: color-mix(in oklch, var(--primary) 30%, transparent);
+    border-radius: 0;
   }
   ::selection {
-    background: color-mix(in oklch, var(--primary) 28%, transparent);
+    background: color-mix(in oklch, var(--primary) 25%, transparent);
     color: var(--foreground);
   }
 }
 
 @layer utilities {
-
-  /* ---- Typography ---- */
-  .aegis-serif {
-    font-family: "Instrument Serif", Georgia, 'Times New Roman', serif;
-    font-weight: 400;
-    letter-spacing: -0.02em;
-    font-feature-settings: "ss01";
+  .aegis-display {
+    font-family: "Space Grotesk", "Geist", system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.03em;
   }
   .aegis-mono {
     font-family: "JetBrains Mono", "Geist Mono", ui-monospace, monospace;
@@ -180,157 +181,33 @@
     color: var(--muted-foreground);
     letter-spacing: 0.1em;
   }
-  /* Display font — Space Grotesk for headlines. Trending, geometric, premium. */
-  .aegis-display {
-    font-family: "Space Grotesk", "Geist", system-ui, sans-serif;
-    font-weight: 600;
-    letter-spacing: -0.03em;
+  .aegis-text-gradient {
+    background: linear-gradient(135deg, var(--primary) 0%, color-mix(in oklch, var(--primary) 50%, white) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
   }
-
-  /* ---- Liquid Glass system ----
-     The .glass class is the material; liquidGlass() from src/lib/liquid-glass.ts
-     adds the real refraction (Chromium) / frosted fallback (Safari/FF).
-     NOTE: .glass rules are defined in GLOBAL scope (below, outside @layer)
-     so they win over Tailwind utility classes like bg-primary/20. */
-
-  /* NOTE: the .glass-glare hover-shine was removed per design review —
-     the specular sweep read as a "cheap AI effect" on every hover and
-     fought the real refraction. Glass now stays clean and static on hover;
-     depth comes from the refraction + ambient orbs, not a fake glare sweep. */
-
-  /* ---- 3D scroll-card system ----
-     Horizontal cards that rotate in 3D as they enter/leave the viewport.
-     Used by architecture callouts, audit blocks, policy cards. The JS sets
-     --scroll-progress 0..1 via framer-motion useTransform on each card. */
-  .card-3d {
-    transform-style: preserve-3d;
-    perspective: 1000px;
-    will-change: transform;
-  }
-  .card-3d-inner {
-    transform-style: preserve-3d;
-    transition: transform 200ms ease-out;
-  }
-
-  /* ---- Mobile tightening ----
-     At <640px, glass panels use smaller shadows so the page doesn't feel
-     like a parade of giant cards. The global .glass rule is below. */
-
-  /* ---- Ambient background orbs ----
-     Fixed-position radial gradients that drift slowly — the depth behind glass. */
-  .aegis-aurora {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    overflow: hidden;
-  }
-  .aegis-orb {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(60px);
-    opacity: 0.35;
-    will-change: transform;
-  }
-  .aegis-orb-1 {
-    width: 50vw;
-    height: 50vw;
-    top: -10vw;
-    left: -10vw;
-    background: radial-gradient(circle, oklch(0.72 0.19 165) 0%, transparent 70%);
-    animation: aegis-drift-1 32s ease-in-out infinite;
-    opacity: 0.35;
-  }
-  .aegis-orb-2 {
-    width: 45vw;
-    height: 45vw;
-    top: 30vh;
-    right: -15vw;
-    background: radial-gradient(circle, oklch(0.7 0.16 280) 0%, transparent 70%);
-    animation: aegis-drift-2 38s ease-in-out infinite;
-    opacity: 0.3;
-  }
-  .aegis-orb-3 {
-    width: 40vw;
-    height: 40vw;
-    bottom: -10vw;
-    left: 20vw;
-    background: radial-gradient(circle, oklch(0.72 0.15 200) 0%, transparent 70%);
-    animation: aegis-drift-3 40s ease-in-out infinite;
-  }
-  @keyframes aegis-drift-1 {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    50% { transform: translate(8vw, 6vh) scale(1.15); }
-  }
-  @keyframes aegis-drift-2 {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    50% { transform: translate(-6vw, 4vh) scale(0.9); }
-  }
-  @keyframes aegis-drift-3 {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    50% { transform: translate(5vw, -5vh) scale(1.1); }
-  }
-
-  /* Grid overlay — faint, for depth. */
   .aegis-grid {
     background-image:
       linear-gradient(to right, color-mix(in oklch, var(--foreground) 3%, transparent) 1px, transparent 1px),
       linear-gradient(to bottom, color-mix(in oklch, var(--foreground) 3%, transparent) 1px, transparent 1px);
     background-size: 72px 72px;
   }
-
-  /* Live pulse dot. */
-  .aegis-live-dot {
-    position: relative;
-  }
+  .aegis-live-dot { position: relative; }
   .aegis-live-dot::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 999px;
+    content: ""; position: absolute; inset: 0; border-radius: 999px;
     background: var(--primary);
-    animation: aegis-pulse 2s ease-out infinite;
-    opacity: 0.5;
+    animation: aegis-pulse 2s ease-out infinite; opacity: 0.5;
   }
   @keyframes aegis-pulse {
     0% { transform: scale(1); opacity: 0.5; }
     100% { transform: scale(2.6); opacity: 0; }
   }
-
-  /* Kinetic marquee. */
-  .aegis-marquee {
-    display: flex;
-    overflow: hidden;
-    user-select: none;
-    gap: 2rem;
-    mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
-  }
-  .aegis-marquee-track {
-    display: flex;
-    gap: 2rem;
-    flex-shrink: 0;
-    min-width: 100%;
-    animation: aegis-marquee 38s linear infinite;
-  }
-  @keyframes aegis-marquee {
-    from { transform: translateX(0); }
-    to { transform: translateX(-100%); }
-  }
-
-  /* Token pill. */
-  .aegis-token {
-    font-family: "JetBrains Mono", "Geist Mono", ui-monospace, monospace;
-    font-size: 0.75rem;
-    font-weight: 600;
-    padding: 0.0625rem 0.375rem;
-    border-radius: 0.25rem;
-    border: 1px solid;
-    display: inline-flex;
-    align-items: center;
-    vertical-align: baseline;
-  }
-
-  /* Entity colors. */
+  .aegis-marquee { display: flex; overflow: hidden; user-select: none; gap: 2rem; mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent); }
+  .aegis-marquee-track { display: flex; gap: 2rem; flex-shrink: 0; min-width: 100%; animation: aegis-marquee 38s linear infinite; }
+  @keyframes aegis-marquee { from { transform: translateX(0); } to { transform: translateX(-100%); } }
+  .aegis-token { font-family: "JetBrains Mono", monospace; font-size: 0.75rem; font-weight: 600; padding: 0.0625rem 0.375rem; border-radius: 0.25rem; border: 1px solid; display: inline-flex; align-items: center; vertical-align: baseline; }
   .entity-EMAIL { --ec: oklch(0.82 0.16 75); }
   .entity-API_KEY { --ec: oklch(0.7 0.21 18); }
   .entity-PHONE { --ec: oklch(0.78 0.13 200); }
@@ -339,138 +216,59 @@
   .entity-PAN { --ec: oklch(0.68 0.2 300); }
   .entity-IP_ADDRESS { --ec: oklch(0.75 0.14 230); }
   .entity-CUSTOM_GLOSSARY { --ec: oklch(0.85 0.19 130); }
-
-  .entity-chip {
-    background: color-mix(in oklch, var(--ec) 14%, transparent);
-    color: color-mix(in oklch, var(--ec) 92%, white);
-    border: 1px solid color-mix(in oklch, var(--ec) 32%, transparent);
-  }
-  .entity-underline {
-    background: linear-gradient(180deg, transparent 65%, color-mix(in oklch, var(--ec) 28%, transparent) 65%);
-    border-bottom: 1px dashed color-mix(in oklch, var(--ec) 65%, transparent);
-  }
-  .entity-dot {
-    background: var(--ec);
-  }
-
-  .chain-link {
-    background: linear-gradient(180deg, color-mix(in oklch, var(--primary) 45%, transparent), color-mix(in oklch, var(--primary) 10%, transparent));
-  }
-
-  .aegis-scanlines {
-    background-image: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      color-mix(in oklch, var(--foreground) 2.5%, transparent) 2px,
-      color-mix(in oklch, var(--foreground) 2.5%, transparent) 3px
-    );
-  }
-
-  /* Text gradient — for hero accent words. */
-  .aegis-text-gradient {
-    background: linear-gradient(135deg, var(--primary) 0%, color-mix(in oklch, var(--primary) 60%, white) 50%, var(--primary) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
-  }
+  .entity-chip { background: color-mix(in oklch, var(--ec) 14%, transparent); color: color-mix(in oklch, var(--ec) 92%, white); border: 1px solid color-mix(in oklch, var(--ec) 32%, transparent); }
+  .entity-underline { background: linear-gradient(180deg, transparent 65%, color-mix(in oklch, var(--ec) 28%, transparent) 65%); border-bottom: 1px dashed color-mix(in oklch, var(--ec) 65%, transparent); }
+  .entity-dot { background: var(--ec); }
+  .chain-link { background: linear-gradient(180deg, color-mix(in oklch, var(--primary) 45%, transparent), color-mix(in oklch, var(--primary) 10%, transparent)); }
+  .aegis-scanlines { background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, color-mix(in oklch, var(--foreground) 2.5%, transparent) 2px, color-mix(in oklch, var(--foreground) 2.5%, transparent) 3px); }
 }
 
-/* ---- Liquid Glass material (global scope — wins over Tailwind utilities) ----
-   Defined outside @layer utilities so the glass tint/shadow/inset aren't
-   overridden by utility classes on buttons. Uses !important on the visual
-   props so Tailwind utilities (bg-*, shadow-*) can't accidentally override.
-   Tuned for visibility: stronger tint + brighter border + visible highlights
-   so glass reads clearly even over dark backgrounds without backdrop-filter. */
+/* Glass — global scope, !important to win over Tailwind utilities */
 .glass {
   position: relative;
-  background: linear-gradient(
-    135deg,
-    color-mix(in oklch, var(--foreground) 12%, transparent) 0%,
-    color-mix(in oklch, var(--foreground) 6%, transparent) 50%,
-    color-mix(in oklch, var(--foreground) 10%, transparent) 100%
-  ) !important;
+  background: linear-gradient(135deg, color-mix(in oklch, var(--foreground) 12%, transparent) 0%, color-mix(in oklch, var(--foreground) 6%, transparent) 50%, color-mix(in oklch, var(--foreground) 10%, transparent) 100%) !important;
   backdrop-filter: blur(8px) saturate(1.2) !important;
   -webkit-backdrop-filter: blur(8px) saturate(1.2) !important;
-  box-shadow:
-    0 12px 32px -8px rgba(0, 0, 0, 0.4),
-    inset 0 1px 1px rgba(255, 255, 255, 0.2),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 12px 32px -8px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.2), inset 0 0 0 1px rgba(255,255,255,0.1) !important;
   will-change: backdrop-filter;
   backface-visibility: hidden;
 }
 .glass-strong {
-  background: linear-gradient(
-    135deg,
-    color-mix(in oklch, var(--foreground) 16%, transparent) 0%,
-    color-mix(in oklch, var(--foreground) 8%, transparent) 50%,
-    color-mix(in oklch, var(--foreground) 12%, transparent) 100%
-  ) !important;
-  box-shadow:
-    0 20px 50px -12px rgba(0, 0, 0, 0.55),
-    inset 0 1px 1px rgba(255, 255, 255, 0.25),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.14) !important;
+  background: linear-gradient(135deg, color-mix(in oklch, var(--foreground) 16%, transparent) 0%, color-mix(in oklch, var(--foreground) 8%, transparent) 50%, color-mix(in oklch, var(--foreground) 12%, transparent) 100%) !important;
+  box-shadow: 0 20px 50px -12px rgba(0,0,0,0.55), inset 0 1px 1px rgba(255,255,255,0.25), inset 0 0 0 1px rgba(255,255,255,0.14) !important;
   will-change: backdrop-filter;
   backface-visibility: hidden;
 }
 @media (max-width: 640px) {
   .glass {
-    box-shadow:
-      0 8px 20px -8px rgba(0, 0, 0, 0.4),
-      inset 0 1px 1px rgba(255, 255, 255, 0.16),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 8px 20px -8px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.16), inset 0 0 0 1px rgba(255,255,255,0.08) !important;
   }
 }
 
-/* ---- Reduced motion ---- */
+/* Ambient background */
+.aegis-aurora { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.aegis-orb { position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.35; will-change: transform; }
+.aegis-orb-1 { width: 50vw; height: 50vw; top: -10vw; left: -10vw; background: radial-gradient(circle, oklch(0.72 0.19 165) 0%, transparent 70%); animation: aegis-drift-1 32s ease-in-out infinite; }
+.aegis-orb-2 { width: 45vw; height: 45vw; top: 30vh; right: -15vw; background: radial-gradient(circle, oklch(0.7 0.16 280) 0%, transparent 70%); animation: aegis-drift-2 38s ease-in-out infinite; }
+.aegis-orb-3 { width: 40vw; height: 40vw; bottom: -10vw; left: 20vw; background: radial-gradient(circle, oklch(0.72 0.15 200) 0%, transparent 70%); animation: aegis-drift-3 40s ease-in-out infinite; }
+@keyframes aegis-drift-1 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(8vw,6vh) scale(1.15); } }
+@keyframes aegis-drift-2 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-6vw,4vh) scale(0.9); } }
+@keyframes aegis-drift-3 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(5vw,-5vh) scale(1.1); } }
+
+/* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important; animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important; scroll-behavior: auto !important;
   }
-  .aegis-live-dot::after,
-  .aegis-marquee-track,
-  .aegis-orb {
-    animation: none !important;
-  }
+  .aegis-live-dot::after, .aegis-marquee-track, .aegis-orb { animation: none !important; }
 }
 
-/* Skip link. */
-.aegis-skip-link {
-  position: absolute;
-  left: 1rem;
-  top: -3rem;
-  z-index: 100;
-  border-radius: var(--radius-md);
-  background: var(--primary);
-  color: var(--primary-foreground);
-  padding: 0.5rem 1rem;
-  font-size: 0.8125rem;
-  font-weight: 500;
-  transition: top 150ms ease-out;
-}
-.aegis-skip-link:focus {
-  top: 0.75rem;
-}
+.aegis-skip-link { position: absolute; left: 1rem; top: -3rem; z-index: 100; border-radius: var(--radius-md); background: var(--primary); color: var(--primary-foreground); padding: 0.5rem 1rem; font-size: 0.8125rem; font-weight: 500; transition: top 150ms ease-out; }
+.aegis-skip-link:focus { top: 0.75rem; }
 
-/* Lenis smooth scroll — recommended global styles. */
-html.lenis, html.lenis body {
-  height: auto;
-}
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
-}
-.lenis.lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
-}
-.lenis.lenis-stopped {
-  overflow: hidden;
-}
-.lenis.lenis-smooth iframe {
-  pointer-events: none;
-}
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+.lenis.lenis-smooth iframe { pointer-events: none; }

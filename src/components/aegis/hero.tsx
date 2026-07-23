@@ -92,14 +92,14 @@ export function AegisHero() {
       />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 w-full">
-        <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+        <div className="grid lg:grid-cols-12 gap-8 lg:gap-10 items-center">
           {/* Left: bold typographic statement */}
           <motion.div
             initial={prefersReduced ? false : { opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
             style={prefersReduced ? undefined : { y: titleY, opacity: titleOpacity }}
-            className="lg:col-span-7 flex flex-col gap-6"
+            className="lg:col-span-7 flex flex-col gap-5 z-10"
           >
             {/* Eyebrow */}
             <motion.div
@@ -220,13 +220,13 @@ export function AegisHero() {
             </motion.div>
           </motion.div>
 
-          {/* Right: the glass proof card — the focal 'hero' element */}
+          {/* Right: the glass proof card — overlaps slightly with headline for unity */}
           <motion.div
             initial={prefersReduced ? false : { opacity: 0, y: 30, rotate: -1.5 }}
             animate={{ opacity: 1, y: 0, rotate: 0 }}
             transition={{ duration: 0.9, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
             style={prefersReduced ? undefined : { y: cardY, opacity: cardOpacity }}
-            className="lg:col-span-5"
+            className="lg:col-span-5 lg:-ml-4"
           >
             <GlassProofCard />
           </motion.div>

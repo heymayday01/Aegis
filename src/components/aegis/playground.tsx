@@ -26,7 +26,6 @@ import type {
 import { ENTITY_META } from '@/lib/aegis/types';
 import { SectionHeading } from './section-heading';
 import { EntityChip } from './entity-chip';
-import { GlassPanel } from './glass-panel';
 import { ScrollReveal } from './scroll-card-3d';
 
 const SAMPLE_TEXT = `Hi team — onboarding the new customer from Acme Corp.
@@ -231,16 +230,16 @@ export function AegisPlayground() {
   };
 
   return (
-    <section id="playground" className="scroll-mt-20 py-12 sm:py-20">
+    <section id="playground" className="scroll-mt-20 py-16 sm:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <SectionHeading
           num="01"
-          eyebrow="Live Playground"
+          eyebrow="Playground"
           title={
             <>
               Paste your prompt. <br className="hidden sm:block" />
               <span className="text-muted-foreground/70">
-                Watch the <span className="aegis-text-gradient">PII</span> vanish.
+                Watch the PII vanish.
               </span>
             </>
           }
@@ -309,7 +308,7 @@ export function AegisPlayground() {
           className="mt-6 grid gap-4 lg:grid-cols-2"
         >
           {/* LEFT: input + highlight preview */}
-          <GlassPanel className="rounded-3xl p-4 sm:p-6">
+          <div className="glass rounded-3xl p-6">
             <div className="flex items-center justify-between pb-3 border-b border-foreground/10">
               <span className="aegis-eyebrow text-muted-foreground">Input</span>
               <span className="text-[11px] text-muted-foreground aegis-mono">
@@ -365,27 +364,27 @@ export function AegisPlayground() {
 
             <Button
               variant="glass-primary"
-              size="lg-pill"
+              size="sm-pill"
               onClick={onRedact}
               disabled={loading || !text.trim()}
               className="mt-4 self-start group"
             >
               {loading ? (
                 <>
-                  <Loader2 className="size-4 animate-spin" />
+                  <Loader2 className="size-3.5 animate-spin" />
                   Redacting…
                 </>
               ) : (
                 <>
-                  <Wand2 className="size-4 transition-transform group-hover:rotate-12" />
+                  <Wand2 className="size-3.5 transition-transform group-hover:rotate-12" />
                   Redact
                 </>
               )}
             </Button>
-          </GlassPanel>
+          </div>
 
           {/* RIGHT: redacted output */}
-          <GlassPanel className="rounded-3xl p-4 sm:p-6">
+          <div className="glass rounded-3xl p-6">
             <div className="flex items-center justify-between pb-3 border-b border-foreground/10">
               <span className="aegis-eyebrow text-muted-foreground">
                 Redacted output
@@ -493,7 +492,7 @@ export function AegisPlayground() {
                 </div>
               </div>
             )}
-          </GlassPanel>
+          </div>
         </ScrollReveal>
       </div>
     </section>
