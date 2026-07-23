@@ -127,7 +127,7 @@ export function AegisArchitecture() {
 
         {/* Honest limits + portfolio narrative */}
         <div className="mt-4 grid gap-4 lg:grid-cols-2">
-          <ScrollCard3D>
+          <ScrollReveal>
             {/* Honest limits */}
             <GlassPanel className="rounded-3xl p-4 sm:p-6 h-full">
               <div className="flex items-center gap-2 mb-3">
@@ -183,9 +183,9 @@ export function AegisArchitecture() {
                 Not “protects all your business secrets.”
               </div>
             </GlassPanel>
-          </ScrollCard3D>
+          </ScrollReveal>
 
-          <ScrollCard3D>
+          <ScrollReveal delay={0.1}>
             {/* Portfolio narrative — primary-tinted glass */}
             <GlassPanel className="rounded-3xl p-4 sm:p-6 ring-1 ring-primary/30 bg-primary/5 h-full">
               <div className="flex items-center gap-2 mb-3">
@@ -241,7 +241,7 @@ export function AegisArchitecture() {
                 </span>
               </div>
             </GlassPanel>
-          </ScrollCard3D>
+          </ScrollReveal>
         </div>
       </div>
     </section>
