@@ -60,10 +60,14 @@ export interface PatternModule {
 }
 
 // Confidence thresholds per strictness level.
+// Permissive: catches structured PII (validated by checksums like Luhn/Verhoeff)
+// but skips lower-confidence heuristic matches. Glossary off.
+// Balanced: catches everything ≥ 0.8 + glossary. (default)
+// Paranoid: catches everything ≥ 0.5 + glossary. Most aggressive.
 export const STRICTNESS_THRESHOLDS: Record<Strictness, { regex: number; glossary: number }> = {
   paranoid: { regex: 0.5, glossary: 0.0 },
   balanced: { regex: 0.8, glossary: 0.0 },
-  permissive: { regex: 0.95, glossary: 1.0 },
+  permissive: { regex: 0.9, glossary: 1.0 }, // lowered from 0.95 → 0.9 so validated PII (cards, aadhaar) still catches
 };
 
 export const ALL_ENTITY_TYPES: EntityType[] = [
