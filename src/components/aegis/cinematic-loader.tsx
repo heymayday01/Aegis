@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -16,28 +17,31 @@ import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
  * see the site immediately.
  */
 export function CinematicLoader() {
-  const [show, setShow] = useState(false);
+  // Start with show=true to prevent ghost/flash of page content before the
+  // loader appears. The loader covers the screen immediately on first paint.
+  const [show, setShow] = useState(true);
   const prefersReduced = useReducedMotion();
 
   useEffect(() => {
-    // Only play once per session.
-    if (sessionStorage.getItem('aegis-loaded') === '1') return;
+    // Only play once per session. On subsequent visits, hide immediately.
+    if (sessionStorage.getItem('aegis-loaded') === '1') {
+      setShow(false);
+      return;
+    }
     sessionStorage.setItem('aegis-loaded', '1');
-    // Defer to avoid cascading renders.
-    const raf = requestAnimationFrame(() => {
-      setShow(true);
-      if (typeof document !== 'undefined') {
-        document.body.style.overflow = 'hidden';
-      }
-    });
+
+    // Lock scroll during the loader.
+    if (typeof document !== 'undefined') {
+      document.body.style.overflow = 'hidden';
+    }
+
     const timer = setTimeout(() => {
       setShow(false);
       if (typeof document !== 'undefined') {
         document.body.style.overflow = '';
       }
-    }, prefersReduced ? 600 : 2400);
+    }, prefersReduced ? 400 : 2200);
     return () => {
-      cancelAnimationFrame(raf);
       clearTimeout(timer);
       if (typeof document !== 'undefined') {
         document.body.style.overflow = '';

@@ -14,7 +14,6 @@ import {
   Wand2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import type {
@@ -69,6 +68,25 @@ export function AegisPlayground() {
   const [rehydrated, setRehydrated] = React.useState<string | null>(null);
   const [roundTripOk, setRoundTripOk] = React.useState<boolean | null>(null);
   const [copied, setCopied] = React.useState(false);
+  const inputRef = React.useRef<HTMLTextAreaElement | null>(null);
+
+  // Auto-resize the input textarea to fit its content — no scrollbar, no clipping.
+  // Re-runs on text change AND on viewport resize (mobile orientation change, etc.)
+  const resizeTextarea = React.useCallback(() => {
+    const el = inputRef.current;
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = Math.max(160, el.scrollHeight) + 'px';
+  }, []);
+
+  React.useEffect(() => {
+    resizeTextarea();
+  }, [text, resizeTextarea]);
+
+  React.useEffect(() => {
+    window.addEventListener('resize', resizeTextarea);
+    return () => window.removeEventListener('resize', resizeTextarea);
+  }, [resizeTextarea]);
 
   // Hydrate the active policy so the strictness selector reflects server truth.
   React.useEffect(() => {
@@ -315,13 +333,14 @@ export function AegisPlayground() {
                 {text.length} chars
               </span>
             </div>
-            <Textarea
+            <textarea
+              ref={inputRef}
               value={text}
               onChange={(e) => onTextChange(e.target.value)}
               onKeyDown={onKeyDown}
-              rows={8}
               spellCheck={false}
-              className="mt-4 min-h-40 resize-y aegis-mono text-[13px] leading-relaxed border-0 bg-transparent focus-visible:ring-0 p-0 placeholder:text-muted-foreground/60"
+              rows={4}
+              className="mt-4 w-full min-h-[160px] resize-none aegis-mono text-[13px] leading-relaxed border-0 bg-transparent focus-visible:outline-none focus-visible:ring-0 p-0 placeholder:text-muted-foreground/60 overflow-hidden"
               placeholder="Paste anything containing PII — emails, keys, cards, Aadhaar, PAN, IPs, your codenames…"
             />
             <div className="mt-3 flex items-center justify-between text-[10px] text-muted-foreground">

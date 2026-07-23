@@ -114,32 +114,45 @@ export function AegisHero() {
               <span className="aegis-eyebrow text-muted-foreground">redaction layer for AI</span>
             </motion.div>
 
-            {/* Hero headline — word-by-word blur-to-sharp reveal.
-                Each word slides up from behind a mask + unblurs, creating
-                a cinematic "focusing" effect that's more modern than smoky text. */}
+            {/* Hero headline — word-by-word blur reveal.
+                Each word independently slides up from behind a mask + unblurs,
+                creating a cinematic "focusing into existence" effect.
+                Stagger: 0.08s per word, starting at 0.3s after load. */}
             <h1 className="aegis-display text-[2.25rem] sm:text-5xl lg:text-6xl xl:text-[4.5rem] leading-[1.05] tracking-tight">
-              <span className="block overflow-hidden">
-                <motion.span
-                  initial={prefersReduced ? false : { y: '110%', filter: 'blur(8px)' }}
-                  animate={{ y: 0, filter: 'blur(0px)' }}
-                  transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                  className="block"
-                >
-                  Your prompts{' '}
-                  <span className="text-foreground/40">leak.</span>
-                </motion.span>
-              </span>
-              <span className="block overflow-hidden mt-1">
-                <motion.span
-                  initial={prefersReduced ? false : { y: '110%', filter: 'blur(8px)' }}
-                  animate={{ y: 0, filter: 'blur(0px)' }}
-                  transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                  className="block"
-                >
-                  Aegis makes them{' '}
-                  <span className="aegis-text-gradient">safe.</span>
-                </motion.span>
-              </span>
+              {[
+                { word: 'Your', className: '' },
+                { word: 'prompts', className: '' },
+                { word: 'leak.', className: 'text-foreground/40' },
+              ].map((item, i) => (
+                <span key={i} className="inline-block overflow-hidden align-bottom mr-[0.25em]">
+                  <motion.span
+                    initial={prefersReduced ? false : { y: '110%', filter: 'blur(10px)', opacity: 0 }}
+                    animate={{ y: 0, filter: 'blur(0px)', opacity: 1 }}
+                    transition={{ duration: 0.7, delay: 0.3 + i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+                    className={`inline-block ${item.className}`}
+                  >
+                    {item.word}
+                  </motion.span>
+                </span>
+              ))}
+              <br />
+              {[
+                { word: 'Aegis', className: '' },
+                { word: 'makes', className: '' },
+                { word: 'them', className: '' },
+                { word: 'safe.', className: 'aegis-text-gradient' },
+              ].map((item, i) => (
+                <span key={i} className="inline-block overflow-hidden align-bottom mr-[0.25em]">
+                  <motion.span
+                    initial={prefersReduced ? false : { y: '110%', filter: 'blur(10px)', opacity: 0 }}
+                    animate={{ y: 0, filter: 'blur(0px)', opacity: 1 }}
+                    transition={{ duration: 0.7, delay: 0.6 + i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+                    className={`inline-block ${item.className}`}
+                  >
+                    {item.word}
+                  </motion.span>
+                </span>
+              ))}
             </h1>
 
             {/* Subhead — concise, bold the key phrase. Delayed to follow the smoky headline. */}
