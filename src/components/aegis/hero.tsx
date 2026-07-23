@@ -2,17 +2,22 @@
 
 import * as React from 'react';
 import { motion, useReducedMotion, useScroll, useTransform, useSpring } from 'framer-motion';
-import { ArrowRight, ArrowDown, ShieldCheck, Lock, Sparkles } from 'lucide-react';
+import { ArrowRight, ArrowDown, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useLiquidGlass } from './glass-panel';
 import { ParticleShield3D } from './particle-shield-3d';
 
-const MARQUEE_ITEMS = [
-  'EMAIL', 'API KEY', 'PHONE', 'CREDIT CARD', 'AADHAAR', 'PAN',
-  'IP ADDRESS', 'GLOSSARY', 'SHA-256 HASH CHAIN', 'STREAMING-AWARE',
-  'MCP-READY', 'LOCAL-FIRST', 'PROVIDER-AGNOSTIC', 'ZERO INFRA',
-];
-
+/**
+ * AegisHero — minimal, spacious, cinematic.
+ *
+ * Design philosophy: "kill your darlings." The hero has exactly 4 elements:
+ *   1. Eyebrow badge (local-first)
+ *   2. Headline (word-by-word blur reveal)
+ *   3. One CTA
+ *   4. 3D particle shield (background, breathing)
+ *
+ * Everything else (audit card, before/after strip, marquee, trust line) was
+ * removed. The hero is for emotion and value proposition, not data logs.
+ */
 export function AegisHero() {
   const prefersReduced = useReducedMotion();
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -23,10 +28,7 @@ export function AegisHero() {
 
   const titleY = useTransform(scrollYProgress, [0, 1], [0, 80]);
   const titleOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
-  const cardY = useTransform(scrollYProgress, [0, 1], [0, -40]);
-  const cardOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
-  // 3D shield fades from 0.8 (clearly visible) to 0.2 on scroll.
-  const dotOpacity = useTransform(scrollYProgress, [0, 0.5], [0.8, 0.2]);
+  const shieldOpacity = useTransform(scrollYProgress, [0, 0.5], [0.7, 0.15]);
 
   // Magnetic CTA effect
   const ctaX = useSpring(0, { stiffness: 200, damping: 15 });
@@ -50,18 +52,41 @@ export function AegisHero() {
     ctaY.set(0);
   };
 
+  // Delays — start AFTER the cinematic loader exits (1.8s + 0.3s curtain)
+  const D = 1.9; // base delay
+
   return (
     <section
       id="top"
       ref={containerRef}
-      className="relative isolate min-h-screen flex items-center overflow-hidden pt-28 pb-12"
+      className="relative isolate min-h-screen flex items-center justify-center overflow-hidden pt-20 pb-12"
     >
-      {/* Entrance overlay sweep — a light beam that sweeps across on load */}
+      {/* 3D particle shield — centered behind text, breathing */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none"
+        aria-hidden
+        style={prefersReduced ? { opacity: 0.5 } : { opacity: shieldOpacity }}
+      >
+        <ParticleShield3D />
+      </motion.div>
+
+      {/* Scrim — directional gradient for text readability */}
+      <div className="absolute inset-0 bg-background/35 pointer-events-none" aria-hidden />
+      <div
+        className="absolute inset-0 pointer-events-none"
+        aria-hidden
+        style={{
+          background:
+            'radial-gradient(60% 50% at 50% 50%, transparent 0%, color-mix(in oklch, var(--background) 40%, transparent) 100%)',
+        }}
+      />
+
+      {/* Entrance overlay sweep — plays right as the curtain opens */}
       {!prefersReduced && (
         <motion.div
           initial={{ x: '-100%' }}
           animate={{ x: '100%' }}
-          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 1.9 }}
+          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: D }}
           className="absolute inset-0 z-20 pointer-events-none"
           style={{
             background:
@@ -71,329 +96,136 @@ export function AegisHero() {
         />
       )}
 
-      {/* 3D particle shield — interactive, mouse-reactive, breathing */}
+      {/* Centered content — minimal, spacious */}
       <motion.div
-        className="absolute inset-0 pointer-events-none"
-        aria-hidden
-        style={prefersReduced ? { opacity: 0.6 } : { opacity: dotOpacity }}
+        initial={prefersReduced ? false : { opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        style={prefersReduced ? undefined : { y: titleY, opacity: titleOpacity }}
+        className="relative z-10 flex flex-col items-center text-center gap-8 px-4 sm:px-6 max-w-4xl"
       >
-        <ParticleShield3D />
-      </motion.div>
-      {/* Scrim — directional gradient darkens the left side for text readability. */}
-      <div className="absolute inset-0 bg-background/30 pointer-events-none" aria-hidden />
-      <div
-        className="absolute inset-0 pointer-events-none"
-        aria-hidden
-        style={{
-          background:
-            'linear-gradient(105deg, color-mix(in oklch, var(--background) 65%, transparent) 0%, transparent 60%), radial-gradient(60% 50% at 30% 35%, transparent 0%, color-mix(in oklch, var(--background) 30%, transparent) 100%)',
-        }}
-      />
-
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 w-full">
-        <div className="grid lg:grid-cols-12 gap-8 lg:gap-10 items-center">
-          {/* Left: bold typographic statement */}
-          <motion.div
-            initial={prefersReduced ? false : { opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            style={prefersReduced ? undefined : { y: titleY, opacity: titleOpacity }}
-            className="lg:col-span-7 flex flex-col gap-5 z-10"
-          >
-            {/* Eyebrow */}
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 1.9 }}
-              className="flex items-center gap-2.5"
-            >
-              <span className="glass rounded-full px-3 py-1 flex items-center gap-2">
-                <Lock className="size-3 text-primary" />
-                <span className="aegis-eyebrow text-primary">local-first</span>
-              </span>
-              <span className="aegis-eyebrow text-muted-foreground">redaction layer for AI</span>
-            </motion.div>
-
-            {/* Hero headline — word-by-word blur reveal.
-                Each word independently slides up from behind a mask + unblurs,
-                creating a cinematic "focusing into existence" effect.
-                Delayed to start AFTER the cinematic loader exits (1.8s + 0.3s curtain). */}
-            <h1 className="aegis-display text-[2.25rem] sm:text-5xl lg:text-6xl xl:text-[4.5rem] leading-[1.05] tracking-tight">
-              {[
-                { word: 'Your', className: '' },
-                { word: 'prompts', className: '' },
-                { word: 'leak.', className: 'text-foreground/40' },
-              ].map((item, i) => (
-                <span key={i} className="inline-block overflow-hidden align-bottom mr-[0.25em]">
-                  <motion.span
-                    initial={prefersReduced ? false : { y: '110%', filter: 'blur(10px)', opacity: 0 }}
-                    animate={{ y: 0, filter: 'blur(0px)', opacity: 1 }}
-                    transition={{ duration: 0.7, delay: 2.1 + i * 0.08, ease: [0.16, 1, 0.3, 1] }}
-                    className={`inline-block ${item.className}`}
-                  >
-                    {item.word}
-                  </motion.span>
-                </span>
-              ))}
-              <br />
-              {[
-                { word: 'Aegis', className: '' },
-                { word: 'makes', className: '' },
-                { word: 'them', className: '' },
-                { word: 'safe.', className: 'aegis-text-gradient' },
-              ].map((item, i) => (
-                <span key={i} className="inline-block overflow-hidden align-bottom mr-[0.25em]">
-                  <motion.span
-                    initial={prefersReduced ? false : { y: '110%', filter: 'blur(10px)', opacity: 0 }}
-                    animate={{ y: 0, filter: 'blur(0px)', opacity: 1 }}
-                    transition={{ duration: 0.7, delay: 2.4 + i * 0.08, ease: [0.16, 1, 0.3, 1] }}
-                    className={`inline-block ${item.className}`}
-                  >
-                    {item.word}
-                  </motion.span>
-                </span>
-              ))}
-            </h1>
-
-            {/* Interactive before→after strip — replaces the paragraph.
-                Shows PII getting stripped visually instead of explaining in words. */}
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 2.7 }}
-              className="glass glass-chromatic rounded-2xl p-3 max-w-lg"
-            >
-              <div className="flex items-center gap-3">
-                {/* Before: raw PII */}
-                <div className="flex-1 min-w-0">
-                  <div className="aegis-eyebrow text-muted-foreground/60 mb-1.5">Before</div>
-                  <div className="aegis-mono text-[11px] leading-relaxed text-foreground/80 break-all">
-                    <span className="text-rose-400">john@acme.com</span>{' '}
-                    <span className="text-rose-400">sk_live_51Hq...</span>{' '}
-                    <span className="text-rose-400">234123412346</span>
-                  </div>
-                </div>
-                {/* Arrow */}
-                <motion.div
-                  initial={prefersReduced ? false : { scale: 0, rotate: -90 }}
-                  animate={{ scale: 1, rotate: 0 }}
-                  transition={{ duration: 0.5, delay: 2.9, type: 'spring', stiffness: 300, damping: 20 }}
-                  className="flex flex-col items-center gap-0.5 shrink-0"
-                >
-                  <ShieldCheck className="size-4 text-primary" />
-                  <span className="text-[8px] text-primary aegis-mono uppercase">strip</span>
-                </motion.div>
-                {/* After: tokens */}
-                <div className="flex-1 min-w-0">
-                  <div className="aegis-eyebrow text-primary/60 mb-1.5">After</div>
-                  <div className="aegis-mono text-[11px] leading-relaxed text-primary/80 break-all">
-                    <span className="aegis-token entity-chip entity-EMAIL">EMAIL</span>{' '}
-                    <span className="aegis-token entity-chip entity-API_KEY">KEY</span>{' '}
-                    <span className="aegis-token entity-chip entity-AADHAAR">ID</span>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Single dominant CTA — magnetic hover, delayed to follow the smoky headline. */}
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 3.0 }}
-              className="flex items-center gap-4 pt-2"
-            >
-              <motion.div
-                style={prefersReduced ? undefined : { x: ctaX, y: ctaY }}
-                onMouseMove={handleCtaMove}
-                onMouseLeave={handleCtaLeave}
-              >
-                <Button
-                  variant="glass-primary"
-                  size="lg-pill"
-                  onClick={() => scrollTo('playground')}
-                  className="h-13 px-7 text-base group"
-                >
-                  Try the playground
-                  <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
-                </Button>
-              </motion.div>
-              <button
-                onClick={() => scrollTo('architecture')}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors aegis-mono uppercase tracking-[0.15em] active:scale-[0.97]"
-              >
-                How it works
-              </button>
-            </motion.div>
-
-            {/* Trust line — minimal, no clutter. Delayed to follow the cascade. */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 3.2 }}
-              className="flex items-center gap-4 pt-2 text-[11px] text-muted-foreground/70"
-            >
-              <span className="flex items-center gap-1.5">
-                <ShieldCheck className="size-3 text-primary" />
-                SHA-256 hash chain
-              </span>
-              <span className="size-1 rounded-full bg-muted-foreground/30" />
-              <span className="flex items-center gap-1.5">
-                <Sparkles className="size-3 text-primary" />
-                streaming-aware
-              </span>
-              <span className="size-1 rounded-full bg-muted-foreground/30" />
-              <span>$0 infra</span>
-            </motion.div>
-          </motion.div>
-
-          {/* Right: the glass proof card — overlaps slightly with headline for unity */}
-          <motion.div
-            initial={prefersReduced ? false : { opacity: 0, y: 30, rotate: -1.5 }}
-            animate={{ opacity: 1, y: 0, rotate: 0 }}
-            transition={{ duration: 0.9, delay: 2.3, ease: [0.16, 1, 0.3, 1] }}
-            style={prefersReduced ? undefined : { y: cardY, opacity: cardOpacity }}
-            className="lg:col-span-5 lg:-ml-4"
-          >
-            <GlassProofCard />
-          </motion.div>
-        </div>
-
-        {/* Kinetic marquee — refined, tighter */}
+        {/* Eyebrow — single small badge */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 3.4 }}
-          className="mt-14 sm:mt-16 -mx-4 sm:-mx-6"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: D }}
         >
-          <div className="aegis-marquee py-2.5 border-y border-foreground/8">
-            <div className="aegis-marquee-track">
-              {MARQUEE_ITEMS.map((item, i) => (
-                <span key={i} className="flex items-center gap-3 text-[11px] text-muted-foreground/60">
-                  <span className="size-1 rounded-full bg-primary/60" />
-                  <span className="aegis-mono uppercase tracking-[0.15em]">{item}</span>
-                </span>
-              ))}
-            </div>
-            <div className="aegis-marquee-track" aria-hidden>
-              {MARQUEE_ITEMS.map((item, i) => (
-                <span key={i} className="flex items-center gap-3 text-[11px] text-muted-foreground/60">
-                  <span className="size-1 rounded-full bg-primary/60" />
-                  <span className="aegis-mono uppercase tracking-[0.15em]">{item}</span>
-                </span>
-              ))}
-            </div>
-          </div>
+          <span className="glass glass-chromatic rounded-full px-4 py-1.5 flex items-center gap-2">
+            <Lock className="size-3 text-primary" />
+            <span className="aegis-eyebrow text-primary">local-first redaction layer</span>
+          </span>
         </motion.div>
-      </div>
+
+        {/* Headline — word-by-word blur reveal, centered, large */}
+        <h1 className="aegis-display text-[2.5rem] sm:text-6xl lg:text-7xl xl:text-[5rem] leading-[1.05] tracking-tight">
+          <span className="inline-block overflow-hidden align-bottom mr-[0.25em]">
+            <motion.span
+              initial={prefersReduced ? false : { y: '110%', filter: 'blur(10px)', opacity: 0 }}
+              animate={{ y: 0, filter: 'blur(0px)', opacity: 1 }}
+              transition={{ duration: 0.7, delay: D + 0.2, ease: [0.16, 1, 0.3, 1] }}
+              className="inline-block"
+            >
+              Your
+            </motion.span>
+          </span>
+          <span className="inline-block overflow-hidden align-bottom mr-[0.25em]">
+            <motion.span
+              initial={prefersReduced ? false : { y: '110%', filter: 'blur(10px)', opacity: 0 }}
+              animate={{ y: 0, filter: 'blur(0px)', opacity: 1 }}
+              transition={{ duration: 0.7, delay: D + 0.28, ease: [0.16, 1, 0.3, 1] }}
+              className="inline-block"
+            >
+              prompts
+            </motion.span>
+          </span>
+          <span className="inline-block overflow-hidden align-bottom mr-[0.25em]">
+            <motion.span
+              initial={prefersReduced ? false : { y: '110%', filter: 'blur(10px)', opacity: 0 }}
+              animate={{ y: 0, filter: 'blur(0px)', opacity: 1 }}
+              transition={{ duration: 0.7, delay: D + 0.36, ease: [0.16, 1, 0.3, 1] }}
+              className="inline-block text-foreground/40"
+            >
+              leak.
+            </motion.span>
+          </span>
+          <br />
+          <span className="inline-block overflow-hidden align-bottom mr-[0.25em]">
+            <motion.span
+              initial={prefersReduced ? false : { y: '110%', filter: 'blur(10px)', opacity: 0 }}
+              animate={{ y: 0, filter: 'blur(0px)', opacity: 1 }}
+              transition={{ duration: 0.7, delay: D + 0.5, ease: [0.16, 1, 0.3, 1] }}
+              className="inline-block"
+            >
+              Aegis
+            </motion.span>
+          </span>
+          <span className="inline-block overflow-hidden align-bottom mr-[0.25em]">
+            <motion.span
+              initial={prefersReduced ? false : { y: '110%', filter: 'blur(10px)', opacity: 0 }}
+              animate={{ y: 0, filter: 'blur(0px)', opacity: 1 }}
+              transition={{ duration: 0.7, delay: D + 0.58, ease: [0.16, 1, 0.3, 1] }}
+              className="inline-block"
+            >
+              makes
+            </motion.span>
+          </span>
+          <span className="inline-block overflow-hidden align-bottom mr-[0.25em]">
+            <motion.span
+              initial={prefersReduced ? false : { y: '110%', filter: 'blur(10px)', opacity: 0 }}
+              animate={{ y: 0, filter: 'blur(0px)', opacity: 1 }}
+              transition={{ duration: 0.7, delay: D + 0.66, ease: [0.16, 1, 0.3, 1] }}
+              className="inline-block"
+            >
+              them
+            </motion.span>
+          </span>
+          <span className="inline-block overflow-hidden align-bottom mr-[0.25em]">
+            <motion.span
+              initial={prefersReduced ? false : { y: '110%', filter: 'blur(10px)', opacity: 0 }}
+              animate={{ y: 0, filter: 'blur(0px)', opacity: 1 }}
+              transition={{ duration: 0.7, delay: D + 0.74, ease: [0.16, 1, 0.3, 1] }}
+              className="inline-block aegis-text-gradient"
+            >
+              safe.
+            </motion.span>
+          </span>
+        </h1>
+
+        {/* Single CTA — magnetic, centered */}
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: D + 1.0 }}
+          className="flex items-center gap-4"
+        >
+          <motion.div
+            style={prefersReduced ? undefined : { x: ctaX, y: ctaY }}
+            onMouseMove={handleCtaMove}
+            onMouseLeave={handleCtaLeave}
+          >
+            <Button
+              variant="glass-primary"
+              size="lg-pill"
+              onClick={() => scrollTo('playground')}
+              className="h-13 px-8 text-base group"
+            >
+              Try the playground
+              <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+            </Button>
+          </motion.div>
+        </motion.div>
+      </motion.div>
 
       {/* Scroll hint */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.3 }}
-        className="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-2 text-[10px] text-muted-foreground/50"
+        transition={{ delay: D + 1.5 }}
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 text-[10px] text-muted-foreground/50"
       >
         <ArrowDown className="size-3 animate-bounce" />
         <span className="aegis-mono uppercase tracking-[0.2em]">scroll</span>
       </motion.div>
     </section>
-  );
-}
-
-/**
- * GlassProofCard — the focal hero element. A living audit-chain snapshot
- * with an animated counter, glow, and real glass refraction.
- */
-function GlassProofCard() {
-  const ref = useLiquidGlass<HTMLDivElement>(true, { scale: -90, chroma: 5, blur: 4 });
-  const [count, setCount] = React.useState(0);
-  const prefersReduced = useReducedMotion();
-
-  // Animate the counter from 0 → 042 on mount.
-  React.useEffect(() => {
-    if (prefersReduced) {
-      setCount(42);
-      return;
-    }
-    let raf: number;
-    const start = performance.now();
-    const duration = 1500;
-    const tick = (now: number) => {
-      const t = Math.min(1, (now - start) / duration);
-      // ease-out cubic
-      const eased = 1 - Math.pow(1 - t, 3);
-      setCount(Math.round(eased * 42));
-      if (t < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [prefersReduced]);
-
-  return (
-    <div className="relative max-w-md mx-auto">
-      {/* Ambient glow — the card emanates light */}
-      <div
-        className="absolute -inset-6 rounded-[2.5rem] opacity-50 blur-3xl pointer-events-none"
-        style={{ background: 'radial-gradient(60% 60% at 50% 30%, color-mix(in oklch, var(--primary) 30%, transparent) 0%, transparent 70%)' }}
-        aria-hidden
-      />
-      <div ref={ref} className="glass relative rounded-[1.75rem] p-7">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-5">
-          <div className="flex items-center gap-2">
-            <span className="grid size-7 place-items-center rounded-full bg-primary/15 text-primary ring-1 ring-primary/30">
-              <ShieldCheck className="size-3.5" />
-            </span>
-            <span className="aegis-eyebrow text-muted-foreground">audit chain</span>
-          </div>
-          <span className="flex items-center gap-1.5 glass rounded-full px-2.5 py-1 border border-primary/30 bg-primary/10">
-            <span className="size-1.5 rounded-full bg-primary aegis-live-dot" />
-            <span className="text-[10px] text-primary aegis-mono font-semibold">VERIFIED</span>
-          </span>
-        </div>
-
-        {/* The counter — the focal number */}
-        <div className="mb-5">
-          <div className="aegis-eyebrow text-muted-foreground/50 mb-1">latest entry</div>
-          <div className="flex items-baseline gap-2">
-            <span className="aegis-mono text-5xl font-semibold text-foreground tabular-nums">
-              {String(count).padStart(3, '0')}
-            </span>
-            <span className="aegis-mono text-xs text-muted-foreground">/ chain</span>
-          </div>
-        </div>
-
-        {/* Data rows */}
-        <div className="space-y-2.5 aegis-mono text-[11px] leading-relaxed">
-          <div className="flex justify-between items-center">
-            <span className="text-muted-foreground">hash</span>
-            <span className="text-foreground/90">8f3a…c2e1</span>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className="text-muted-foreground">redacted</span>
-            <span className="text-foreground/90">EMAIL · API_KEY</span>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className="text-muted-foreground">provider</span>
-            <span className="text-foreground/90">openai</span>
-          </div>
-        </div>
-
-        {/* Integrity footer */}
-        <div className="mt-5 pt-4 border-t border-foreground/10 flex items-center justify-between">
-          <span className="aegis-eyebrow text-muted-foreground">integrity</span>
-          <span className="flex items-center gap-1.5 text-primary text-xs font-medium">
-            <ShieldCheck className="size-3.5" />
-            chain intact
-          </span>
-        </div>
-      </div>
-
-      {/* Caption */}
-      <p className="mt-4 text-center text-[10px] text-muted-foreground/60 aegis-mono leading-relaxed">
-        every redaction appends here.<br />
-        tamper any entry — the chain breaks downstream.
-      </p>
-    </div>
   );
 }
