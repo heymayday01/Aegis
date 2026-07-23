@@ -223,7 +223,7 @@ export function AegisStreamingDemo() {
           title={
             <>
               Redaction that keeps up <br className="hidden sm:block" />
-              <span className="italic text-muted-foreground">with the stream.</span>
+              <span className="text-muted-foreground/70">with the stream.</span>
             </>
           }
           description="LLM responses arrive token-by-token. Aegis holds back a sliding window and redacts live as the stream flows. Try the live LLM mode — your prompt is redacted before it reaches the model, and the response is redacted as it arrives."

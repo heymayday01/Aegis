@@ -423,14 +423,6 @@
   }
 }
 
-/* ---- Perf: skip rendering offscreen sections ----
-   content-visibility:auto lets the browser skip layout/paint for sections
-   that aren't in the viewport. Huge win for long pages with glass + WebGL. */
-section {
-  content-visibility: auto;
-  contain-intrinsic-size: auto 600px;
-}
-
 /* ---- Reduced motion ---- */
 @media (prefers-reduced-motion: reduce) {
   *,

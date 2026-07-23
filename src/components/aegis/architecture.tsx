@@ -47,7 +47,7 @@ export function AegisArchitecture() {
           title={
             <>
               How it <br className="hidden sm:block" />
-              <span className="italic text-muted-foreground">
+              <span className="text-muted-foreground/70">
                 <span className="aegis-text-gradient">works.</span>
               </span>
             </>

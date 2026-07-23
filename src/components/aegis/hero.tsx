@@ -138,7 +138,7 @@ export function AegisHero() {
                 }}
                 color="var(--foreground)"
                 appearTrigger="default"
-                appearTransition={{ type: 'tween', ease: 'easeOut', duration: 1.8, delay: 0.3 }}
+                appearTransition={{ type: 'tween', ease: 'easeOut', duration: 1.2, delay: 0.2 }}
                 intensity={8}
                 position="bottomLeft"
                 animationMode="singleLine"
@@ -155,7 +155,7 @@ export function AegisHero() {
                   }}
                   color="var(--primary)"
                   appearTrigger="default"
-                  appearTransition={{ type: 'tween', ease: 'easeOut', duration: 1.8, delay: 0.8 }}
+                  appearTransition={{ type: 'tween', ease: 'easeOut', duration: 1.2, delay: 0.6 }}
                   intensity={10}
                   position="bottomLeft"
                   animationMode="singleLine"
@@ -167,7 +167,7 @@ export function AegisHero() {
             <motion.p
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 1.8 }}
+              transition={{ duration: 0.6, delay: 1.2 }}
               className="text-base sm:text-lg text-muted-foreground max-w-lg leading-relaxed"
             >
               Every prompt you send to ChatGPT, Claude, or Gemini carries your emails,
@@ -182,7 +182,7 @@ export function AegisHero() {
             <motion.div
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 2.2 }}
+              transition={{ duration: 0.6, delay: 1.5 }}
               className="flex items-center gap-4 pt-2"
             >
               <motion.div
@@ -212,7 +212,7 @@ export function AegisHero() {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 2.6 }}
+              transition={{ duration: 0.6, delay: 1.8 }}
               className="flex items-center gap-4 pt-2 text-[11px] text-muted-foreground/70"
             >
               <span className="flex items-center gap-1.5">

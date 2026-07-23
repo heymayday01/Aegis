@@ -45,7 +45,7 @@ export function SectionHeading({
           {eyebrow}
         </span>
       </div>
-      <h2 className="aegis-serif text-3xl sm:text-4xl lg:text-5xl leading-[1.05] tracking-tight">
+      <h2 className="aegis-display text-3xl sm:text-4xl lg:text-5xl leading-[1.05] tracking-tight">
         {title}
       </h2>
       {description && (

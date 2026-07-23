@@ -239,7 +239,7 @@ export function AegisPlayground() {
           title={
             <>
               Paste your prompt. <br className="hidden sm:block" />
-              <span className="italic text-muted-foreground">
+              <span className="text-muted-foreground/70">
                 Watch the <span className="aegis-text-gradient">PII</span> vanish.
               </span>
             </>

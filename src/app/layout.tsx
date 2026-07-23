@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { SmoothScrollProvider } from "@/components/aegis/smooth-scroll-provider";
 import { AmbientBackground } from "@/components/aegis/ambient-background";
+import { CinematicLoader } from "@/components/aegis/cinematic-loader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -97,6 +98,7 @@ export default function RootLayout({
       >
         <SmoothScrollProvider>
           <AmbientBackground />
+          <CinematicLoader />
           {children}
           <Toaster richColors position="bottom-right" />
         </SmoothScrollProvider>

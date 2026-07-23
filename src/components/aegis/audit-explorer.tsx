@@ -122,7 +122,7 @@ export function AegisAuditExplorer() {
           title={
             <>
               Tamper-evident <br className="hidden sm:block" />
-              <span className="italic text-muted-foreground">
+              <span className="text-muted-foreground/70">
                 <span className="aegis-text-gradient">audit</span> chain.
               </span>
             </>
